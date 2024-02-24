@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="instruction-manual"
+        content="Homework Machinery serves as a refuge against depression, a haven for daydreams, and a tool for my code learning" />
+    <title>Homework Machinery</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        .center {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .square {
+            background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%);
+            width: 16vw;
+            height: 16vw;
+            transition: all 0.2s linear;
+        }
+
+        .square:hover {
+            box-shadow: 0px 0px 100px 5px green;
+        }
+
+
+        .circle {
+            width: 16vw;
+            height: 16vw;
+            background-color: black; 
+            border-radius: 50%;
+            box-shadow: 0px 0px 50px 40px green;
+            margin-top: 8.5vw;
+            transition: all 0.2s linear;
+            animation:light 4s ease-in-out infinite ;
+        }
+
+        @keyframes light{
+from{box-shadow: 0px 0px 38px 28px green;}
+50%{
+    box-shadow: 0px 0px 60px 40px green;
+}
+to{box-shadow: 0px 0px 38px 28px green;}
+        }
+        /* @keyframes light{
+from{box-shadow: 0px 0px 30px 20px green;}
+50%{
+    box-shadow: 0px 0px 60px 40px green;
+}
+to{box-shadow: 0px 0px 30px 20px green;}
+        } */
+
+
+
+        .circle:hover {
+            box-shadow: 0px 0px 60px 50px green;
+            /* animation-play-state: paused; */
+        }
+       
+.flatland{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+        /* .triangle {
+        width: 180px;
+  height: 150px;
+  background: linear-gradient(to top, rgba(41, 27, 86, .9) 60%, rgba(0, 75, 142, 0.8) 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  margin-top: 100px;
+} */
+        .triangle {
+            width: 16vw;
+            height: 13.5vw;
+            background: linear-gradient(to bottom, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0.5) 100%);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            margin-top: 8.5vw;
+
+        }
+
+        /* .flatland{
+    display: flex;
+    flex-direction:column ;
+} */
+
+        /* .hover-shadow{
+    width: 0;
+  height: 0;
+  border-left: 90px solid transparent;   /* 左边透明边框 */
+        border-right: 90px solid transparent;
+        /* 右边透明边框 */
+
+        */
+        /* 
+.hover-shadow:hover{
+    box-shadow: 0px 0px 200px 20px green;
+} */
+    </style>
+</head>
+
+
+<body bgcolor="black">
+    <div class="header"> <a class="green" href="#">~((((((CLICK HERE TO ENTER MY HOMEWORK
+            MACHINERY))))))~</a></div>
+    <hr class="purpleline">
+    <div class="instruction"> &lt;meta name="instruction-manual" content="Homework Machinery serves as a refuge against
+        depression, a haven for daydreams, and a tool for my code learning" /&gt; </div>
+    <hr class="greenline">
+
+
+    <div class="flatland ">
+        <a href="./homework.html" target="_blank">
+            <div class="square "></div>
+        </a>
+        <a href="#">
+            <div class="circle "></div>
+        </a>
+        <div class="hover-shadow "> <a href="#">
+                <div class="triangle"></div>
+            </a> </div>
+    </div>
+
+
+
+    <!-- <hr class="greenline"> -->
+</body>
+
+</html>
+
+<!-- 点击中间圆形呼吸灯的时候 上面的click也闪红 -->
+<!-- ins链接 -->
