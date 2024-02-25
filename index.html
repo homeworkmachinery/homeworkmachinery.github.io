@@ -17,7 +17,7 @@
             background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%);
             width: 16vw;
             height: 16vw;
-            transition: all 0.2s linear;
+            /* transition: all 0.2s linear; */
         }
 
         .square:hover {
@@ -31,8 +31,9 @@
             background-color: black; 
             border-radius: 50%;
             box-shadow: 0px 0px 50px 40px green;
-            margin-top: 8.5vw;
-            transition: all 0.2s linear;
+            margin-top: 8vw;
+            margin-bottom: 5vw;
+            /* transition: all 0.2s linear; */
             animation:light 4s ease-in-out infinite ;
         }
 
@@ -43,16 +44,8 @@ from{box-shadow: 0px 0px 38px 28px green;}
 }
 to{box-shadow: 0px 0px 38px 28px green;}
         }
-        /* @keyframes light{
-from{box-shadow: 0px 0px 30px 20px green;}
-50%{
-    box-shadow: 0px 0px 60px 40px green;
-}
-to{box-shadow: 0px 0px 30px 20px green;}
-        } */
 
-
-
+ 
         .circle:hover {
             box-shadow: 0px 0px 60px 50px green;
             /* animation-play-state: paused; */
@@ -64,45 +57,25 @@ to{box-shadow: 0px 0px 30px 20px green;}
     justify-content: center;
     align-items: center;
 }
-        /* .triangle {
-        width: 180px;
-  height: 150px;
-  background: linear-gradient(to top, rgba(41, 27, 86, .9) 60%, rgba(0, 75, 142, 0.8) 100%);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  margin-top: 100px;
-} */
-        .triangle {
-            width: 16vw;
-            height: 13.5vw;
-            background: linear-gradient(to bottom, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0.5) 100%);
-            clip-path: polygon(0 0, 100% 0, 50% 100%);
-            margin-top: 8.5vw;
 
+        
+  .triangle{
+    transition: all 0.2s linear;
+  }      
+
+
+.triangle-svg:hover polygon{       
+    filter: url(#dropshadow);
         }
 
-        /* .flatland{
-    display: flex;
-    flex-direction:column ;
-} */
 
-        /* .hover-shadow{
-    width: 0;
-  height: 0;
-  border-left: 90px solid transparent;   /* 左边透明边框 */
-        border-right: 90px solid transparent;
-        /* 右边透明边框 */
-
-        */
-        /* 
-.hover-shadow:hover{
-    box-shadow: 0px 0px 200px 20px green;
-} */
+ 
     </style>
 </head>
 
 
 <body bgcolor="black">
-    <div class="header"> <a class="green" href="#">~((((((CLICK HERE TO ENTER MY HOMEWORK
+    <div class="header"> <a id="headerLink" class="green" href="#">~((((((CLICK HERE TO ENTER MY HOMEWORK
             MACHINERY))))))~</a></div>
     <hr class="purpleline">
     <div class="instruction"> &lt;meta name="instruction-manual" content="Homework Machinery serves as a refuge against
@@ -115,11 +88,30 @@ to{box-shadow: 0px 0px 30px 20px green;}
             <div class="square "></div>
         </a>
         <a href="#">
-            <div class="circle "></div>
+            <div class="circle " id="circle"></div>
         </a>
-        <div class="hover-shadow "> <a href="#">
-                <div class="triangle"></div>
-            </a> </div>
+        
+        <a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank" style="display: block; width: 16vw; height: 13.5vw;">
+            <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
+                <defs>
+                    <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgb(0, 128, 0);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="dropshadow" x="-100%" y="-100%" width="300%" height="300%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="35"/> <!-- 调整这里以改变模糊度 -->
+                        <feOffset dx="0" dy="0" result="offsetblur"/> <!-- 没有偏移 -->
+                        <feFlood flood-color="green" result="color"/> <!-- 绿色阴影 -->
+                        <feComposite in="color" in2="offsetblur" operator="in" result="shadow"/>
+                        <feMerge>
+                            <feMergeNode in="shadow"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
+            </svg>
+        </a>
     </div>
 
 
@@ -127,7 +119,23 @@ to{box-shadow: 0px 0px 30px 20px green;}
     <!-- <hr class="greenline"> -->
 </body>
 
+
+<script>
+    var circle = document.getElementById('circle');
+    var headerLink = document.getElementById('headerLink');
+
+    // 当鼠标悬停在圆形上时，改变链接文本颜色
+    circle.addEventListener('mouseenter', function() {
+        headerLink.style.color = 'red';
+    });
+
+    // 当鼠标离开圆形时，恢复链接文本的原始颜色
+    circle.addEventListener('mouseleave', function() {
+        headerLink.style.color = ''; // 这里假设原始颜色是通过CSS类或者直接在HTML中定义的
+    });
+</script>
+
 </html>
 
+
 <!-- 点击中间圆形呼吸灯的时候 上面的click也闪红 -->
-<!-- ins链接 -->

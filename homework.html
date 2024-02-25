@@ -25,7 +25,7 @@
     width: 40px;
     height: 40px;
     background:linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%);
-    bottom:80px;
+    bottom:130px;
     right:25px;  
 
 }
@@ -37,7 +37,7 @@
     border-radius: 50%;
     background-color: black;
     box-shadow: 0px 0px 15px 8px green;
-    bottom:25px;
+    bottom:75px;
     right:25px; 
 }
 
@@ -46,6 +46,17 @@
 }
 .circle:hover{
     box-shadow: 0px 0px 20px 10px green;
+}
+.triangle-svg{
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    bottom:25px;
+    right:25px; 
+}
+
+.triangle:hover polygon{   
+    filter: url(#dropshadow);
 }
 
 </style>
@@ -62,6 +73,27 @@
 <div class="flatland">
 <a href="#"> <div class="square"></div></a>   
 <a href="./index.html" target="_blank" ><div class="circle"></div></a>
+<a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank">
+    <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
+        <defs>
+            <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
+                <stop offset="0%" style="stop-color:rgb(0, 128, 0);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+            </linearGradient>
+            <filter id="dropshadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="40"/> <!-- 调整这里以改变模糊度 -->
+                <feOffset dx="0" dy="0" result="offsetblur"/> <!-- 没有偏移 -->
+                <feFlood flood-color="green" result="color"/> <!-- 绿色阴影 -->
+                <feComposite in="color" in2="offsetblur" operator="in" result="shadow"/>
+                <feMerge>
+                    <feMergeNode in="shadow"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
+    </svg>
+</a>
 </div>
 </body>
 </html>
