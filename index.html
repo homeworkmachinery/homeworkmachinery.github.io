@@ -396,9 +396,8 @@
                     </span>
                 </div>
 
-                <video autoplay loop muted>
-                    <source src="./endless-tears/1.mp4" type="video/mp4">
-                </video>
+                <img src="./endless-tears/1.gif">
+                
             </li>
         </ul>
     </div>
@@ -480,28 +479,36 @@
         item.addEventListener('click', function () {
             var id = this.getAttribute('data-id');
             var content = modalContent.find(c => c.id.toString() === id);
-            modalLeft.innerHTML = `
-            <video  autoplay loop class="modal-video">
-                <source src="${content.videoAa}" type="video/mp4" >
-            </video>
-            <video controls loop class="modal-video">
-                <source src="${content.videoAb}" type="video/mp4" >
-            </video>
-            <img src="${content.imageA}" >`;
+
+            var mediaContent = '';
+            if (content.imageAa) {
+            mediaContent += `<img src="${content.imageAa}" >`;
+        }
+
+        if (content.videoAa) {
+            mediaContent += `<video controls loop class="modal-video">
+                                <source src="${content.videoAa}" type="video/mp4">
+                             </video>`;
+        }
+        if (content.videoAb) {
+            mediaContent += `<video controls loop class="modal-video">
+                                <source src="${content.videoAb}" type="video/mp4">
+                             </video>`;
+        }
+        
+
+        modalLeft.innerHTML = mediaContent;
+
+
+            modalLeft.innerHTML = mediaContent;
             modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+
             squareMini.addEventListener('mouseenter', function () {
                 if (content) {
-                    modalLeft.innerHTML = `
-            <video  autoplay loop class="modal-video">
-                <source src="${content.videoAa}" type="video/mp4" >
-            </video>
-            <video controls loop class="modal-video">
-                <source src="${content.videoAb}" type="video/mp4" >
-            </video>
-            <img src="${content.imageA}" >`;
+                    modalLeft.innerHTML =mediaContent;
                     modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 

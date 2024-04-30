@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>我的作业</title>
+
 </head>
 <style>
     * {
@@ -13,7 +14,7 @@
     body {
         background-color: black;
     }
-
+/*  */
     table thead tr td {
         color: green;
         font-size: 5.4vw;
@@ -247,6 +248,64 @@
         .triangle-hover-effect:after {
             border-top: 25px solid black;
         }
+
+
+
+        @media (max-width: 768px) {
+    .square, .circle, .triangle-svg {
+        width: 60px; 
+        height: 60px;
+    }
+    .square{
+        bottom: 175px; 
+    }
+    .circle{
+        bottom: 95px; 
+    }
+    .triangle {
+        bottom: 25px;
+    
+    }
+
+    .square-mini, .circle-mini, .triangle-mini {
+        width: 60px; 
+        height: 60px;
+    }
+
+    .square-mini{
+        bottom: 175px; 
+    }
+    .circle-mini{
+        bottom: 95px; 
+    }
+
+    .triangle-mini {
+        bottom: 25px;
+    
+    }
+
+    .triangle-mini::after {
+        border-top: 50px solid green; /* 调整伪元素大小 */
+        bottom: 10px; /* 调整位置 */
+        right: -26px;
+        width: 0;
+        height: 0;
+        border-left: 28px solid transparent;
+        border-right: 28px solid transparent;
+    }
+
+
+    /* table thead tr td{
+        font-size: 5vw;
+    }
+
+    tbody tr{
+        font-size: 4vw;
+        } */
+        };
+
+        
+
 </style>
 
 <body>
@@ -309,6 +368,8 @@
         </a>
     </div>
     <script src="./modalContent.js"></script>
+
+    
     <script>
 
         var tbody = document.getElementById('homework-list');
@@ -344,49 +405,56 @@
 
             row.addEventListener('click', function () {
                 var id = this.getAttribute('data-id');
-                var content = modalContent.find(c => c.id.toString() === id);
-                modalLeft.innerHTML = `
-            <video  autoplay loop class="modal-video">
-                <source src="${content.videoAa}" type="video/mp4" >
-            </video>
-            <video controls loop class="modal-video">
-                <source src="${content.videoAb}" type="video/mp4" >
-            </video>
-            <img src="${content.imageA}" >`;
-                modalRight.innerHTML = `
+            var content = modalContent.find(c => c.id.toString() === id);
+
+            var mediaContent = '';
+            if (content.imageAa) {
+            mediaContent += `<img src="${content.imageAa}" >`;
+        }
+
+        if (content.videoAa) {
+            mediaContent += `<video controls loop class="modal-video">
+                                <source src="${content.videoAa}" type="video/mp4">
+                             </video>`;
+        }
+        if (content.videoAb) {
+            mediaContent += `<video controls loop class="modal-video">
+                                <source src="${content.videoAb}" type="video/mp4">
+                             </video>`;
+        }
+        
+
+        modalLeft.innerHTML = mediaContent;
+
+
+            modalLeft.innerHTML = mediaContent;
+            modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
-                squareMini.addEventListener('mouseenter', function () {
-                    if (content) {
-                        modalLeft.innerHTML = `
-            <video  autoplay loop class="modal-video">
-                <source src="${content.videoAa}" type="video/mp4" >
-            </video>
-            <video controls loop class="modal-video">
-                <source src="${content.videoAb}" type="video/mp4" >
-            </video>
-            <img src="${content.imageA}" >`;
-                        modalRight.innerHTML = `
+
+            squareMini.addEventListener('mouseenter', function () {
+                if (content) {
+                    modalLeft.innerHTML =mediaContent;
+                    modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
-                    }
                 }
+            }
 
-                );
-
-                circleMini.addEventListener('mouseenter', function () {
-                    if (content) {
-                        modalLeft.innerHTML = `
+            );
+            circleMini.addEventListener('mouseenter', function () {
+                if (content) {
+                    modalLeft.innerHTML = `
             <img class='modal-image' src="${content.imageB}" >`;
-                        modalRight.innerHTML = `
+                    modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <div class="modal-textB">${content.textB.replace(/\n/g, '<br>')}</div> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
-                    }
                 }
-                );
+            }
+            );
 
                 triangleMini.addEventListener('mouseenter', function () {
                     if (content) {

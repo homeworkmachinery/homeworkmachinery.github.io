@@ -1,12 +1,12 @@
 var modalContent = [
     {
         id: 1,
-        videoAa: "./endless-tears/2.mp4",
-        videoAb: "./endless-tears/3.mp4",
-        videoC: "./endless-tears/4.mp4",
-        imageA: "",
+        imageAa: "./endless-tears/2.gif",
         imageB: "./endless-tears/003.png",
         imageC: "",
+        videoAa: "",
+        videoAb: "./endless-tears/3.mp4",
+        videoC: "./endless-tears/4.mp4",
         title: ")endless-tears(((Endless Tears))~",
         textA: `[INTRO]<br>
 (electronic pulses simulate human breathing, melding with distant, echoing synths)<br>
