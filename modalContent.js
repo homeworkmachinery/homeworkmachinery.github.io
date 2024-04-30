@@ -1,13 +1,13 @@
 var modalContent = [
     {
         id: 1,
-        videoAa: "./泪目/2.mp4",
-        videoAb: "./泪目/3.mp4",
-        videoC: "./泪目/4.mp4",
+        videoAa: "./endless-tears/2.mp4",
+        videoAb: "./endless-tears/3.mp4",
+        videoC: "./endless-tears/4.mp4",
         imageA: "",
-        imageB: "./泪目/003.png",
+        imageB: "./endless-tears/003.png",
         imageC: "",
-        title: ")泪目(((Endless Tears))~",
+        title: ")endless-tears(((Endless Tears))~",
         textA: `[INTRO]<br>
 (electronic pulses simulate human breathing, melding with distant, echoing synths)<br>
 
@@ -40,7 +40,7 @@ var modalContent = [
         textB: `[操作指南]
 
 <div class='textB-desc'>
-<img src='./泪目/002.png' width='55px'>
+<img src='./endless-tears/002.png' width='55px'>
 暂停/播放
 <br>
 进入家庭作业机器
@@ -70,6 +70,6 @@ var modalContent = [
 
 `,
         link: "~CLICK HERE TO ENTER MY ENDLESS TEARS~",
-        href: "./泪目/endless-tears.html"
+        href: "./endless-tears/endless-tears.html"
     }
 ];
