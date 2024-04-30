@@ -1,68 +1,256 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>我的作业</title>
-<!--     <title>My Homework</title> -->
 </head>
 <style>
-    *{font-family: 'Times New Roman', Times, serif;color: green;
-    font-size: 5.4vw;
-    text-decoration-thickness: 0.45vw;
-
-            
-        }
-        .underline{
-            text-decoration:underline;
-            text-decoration-thickness: 0.45vw;
-        }
-    :hover{
-        color:red;
+    * {
+        font-family: 'Times New Roman', Times, serif;
     }
-    
 
-.square{
-    position: fixed;
-    width: 40px;
-    height: 40px;
-    background:linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%);
-    bottom:130px;
-    right:25px;  
+    body {
+        background-color: black;
+    }
 
-}
+    table thead tr td {
+        color: green;
+        font-size: 5.4vw;
+        text-decoration-thickness: 0.45vw;
+        cursor: pointer;
+    }
 
-.circle{
-    position: fixed;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: black;
-    box-shadow: 0px 0px 15px 8px green;
-    bottom:75px;
-    right:25px; 
-}
+    .underline {
+        text-decoration: underline;
+        text-decoration-thickness: 0.45vw;
+    }
 
-.square:hover{
-    box-shadow: 0px 0px 30px 2px green;
-}
-.circle:hover{
-    box-shadow: 0px 0px 20px 10px green;
-}
-.triangle-svg{
-    position: fixed;
-    width: 40px;
-    height: 40px;
-    bottom:25px;
-    right:25px; 
-}
+    thead :hover {
+        color: red;
+    }
 
-.triangle:hover polygon{   
-    filter: url(#dropshadow);
-}
+    tbody tr {
+        color: green;
+        font-size: 4.4vw;
+        text-align: center;
+        /* margin-top: 10px; */
+        cursor: pointer;
+        position: relative;
 
+    }
+
+    tbody tr:hover::after {
+        content: '';
+        position: absolute;
+        bottom: 1.3vw;
+        left: 0;
+        width: 100%;
+        height: 0.25vw;
+        background-color: green;
+        display: block;
+    }
+
+
+    .square {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%);
+        bottom: 130px;
+        right: 25px;
+
+    }
+
+    .circle {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: black;
+        box-shadow: 0px 0px 15px 8px green;
+        bottom: 75px;
+        right: 25px;
+    }
+
+    .square:hover {
+        box-shadow: 0px 0px 30px 2px green;
+    }
+
+    .circle:hover {
+        box-shadow: 0px 0px 20px 10px green;
+    }
+
+    .triangle-svg {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        bottom: 25px;
+        right: 25px;
+    }
+
+    .triangle:hover polygon {
+        filter: url(#dropshadow);
+    }
+
+    .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+
+        .modal-half {
+            flex: 1;
+            padding: 0px 20px 20px 20px;
+        }
+
+        .modal-left {
+            padding: 30px;
+        }
+
+        .modal-right {
+            color: white;
+        }
+
+
+        .modal-content {
+            background-color: rgb(0, 0, 0);
+            margin: 15% auto;
+            border: 1px solid #888;
+            width: 80%;
+            display: flex;
+        }
+
+        .modal-title {
+            color: green;
+            /* text-decoration: underline; */
+        }
+
+        .modal-link {
+            color: green;
+            font-size: 30px;
+        }
+
+
+        .modal-video {
+            width: 100%;
+            height: auto;
+            max-width: 640px;
+            min-width: 300px;
+        }
+
+        .modal-image {
+            max-width: 640px;
+            min-width: 300px;
+            width: 100%;
+            height: auto;
+        }
+
+        .modal-textA {
+            /* font-family: 'Monaco'; */
+            line-height: 11px;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .close-modal:hover {
+            /* color: green;
+             */
+        }
+
+        .flatland-mini {
+            cursor: pointer;
+
+        }
+
+        .square-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            /* background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%); */
+            bottom: 130px;
+            right: 25px;
+            background-color: green;
+            box-sizing: border-box;
+        }
+
+        .circle-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: green;
+            /* box-shadow: 0px 0px 15px 8px green; */
+            bottom: 75px;
+            right: 25px;
+            box-sizing: border-box;
+
+        }
+
+
+        .triangle-mini {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 35px solid green;
+        }
+
+        .triangle-mini::after {
+            content: '';
+            position: absolute;
+            bottom: 7px;
+            right: -13.5px;
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 25px solid green;
+        }
+
+        .textB-desc {
+            display: flex;
+            justify-content: left;
+
+        }
+
+        .textB-desc img {
+            margin-right: 10px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .hover-effect {
+            background-color: black;
+            border: 3px solid green;
+        }
+
+        .triangle-hover-effect:after {
+            border-top: 25px solid black;
+        }
 </style>
-<body bgcolor="black">
-    <table aligncenter;>
+
+<body>
+    <table>
         <thead>
             <tr>
                 <td class="underline">~((DATE))~</td>
@@ -70,31 +258,181 @@
                 <td class="underline">~((SUBJECT))~</td>
             </tr>
         </thead>
+        <tbody id="homework-list">
+        </tbody>
     </table>
-<div class="flatland">
-<a href="#"> <div class="square"></div></a>   
-<a href="./index.html" target="_blank" ><div class="circle"></div></a>
-<a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank">
-    <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
-        <defs>
-            <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
-                <stop offset="0%" style="stop-color:rgb(0, 128, 0);stop-opacity:1" />
-                <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
-            </linearGradient>
-            <filter id="dropshadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="40"/> <!-- 调整这里以改变模糊度 -->
-                <feOffset dx="0" dy="0" result="offsetblur"/> <!-- 没有偏移 -->
-                <feFlood flood-color="green" result="color"/> <!-- 绿色阴影 -->
-                <feComposite in="color" in2="offsetblur" operator="in" result="shadow"/>
-                <feMerge>
-                    <feMergeNode in="shadow"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-            </filter>
-        </defs>
-        <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
-    </svg>
-</a>
-</div>
+
+
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-half modal-left"></div>
+            <div class="modal-half modal-right">
+            </div>
+        </div>
+        <div class="flatland-mini">
+            <div class="square-mini"></div>
+            <div class="circle-mini"></div>
+            <div class="triangle-mini">
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="flatland">
+        <a href="#">
+            <div class="square"></div>
+        </a>
+        <a href="./index.html" target="_parent">
+            <div class="circle"></div>
+        </a>
+        <a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank">
+            <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
+                <defs>
+                    <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgb(0, 128, 0);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="dropshadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="40" /> <!-- 调整这里以改变模糊度 -->
+                        <feOffset dx="0" dy="0" result="offsetblur" /> <!-- 没有偏移 -->
+                        <feFlood flood-color="green" result="color" /> <!-- 绿色阴影 -->
+                        <feComposite in="color" in2="offsetblur" operator="in" result="shadow" />
+                        <feMerge>
+                            <feMergeNode in="shadow" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
+            </svg>
+        </a>
+    </div>
+    <script src="./modalContent.js"></script>
+    <script>
+
+        var tbody = document.getElementById('homework-list');
+        var oModal = document.querySelector('.modal');
+    var modalLeft = document.querySelector('.modal-left');
+    var modalRight = document.querySelector('.modal-right');
+    var squareMini = document.querySelector('.square-mini');
+    var circleMini = document.querySelector('.circle-mini');
+    var triangleMini = document.querySelector('.triangle-mini');
+    var flatlandMini = document.querySelector('.flatland-mini');
+    var flatLand =document.querySelector('.flatland');
+
+
+        var homeworkList = [
+            { id: 1, date: '(.2024-05-01.)', object: '(.design.)', subject: '(.泪目endless tears.)' }
+        ];
+
+        homeworkList.forEach(function (homework) {
+            var row = document.createElement('tr');
+            row.setAttribute('data-id', homework.id);
+            var dateCell = document.createElement('td');
+            dateCell.textContent = homework.date;
+            var objectCell = document.createElement('td');
+            objectCell.textContent = homework.object;
+            var subjectCell = document.createElement('td');
+            subjectCell.textContent = homework.subject;
+            
+
+            row.appendChild(dateCell);
+            row.appendChild(objectCell);
+            row.appendChild(subjectCell);
+            tbody.appendChild(row);
+
+            row.addEventListener('click', function () {
+                var id = this.getAttribute('data-id');
+                var content = modalContent.find(c => c.id.toString() === id);
+                modalLeft.innerHTML = `
+            <video  autoplay loop class="modal-video">
+                <source src="${content.videoAa}" type="video/mp4" >
+            </video>
+            <video controls loop class="modal-video">
+                <source src="${content.videoAb}" type="video/mp4" >
+            </video>
+            <img src="${content.imageA}" >`;
+                modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                squareMini.addEventListener('mouseenter', function () {
+                    if (content) {
+                        modalLeft.innerHTML = `
+            <video  autoplay loop class="modal-video">
+                <source src="${content.videoAa}" type="video/mp4" >
+            </video>
+            <video controls loop class="modal-video">
+                <source src="${content.videoAb}" type="video/mp4" >
+            </video>
+            <img src="${content.imageA}" >`;
+                        modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                    }
+                }
+
+                );
+
+                circleMini.addEventListener('mouseenter', function () {
+                    if (content) {
+                        modalLeft.innerHTML = `
+            <img class='modal-image' src="${content.imageB}" >`;
+                        modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <div class="modal-textB">${content.textB.replace(/\n/g, '<br>')}</div> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                    }
+                }
+                );
+
+                triangleMini.addEventListener('mouseenter', function () {
+                    if (content) {
+                        modalLeft.innerHTML = `
+            <video  controls loop class="modal-video">
+                <source src="${content.videoC}" type="video/mp4" >
+            </video>`
+                        modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <div class="modal-textB">${content.textC.replace(/\n/g, '<br>')}</div> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                    }
+                }
+                );
+                oModal.style.display = 'block';
+                flatLand.style.display = 'none';
+                squareMini.classList.add('hover-effect');
+            })
+        });
+
+        var oModalContent = document.querySelector('.modal-content');
+
+        var miniIcons = document.querySelectorAll('.flatland-mini div');
+
+
+        miniIcons.forEach(function (icon) {
+            icon.addEventListener('mouseenter', function () {
+                miniIcons.forEach(el => el.classList.remove('hover-effect', 'triangle-hover-effect'));
+                if (this === triangleMini) {
+                    this.classList.add('triangle-hover-effect');
+                } else {
+                    this.classList.add('hover-effect');
+                }
+            });
+        });
+
+
+
+        var closeModal = document.querySelector('.close-modal');
+        document.addEventListener('click', function(event) {
+            if (event.target === oModal || event.target.classList.contains('close-modal')) {
+                oModal.style.display = 'none';
+                flatLand.style.display = 'block';  
+            }
+        });
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+          .center {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .square {
+            /* background: linear-gradient(to top, rgb(0, 0, 0) 40%, rgba(0, 0, 0, 0) 100%); */
+            width: 16vw;
+            height: 16vw;
+            /* transition: all 0.2s linear; */
+            background-color: rgba(0, 0, 0); 
+        }
+
+        .square:hover {
+            box-shadow: 0px 0px 100px 5px black;
+        }
+
+
+        .circle {
+            width: 16vw;
+            height: 16vw;
+            background-color: rgba(0, 0, 0, 0); 
+            border-radius: 50%;
+            box-shadow: 0px 0px 50px 40px black;
+            margin-top: 8vw;
+            margin-bottom: 5vw;
+            /* transition: all 0.2s linear; */
+            animation:light 4s ease-in-out infinite ;
+        }
+
+     
+
+ 
+        .circle:hover {
+            box-shadow: 0px 0px 60px 50px black;
+            /* animation-play-state: paused; */
+        }
+       
+.flatland{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+        
+  .triangle{
+    transition: all 0.2s linear;
+  }      
+
+
+.triangle-svg:hover polygon{       
+    filter: url(#dropshadow);
+        }
+    </style>
+</head>
+<body>
+    <div class="flatland ">
+        <a href="./homework.html" target="_blank">
+            <div class="square "></div>
+        </a>
+        <a href="#">
+            <div class="circle " id="circle"></div>
+        </a>
+        
+        <a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank" style="display: block; width: 16vw; height: 13.5vw;">
+            <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
+                <defs>
+                    <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="dropshadow" x="-100%" y="-100%" width="300%" height="300%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="35"/> <!-- 调整这里以改变模糊度 -->
+                        <feOffset dx="0" dy="0" result="offsetblur"/> <!-- 没有偏移 -->
+                        <feFlood flood-color="black" result="color"/> <!-- 绿色阴影 -->
+                        <feComposite in="color" in2="offsetblur" operator="in" result="shadow"/>
+                        <feMerge>
+                            <feMergeNode in="shadow"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
+            </svg>
+        </a>
+    </div>
+</body>
+</html>
