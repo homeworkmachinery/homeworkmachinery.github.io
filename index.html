@@ -6,7 +6,6 @@
     <meta name="instruction-manual"
         content="Homework Machinery serves as a refuge against depression, a haven for daydreams, and a tool for my code learning" />
     <title>家庭作业机器</title>
-    <!-- <meta name="viewport" content="width=device-width"> -->
 
     <style>
        * {
@@ -187,7 +186,7 @@
             color: green;
 
         }
-
+        
         .modal {
             display: none;
             position: fixed;
@@ -202,7 +201,7 @@
 
 
         .modal-half {
-            flex: 1;
+            flex:1;
             padding: 0px 20px 20px 20px;
         }
 
@@ -342,7 +341,6 @@
         .triangle-hover-effect:after {
             border-top: 25px solid black;
         }
-
 
       
     </style>
@@ -487,7 +485,7 @@
 
             var mediaContent = '';
             if (content.imageAa) {
-            mediaContent += `<img src="${content.imageAa}" >`;
+            mediaContent += `<img class="modal-image" src="${content.imageAa}" >`;
         }
 
         if (content.videoAa) {
@@ -511,7 +509,7 @@
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
 
-            squareMini.addEventListener('mouseenter', function () {
+             squareMini.addEventListener('mouseenter', function () {
                 if (content) {
                     modalLeft.innerHTML =mediaContent;
                     modalRight.innerHTML = `
@@ -520,6 +518,7 @@
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
                 }
             }
+
 
             );
 
