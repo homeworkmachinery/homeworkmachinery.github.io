@@ -7,7 +7,7 @@ var modalContent = [
         videoAa: "",
         videoAb: "./endless-tears/3.mp4",
         videoC: "./endless-tears/4.mp4",
-        title: ")endless-tears(((Endless Tears))~",
+        title: ")泪目(((Endless Tears))~",
         textA: `[INTRO]<br>
 (electronic pulses simulate human breathing, melding with distant, echoing synths)<br>
 
