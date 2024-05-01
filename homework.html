@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>我的作业</title>
+    <meta name="viewport" content="width=device-width">
+
 
 </head>
 <style>
@@ -14,7 +16,7 @@
     body {
         background-color: black;
     }
-/*  */
+
     table thead tr td {
         color: green;
         font-size: 5.4vw;
@@ -251,10 +253,10 @@
 
 
 
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
     .square, .circle, .triangle-svg {
-        width: 60px; 
-        height: 60px;
+        width: 16vw;
+            height: 16vw;
     }
     .square{
         bottom: 175px; 
@@ -267,9 +269,9 @@
     
     }
 
-    .square-mini, .circle-mini, .triangle-mini {
-        width: 60px; 
-        height: 60px;
+    .square-mini, .circle-mini {
+        width: 16vw;
+            height: 16vw;
     }
 
     .square-mini{
@@ -280,31 +282,71 @@
     }
 
     .triangle-mini {
-        bottom: 25px;
-    
-    }
-
-    .triangle-mini::after {
-        border-top: 50px solid green; /* 调整伪元素大小 */
-        bottom: 10px; /* 调整位置 */
-        right: -26px;
-        width: 0;
-        height: 0;
-        border-left: 28px solid transparent;
-        border-right: 28px solid transparent;
+        bottom: 25px;  
+        right: 25px;
+        border-left: 30px solid transparent; 
+        border-right: 30px solid transparent;
+        border-top: 50px solid green;
     }
 
 
-    /* table thead tr td{
-        font-size: 5vw;
+    .triangle-hover-effect:after {
+            border-top:39px solid black;
+            border-left: 23px solid transparent;
+            border-right: 23px solid transparent; 
+            bottom: 8px;
+            right: -23px; 
+        }
+
+
+    table thead tr td{
+        font-size: 5.1vw;
     }
 
     tbody tr{
-        font-size: 4vw;
-        } */
+        font-size: 4.1vw;
+        }
+
+        .modal-content {
+        margin: 10% auto;
+        width: 85%;
+    }
+    .modal-half {
+        padding: 10px; 
+    }
+
+    .modal-right {
+        margin-top: -13px; 
+    }
+
+        .modal-video, .modal-image {
+            max-width: 100%; 
+            min-width: initial; 
+        }
+
+        .modal-textA {
+            font-size: 2vw;
+            line-height: 1.5vw;
+        }
+        .modal-textC {
+            font-size: 2vw;
+            
+        }
+        .modal-title {
+            font-size: 4vw;
+          
+        }
+      
+        .modal-link {
+        
+            font-size: 4vw;
+        }
+
+
+
         };
 
-        
+         */
 
 </style>
 
@@ -409,7 +451,7 @@
 
             var mediaContent = '';
             if (content.imageAa) {
-            mediaContent += `<img src="${content.imageAa}" >`;
+            mediaContent += `<img class='modal-image' src="${content.imageAa}" >`;
         }
 
         if (content.videoAa) {
@@ -464,7 +506,7 @@
             </video>`
                         modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
-    <div class="modal-textB">${content.textC.replace(/\n/g, '<br>')}</div> 
+    <div class="modal-textC">${content.textC.replace(/\n/g, '<br>')}</div> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
                     }
                 }
