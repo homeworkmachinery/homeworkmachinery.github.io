@@ -236,6 +236,16 @@
 
 
 
+
+var isInitialPlay = true;
+    document.addEventListener('click', function() {
+        if (isInitialPlay) {
+            playSound();
+            soundEffect();
+            isInitialPlay = false; 
+        }
+    });
+
         </script>
 
 
