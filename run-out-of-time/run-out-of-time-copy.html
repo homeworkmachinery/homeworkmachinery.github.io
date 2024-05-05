@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>没空</title>
 </head>
 <style>
@@ -89,6 +89,19 @@
         border-top: 31px solid black;
     }
 
+    #playButton {
+            /* display: none;  */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        
+        }
+        @media (max-width: 768px) {
+            #playButton {
+                display: block; /* 在移动设备上显示按钮 */
+            }
+        }
+
 </style>
 
 <body>
@@ -102,6 +115,34 @@
         <div class="triangle-mini" onclick="clearPage()">
         </div>
 
+        <button id="playButton" onclick="initAudio()">999<img src="./001.gif"></button>
+
+        <script>
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var gainNode = audioContext.createGain();
+            var source;
+    
+            function initAudio() {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume().then(() => {
+                        console.log("Audio Context Activated");
+                        playSound();
+                    });
+                } else {
+                    playSound();
+                }
+            }
+    
+            function playSound() {
+                var sound = new Audio('path_to_your_audio_file.mp3');
+                sound.oncanplaythrough = () => {
+                    source = audioContext.createMediaElementSource(sound);
+                    source.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    sound.play();
+                };
+            }
+        </script>
         <script>
             var audioContext = new (window.AudioContext || window.webkitAudioContext)();
             var mediaRecorder, audioChunks = [], isRecording = false, audioBlob, mediaStream;
