@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>没空</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    
+    body,
+    html {
+        height: 100%;
+        margin: 0;
+        background: white;
+        color: green;
+        font-family: 'Times New Roman', Times, serif, sans-serif;
+        /* font-weight:bold; */
+        font-size: 100px;
+        /* font-size: 10vw; */
+        overflow: hidden;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+    }
+
+    .flatland-mini {
+        cursor: pointer;
+
+    }
+
+    .square-mini {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        bottom: 130px;
+        right: 25px;
+        background-color: black;
+        box-sizing: border-box;
+        border: 1px white solid;
+    }
+
+    .recording {
+        background-color: white;
+        border: 1px black solid;
+    }
+
+    .circle-mini {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: black;
+        bottom: 75px;
+        right: 25px;
+        box-sizing: border-box;
+        border: 1px white solid;
+
+    }
+
+
+    .triangle-mini {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 35px solid white;
+    }
+
+    .triangle-mini::after {
+        content: '';
+        position: absolute;
+        bottom: 3px;
+        right: -18px;
+        width: 0;
+        height: 0;
+        border-left: 18px solid transparent;
+        border-right: 18px solid transparent;
+        border-top: 31px solid black;
+    }
+
+</style>
+
+<body>
+    <div id="clocksContainer" style="min-height: 300vh;" onclick="createClock(event) ">
+    </div>
+    <div class="flatland-mini">
+        <div class="square-mini" onclick="toggleRecording(this)"> </div>
+        <a href="../index.html" target="_blank">
+            <div class="circle-mini"></div>
+        </a>
+        <div class="triangle-mini" onclick="clearPage()">
+        </div>
+
+        <script>
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            var mediaRecorder, audioChunks = [], isRecording = false, audioBlob, mediaStream;
+            var gainNode = audioContext.createGain();
+            var destination = audioContext.createMediaStreamDestination();
+            var activeSounds = []; 
+        
+
+            function createClock(event) {
+                var clockElement = document.createElement('div');
+                var x = Math.random() * (window.innerWidth );
+                var y = Math.random() * (window.innerHeight );
+
+                clockElement.style.position = 'absolute';
+                clockElement.style.left = x + 'px';
+                clockElement.style.top = y + 'px';
+                clockElement.style.color = 'black';
+
+                document.getElementById('clocksContainer').appendChild(clockElement);
+                updateClock(clockElement);
+
+                playSound();
+
+         
+            }
+           
+            function playSound() {
+                if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+                var sound = new Audio('./tickingSound.mp3');
+                var source = audioContext.createMediaElementSource(sound);
+                source.connect(gainNode);
+                gainNode.connect(destination);
+                gainNode.connect(audioContext.destination);
+                sound.play();
+                activeSounds.push(sound); 
+            }
+
+            function soundEffect() {
+                if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+                var soundEffect = new Audio('./soundEffect.mp3');
+                var source = audioContext.createMediaElementSource(soundEffect);
+                source.connect(gainNode);
+                gainNode.connect(destination);
+                gainNode.connect(audioContext.destination);
+                soundEffect.play();
+                activeSounds.push(soundEffect); 
+            }
+
+
+            function updateClock(element) {
+                setInterval(function () {
+                    var now = new Date();
+                    var timeString = now.getHours().toString().padStart(2, '0') + ':' +
+                        now.getMinutes().toString().padStart(2, '0') + ':' +
+                        now.getSeconds().toString().padStart(2, '0');
+                    element.textContent = timeString;
+                }, 1000);
+            }
+
+
+            function toggleRecording(element) {
+                if (!isRecording) {
+                    startRecording();
+                    element.classList.add('recording');
+                } else {
+                    stopRecording();
+                    element.classList.remove('recording');
+                }
+            }
+
+            function startRecording() {
+                mediaStream = destination.stream;
+                mediaRecorder = new MediaRecorder(mediaStream);
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    downloadRecording();
+                    audioChunks = [];
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                soundEffect();
+
+            }
+
+            function stopRecording() {
+                if (mediaRecorder) {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                }
+                soundEffect();
+            }
+
+
+            function downloadRecording() {
+                var url = URL.createObjectURL(audioBlob);
+                var a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = "有空了.webm";
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                soundEffect();
+            }
+
+
+            function clearPage() {
+    if (audioContext.state === 'suspended') {
+        audioContext.resume();
+    }
+    var container = document.getElementById('clocksContainer');
+            if (container) {
+                container.innerHTML = ''; 
+            }
+    activeSounds.forEach(sound => {
+        sound.pause();
+        sound.src = '';  
+    });
+    activeSounds = [];  
+    var highestIntervalId = setInterval(";");
+    for (var i = 0; i < highestIntervalId; i++) {
+        clearInterval(i);
+    }
+    soundEffect();
+}
+
+
+
+        </script>
+
+
+
+
+
+</body>
+
+</html>
