@@ -33,26 +33,7 @@
         color: red;
     }
 
-    tbody tr {
-        color: green;
-        font-size: 4.4vw;
-        text-align: center;
-        /* margin-top: 10px; */
-        cursor: pointer;
-        position: relative;
 
-    }
-
-    tbody tr:hover::after {
-        content: '';
-        position: absolute;
-        bottom: 1.3vw;
-        left: 0;
-        width: 100%;
-        height: 0.25vw;
-        background-color: green;
-        display: block;
-    }
 
 
     .square {
@@ -251,7 +232,44 @@
             border-top: 25px solid black;
         }
 
+        
+        tbody tr {
+        color: green;
+        font-size: 4.3vw;
+        text-align: center;
+        /* margin-top: 10px; */
+        cursor: pointer;
+        position: relative;
 
+    }
+
+    tbody tr:hover::after {
+        content: '';
+        position: absolute;
+        bottom: 1.3vw;
+        left: 0;
+        width: 100%;
+        height: 0.25vw;
+        background-color: green;
+        display: block;
+    }
+
+        .subject-cell {
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: transform 3s ease;
+    transform: translateX(0);
+}
+
+.subject-cell:hover {
+    overflow: visible;
+    white-space: normal;
+    white-space: nowrap;
+    z-index: 10;
+    transform: translateX(-15%);
+}
 
         /* @media (max-width: 768px) {
     .square, .circle, .triangle-svg {
@@ -354,9 +372,9 @@
     <table>
         <thead>
             <tr>
-                <td class="underline">~((DATE))~</td>
-                <td class="underline">~((OBJECT))~</td>
-                <td class="underline">~((SUBJECT))~</td>
+                <td id="sort-date" class="sortable underline" >~((DATE))~</td>
+                <td id="sort-object" class="sortable underline">~((OBJECT))~</td>
+                <td id="sort-subject" class="sortable underline" >~((SUBJECT))~</td>
             </tr>
         </thead>
         <tbody id="homework-list">
@@ -410,10 +428,7 @@
         </a>
     </div>
     <script src="./modalContent.js"></script>
-
-    
     <script>
-
         var tbody = document.getElementById('homework-list');
         var oModal = document.querySelector('.modal');
     var modalLeft = document.querySelector('.modal-left');
@@ -425,11 +440,17 @@
     var flatLand =document.querySelector('.flatland');
 
 
-        var homeworkList = [
+        var homeworkList = [{ id: 2, date: '(.2024-05-05.)', object: '(.sound.)', subject: '(.没空run out of time.)' },
             { id: 1, date: '(.2024-05-01.)', object: '(.design.)', subject: '(.泪目endless tears.)' }
+            
         ];
 
-        homeworkList.forEach(function (homework) {
+        var headers = document.querySelectorAll('.sortable');
+    var sortOrder = { date: true, object: true, subject: true };
+
+    function renderTable(data) {
+        tbody.innerHTML = ''; 
+        data.forEach(function(homework) {
             var row = document.createElement('tr');
             row.setAttribute('data-id', homework.id);
             var dateCell = document.createElement('td');
@@ -437,53 +458,81 @@
             var objectCell = document.createElement('td');
             objectCell.textContent = homework.object;
             var subjectCell = document.createElement('td');
+            subjectCell.className = 'subject-cell';
             subjectCell.textContent = homework.subject;
-            
-
             row.appendChild(dateCell);
             row.appendChild(objectCell);
             row.appendChild(subjectCell);
             tbody.appendChild(row);
 
             row.addEventListener('click', function () {
-                var id = this.getAttribute('data-id');
-            var content = modalContent.find(c => c.id.toString() === id);
+                showDetails(homework);
+            });
+        });
+    }
 
-            var mediaContent = '';
+
+
+    function sortTable(sortField) {
+        sortOrder[sortField] = !sortOrder[sortField]; 
+        homeworkList.sort(function(a, b) {
+            if (a[sortField] < b[sortField]) return sortOrder[sortField] ? -1 : 1;
+            if (a[sortField] > b[sortField]) return sortOrder[sortField] ? 1 : -1;
+            return 0;
+        });
+        renderTable(homeworkList);
+    }
+
+    headers.forEach(function(header) {
+        header.addEventListener('click', function() {
+            var sortField = header.id.replace('sort-', ''); 
+            sortTable(sortField);
+        });
+    });
+
+    
+
+
+
+     function showDetails(homework){
+                var content = modalContent.find(c => c.id === homework.id);
+
+            var mediaContentA = '';
             if (content.imageAa) {
-            mediaContent += `<img class='modal-image' src="${content.imageAa}" >`;
+            mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
         }
 
         if (content.videoAa) {
-            mediaContent += `<video controls loop class="modal-video">
+            mediaContentA += `<video controls loop class="modal-video">
                                 <source src="${content.videoAa}" type="video/mp4">
                              </video>`;
         }
         if (content.videoAb) {
-            mediaContent += `<video controls loop class="modal-video">
+            mediaContentA += `<video controls loop class="modal-video">
                                 <source src="${content.videoAb}" type="video/mp4">
                              </video>`;
         }
         
 
-        modalLeft.innerHTML = mediaContent;
+        modalLeft.innerHTML = mediaContentA;
 
 
-            modalLeft.innerHTML = mediaContent;
+            modalLeft.innerHTML = mediaContentA;
             modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
 
-            squareMini.addEventListener('mouseenter', function () {
+             squareMini.addEventListener('mouseenter', function () {
                 if (content) {
-                    modalLeft.innerHTML =mediaContent;
+                    modalLeft.innerHTML =mediaContentA;
                     modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
     <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
                 }
             }
+
 
             );
             circleMini.addEventListener('mouseenter', function () {
@@ -498,24 +547,53 @@
             }
             );
 
-                triangleMini.addEventListener('mouseenter', function () {
-                    if (content) {
-                        modalLeft.innerHTML = `
-            <video  controls loop class="modal-video">
-                <source src="${content.videoC}" type="video/mp4" >
-            </video>`
-                        modalRight.innerHTML = `
+            triangleMini.addEventListener('mouseenter', function () {
+                var mediaContentC = '';
+            if (content.imageCa) {
+            mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
+        }
+
+        if (content.videoCa) {
+            mediaContentC += `<video controls loop class="modal-video">
+                                <source src="${content.videoCa}" type="video/mp4">
+                             </video>`;
+        }
+        if (content.videoCb) {
+            mediaContentC += `<video controls loop class="modal-video">
+                                <source src="${content.videoCb}" type="video/mp4">
+                             </video>`;
+        }
+
+
+
+                if (content) {
+                     modalLeft.innerHTML = mediaContentC;
+                    modalRight.innerHTML = `
     <h1 class="modal-title">${content.title}</h1>
-    <div class="modal-textC">${content.textC.replace(/\n/g, '<br>')}</div> 
+    <div class="modal-textB">${content.textC.replace(/\n/g, '<br>')}</div> 
     <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
-                    }
                 }
-                );
-                oModal.style.display = 'block';
+            }
+            );
+
+
+
+
+            oModal.style.display = 'block';
+            squareMini.classList.add('hover-effect');
+
+            oModal.style.display = 'block';
                 flatLand.style.display = 'none';
                 squareMini.classList.add('hover-effect');
-            })
-        });
+       
+       
+               
+            };
+               
+            renderTable(homeworkList);
+
+
+
 
         var oModalContent = document.querySelector('.modal-content');
 

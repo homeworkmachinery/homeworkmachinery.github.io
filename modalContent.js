@@ -3,10 +3,10 @@ var modalContent = [
         id: 1,
         imageAa: "./endless-tears/2.gif",
         imageB: "./endless-tears/003.png",
-        imageC: "",
+        imageCa: "",
         videoAa: "",
         videoAb: "./endless-tears/3.mp4",
-        videoC: "./endless-tears/4.mp4",
+        videoCa: "./endless-tears/4.mp4",
         title: ")泪目(((Endless Tears))~",
         textA: `[INTRO]<br>
 (electronic pulses simulate human breathing, melding with distant, echoing synths)<br>
@@ -71,5 +71,91 @@ var modalContent = [
 `,
         link: "~CLICK HERE TO ENTER MY ENDLESS TEARS~",
         href: "./endless-tears/endless-tears.html"
+    },
+    {id: 2,
+    imageAa: "./run-out-of-time/001.gif",
+    imageB: "./run-out-of-time/002.png",
+    imageCa: "./run-out-of-time/003.png",
+    videoAa: "./run-out-of-time/1.mp4",
+    videoAb: "",
+    videoC: "",
+    title: "没空",
+    textA: `
+07:00 没有时间了
+08:00 没有时间了
+09:00 没有时间了
+10:00 没有时间了
+11:00 没有时间了
+12:00 没有时间了
+13:00 没有时间了
+14:00 没有时间了
+15:00 没有时间了
+16:00 没有时间了
+17:00 没有时间了
+18:00 没有时间了
+19:00 没有时间了
+20:00 没有时间了
+21:00 没有时间了
+22:00 没有时间了
+23:00 没有时间了
+24:00 没有时间了
+01:00 没有时间了
+02:00 没有时间了
+03:00 没有时间了
+04:00 没有时间了
+05:00 没有时间了
+06:00 没有时间了
+07:00 没有时间了
+`,
+    textB: `[操作指南]
+
+<div class='textB-desc'>
+<img src='./run-out-of-time/001.png' width='55px'>
+开始录制/停止录制（下载）
+<br>
+进入家庭作业机器
+<br>
+清空页面
+</div>
+`,
+    textC: `[README]
+<span class='bold ' >((利用Web Audio API 实现网页声音录制))</span>
+Web Audio API为网页音频处理提供了丰富接口。偶将简要介绍如何使用此API进行声音录制。
+<span class='bold'>1.初始化音频环境。</span>
+var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+<span class='bold'>2.创建和连接音频节点。</span>
+var gainNode = audioContext.createGain();
+var destination = audioContext.createMediaStreamDestination();
+<span class='bold'>3.播放音频，将audio元素连接到音频处理图。</span>
+function playSound() {
+        var sound = new Audio('./tickingSound.mp3');
+        var source = audioContext.createMediaElementSource(sound);
+        source.connect(gainNode);
+        gainNode.connect(destination);
+        gainNode.connect(audioContext.destination);
+        sound.play();
     }
+<span class='bold'>4.录制音频，使用 MediaRecorder 录制通过 destination 的音频流。
+</span>function startRecording() {
+        mediaStream = destination.stream;
+        mediaRecorder = new MediaRecorder(mediaStream);
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.start();
+    }
+<span class='bold'>5.保存录音，将录制的音频保存为 Blob，创建 URL 并通过隐藏的a标签下载。
+</span>function downloadRecording() {
+        var url = URL.createObjectURL(audioBlob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "recorded_audio.webm";
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+    这样以来，点击网页右下角正方形「█」按钮就可以实现网页自身的声音录制，点击一次开始录制，第二次点击时停止录制并自动下载webm录音文件(可以通过在线软件转换成mp3或其他格式）。
+        你也可以拥有属于自己的时间，来试试吧！ (^_<)
+
+`,
+    link: "I'VE REALLY RUN OUT OF TIME.",
+    href: "./run-out-of-time/run-out-of-time.html"
+}
 ];
