@@ -225,11 +225,20 @@ body {
 
 
  .modal-video {
-     width: 100%;
-     height: auto;
+    width: 100%;
+    height: auto;
      max-width: 640px;
      min-width: 300px;
  }
+
+ .modal-iframe {
+    width: 100%;
+    height: auto;
+    max-width: 640px;
+    /* border: 2px solid green; */
+    box-sizing: border-box;
+    
+}
 
  .modal-image {
      max-width: 640px;

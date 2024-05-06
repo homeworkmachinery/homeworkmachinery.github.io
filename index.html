@@ -158,6 +158,11 @@
             mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
         }
 
+        if (content.iframeAa) {
+            mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
+        }
+
+
         if (content.videoAa) {
             mediaContentA += `<video controls loop class="modal-video">
                                 <source src="${content.videoAa}" type="video/mp4">

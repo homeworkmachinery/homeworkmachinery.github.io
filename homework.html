@@ -130,6 +130,15 @@
             min-width: 300px;
         }
 
+        .modal-iframe {
+    width: 100%;
+    height: auto;
+    max-width: 640px;
+    /* border: 2px solid green; */
+    box-sizing: border-box;
+    
+}
+
         .modal-image {
             max-width: 640px;
             min-width: 300px;
@@ -440,8 +449,8 @@
     var flatLand =document.querySelector('.flatland');
 
 
-        var homeworkList = [{ id: 2, date: '(.2024-05-05.)', object: '(.sound.)', subject: '(.没空run out of time.)' },
-            { id: 1, date: '(.2024-05-01.)', object: '(.design.)', subject: '(.泪目endless tears.)' }
+        var homeworkList = [{ id: 2, date: '2024.05.05', object: 'sound.', subject: 'run.out.of.time' },
+            { id: 1, date: '2024.05.01', object: 'design.', subject: 'endless.tears' }
             
         ];
 
@@ -500,6 +509,10 @@
             var mediaContentA = '';
             if (content.imageAa) {
             mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
+        }
+
+        if (content.iframeAa) {
+            mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
         }
 
         if (content.videoAa) {

@@ -76,7 +76,8 @@ var modalContent = [
     imageAa: "./run-out-of-time/001.gif",
     imageB: "./run-out-of-time/002.png",
     imageCa: "./run-out-of-time/003.png",
-    videoAa: "./run-out-of-time/1.mp4",
+    iframeAa:"//player.bilibili.com/player.html?aid=1804192624&bvid=BV1zb42187KL&cid=1532170252&p=1 ",
+    videoAa: ``,
     videoAb: "",
     videoC: "",
     title: "没空",
@@ -126,7 +127,7 @@ var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 <span class='bold'>2.创建和连接音频节点。</span>
 var gainNode = audioContext.createGain();
 var destination = audioContext.createMediaStreamDestination();
-<span class='bold'>3.播放音频，将audio元素连接到音频处理图。</span>
+<span class='bold'>3.播放音频，将audio元素连接到音频处理。</span>
 function playSound() {
         var sound = new Audio('./tickingSound.mp3');
         var source = audioContext.createMediaElementSource(sound);
