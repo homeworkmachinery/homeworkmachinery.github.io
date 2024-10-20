@@ -153,8 +153,8 @@ body {
  }
 
  .overlay .title {
-     font-size: 5vw;
-     line-height: 4vw;
+     font-size: 4vw;
+     line-height: 3vw;
      /* background-color: green ; */
      color: green;
      bottom: 0px;
@@ -179,17 +179,23 @@ body {
  }
  
  .modal {
-     display: none;
-     position: fixed;
-     z-index: 1;
-     left: 0;
-     top: 0;
-     width: 100%;
-     height: 100%;
-     overflow: auto;
-     background-color: rgba(0, 0, 0, 0.4);
- }
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* transform: scale(0);
+    transition: transform 0.5s ease; */
+}
 
+ /* .modal.show {
+    display: block;
+    transform: scale(1); 
+} */
 
  .modal-half {
      flex:1;
@@ -257,13 +263,11 @@ body {
      text-decoration: underline;
  }
 
- .close-modal:hover {
-     /* color: green;
-      */
- }
+
 
  .flatland-mini {
      cursor: pointer;
+     position: fixed;
 
  }
 

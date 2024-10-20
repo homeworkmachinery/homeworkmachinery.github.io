@@ -11,10 +11,15 @@
 <style>
     * {
         font-family: 'Times New Roman', Times, serif;
+        /* margin: 0;
+        padding: 0; */
+
+
     }
 
     body {
         background-color: black;
+   
     }
 
     table thead tr td {
@@ -24,14 +29,16 @@
         cursor: pointer;
     }
 
-    .underline {
+    thead :hover {
+        color: red;
+    }
+
+
+    td .underline {
         text-decoration: underline;
         text-decoration-thickness: 0.45vw;
     }
 
-    thead :hover {
-        color: red;
-    }
 
 
 
@@ -242,18 +249,17 @@
         }
 
         
-        tbody tr {
+        tbody>tr {
         color: green;
         font-size: 4.3vw;
         text-align: center;
         /* margin-top: 10px; */
         cursor: pointer;
-        position: relative;
+       
 
     }
 
-    tbody tr:hover::after {
-        content: '';
+    .hover-line {
         position: absolute;
         bottom: 1.3vw;
         left: 0;
@@ -261,6 +267,7 @@
         height: 0.25vw;
         background-color: green;
         display: block;
+
     }
 
         .subject-cell {
@@ -374,7 +381,10 @@
         };
 
          */
-
+         
+.relative-position{
+    position: relative;
+}
 </style>
 
 <body>
@@ -449,10 +459,15 @@
     var flatLand =document.querySelector('.flatland');
 
 
-        var homeworkList = [{ id: 2, date: '2024.05.05', object: 'sound.', subject: 'run.out.of.time' },
+        var homeworkList = [
+        { id: 3, date: '2024.10.20', object: 'design.', subject: 'shadow.box' },  
+        { id: 2, date: '2024.05.05', object: 'sound.', subject: 'run.out.of.time' },
             { id: 1, date: '2024.05.01', object: 'design.', subject: 'endless.tears' }
             
         ];
+
+
+      
 
         var headers = document.querySelectorAll('.sortable');
     var sortOrder = { date: true, object: true, subject: true };
@@ -462,6 +477,8 @@
         data.forEach(function(homework) {
             var row = document.createElement('tr');
             row.setAttribute('data-id', homework.id);
+            
+
             var dateCell = document.createElement('td');
             dateCell.textContent = homework.date;
             var objectCell = document.createElement('td');
@@ -469,16 +486,47 @@
             var subjectCell = document.createElement('td');
             subjectCell.className = 'subject-cell';
             subjectCell.textContent = homework.subject;
+
+           
+
             row.appendChild(dateCell);
             row.appendChild(objectCell);
             row.appendChild(subjectCell);
             tbody.appendChild(row);
 
+
+
+             row.classList.add('relative-position');
+
+
+            var line = document.createElement('div');
+        line.classList.add('hover-line');
+        line.style.position = 'absolute';
+        line.style.display = 'none'; 
+        
+        var forceRedraw = row.offsetHeight; 
+        row.appendChild(line);
+
             row.addEventListener('click', function () {
                 showDetails(homework);
             });
-        });
-    }
+            
+
+    row.addEventListener('mouseenter', function() {
+        line.style.display = 'block';
+        
+    });
+
+    row.addEventListener('mouseleave', function() {
+        line.style.display = 'none';
+    });
+});
+}
+    
+renderTable(homeworkList);
+
+
+
 
 
 
@@ -512,7 +560,7 @@
         }
 
         if (content.iframeAa) {
-            mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
+            mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
         }
 
         if (content.videoAa) {

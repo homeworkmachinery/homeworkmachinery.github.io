@@ -158,5 +158,54 @@ function playSound() {
 `,
     link: "I'VE REALLY RUN OUT OF TIME.",
     href: "./run-out-of-time/run-out-of-time.html"
+},
+{id: 3,
+    imageAa: "./shadow-box/001.gif",
+    imageB: "./shadow-box/002.png",
+    imageCa: "./run-out-of-time/003.png",
+    iframeAa:"//player.bilibili.com/player.html?isOutside=true&aid=113337593499679&bvid=BV1NWytYTEPF&cid=26373655252&p=1",
+    imageCa: "",
+    videoAa: ``,
+    videoAb: "",
+    videoCa: "./shadow-box/1.mp4",
+    title: "隐藏的盒子",
+    textA: `
+    三维立方体在二维空间的投影是一个平面，
+
+    而四维立方体在三维空间的投影是个三维物体。
+
+    这正是一个四维正方体在三维空间的投影。
+
+    不同维度的物体如果要互相理解，
+
+    需要将其拉入同一维度，再去感知。
+
+    扭曲的事情或许只是高维物体的投影
+    扭曲的事情或许只是高维物体的投影
+
+    我们所知的世界是感知的限制，
+
+    而真相可能隐藏在无法打开的盒子里。
+`,
+    textB: `[操作指南]
+<div class='textB-desc'>
+<img src='./shadow-box/001.png' width='55px'>
+停止/开始旋转
+<br>
+进入家庭作业机器
+<br>
+可见/隐藏
+</div>
+`,
+    textC: `[README]
+当三维立方体投影到二维空间时，结果是一个平面图形，通常表现为正方形或其他多边形。这取决于投影的角度。二维的生物，假设它们只能感知二维世界，它们只能看到这个投影，无法理解其背后的三维立体性质。类似地，四维物体在三维空间中的投影会表现为一个三维物体。我们无法真正“看到”四维的全貌，但通过其投影，我们可以窥察到其部分性质。最常见的三维投影是一个看似扭曲、变形的立方体，这正是四维立方体的三维投影。
+
+这种映射会丢失原有物体的部分信息。正如二维生物无法感知三维空间中的高度，三维生物也难以直接感知四维空间。我们只能通过投影、数学描述和间接观察来理解更高维度的现象。
+
+我们所知的世界是感知的限制，而真理可能隐藏在我们无法打开的盒子中。我们所看到的不过是真实世界的影子，洞穴外的世界永远是我们需要去追寻和理解的。
+
+`,
+    link: "ENTERING THE SHADOW BOX",
+    href: "./shadow-box/shadow-box.html"
 }
 ];
