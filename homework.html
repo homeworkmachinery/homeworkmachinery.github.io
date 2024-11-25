@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>我的作业</title>
+    <!-- <meta name="viewport" content="width=device-width"> -->
+
+
+</head>
+<style>
+    * {
+        font-family: 'Times New Roman', Times, serif;
+        /* margin: 0;
+        padding: 0; */
+
+
+    }
+
+    body {
+        background-color: black;
+   
+    }
+
+    table thead tr td {
+        color: green;
+        font-size: 5.4vw;
+        text-decoration-thickness: 0.45vw;
+        cursor: pointer;
+    }
+
+    thead :hover {
+        color: red;
+    }
+
+
+    td .underline {
+        text-decoration: underline;
+        text-decoration-thickness: 0.45vw;
+    }
+
+
+
+
+
+    .square {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%);
+        bottom: 130px;
+        right: 25px;
+
+    }
+
+    .circle {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: black;
+        box-shadow: 0px 0px 15px 8px green;
+        bottom: 75px;
+        right: 25px;
+    }
+
+    .square:hover {
+        box-shadow: 0px 0px 30px 2px green;
+    }
+
+    .circle:hover {
+        box-shadow: 0px 0px 20px 10px green;
+    }
+
+    .triangle-svg {
+        position: fixed;
+        width: 40px;
+        height: 40px;
+        bottom: 25px;
+        right: 25px;
+    }
+
+    .triangle:hover polygon {
+        filter: url(#dropshadow);
+    }
+
+    .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+
+        .modal-half {
+            flex: 1;
+            padding: 0px 20px 20px 20px;
+        }
+
+        .modal-left {
+            padding: 30px;
+        }
+
+        .modal-right {
+            color: white;
+        }
+
+
+        .modal-content {
+            background-color: rgb(0, 0, 0);
+            margin: 15% auto;
+            border: 1px solid #888;
+            width: 80%;
+            display: flex;
+        }
+
+        .modal-title {
+            color: green;
+            /* text-decoration: underline; */
+        }
+
+        .modal-link {
+            color: green;
+            font-size: 30px;
+        }
+
+
+        .modal-video {
+            width: 100%;
+            height: auto;
+            max-width: 640px;
+            min-width: 300px;
+        }
+
+        .modal-iframe {
+    width: 100%;
+    height: auto;
+    max-width: 640px;
+    /* border: 2px solid green; */
+    box-sizing: border-box;
+    
+}
+
+        .modal-image {
+            max-width: 640px;
+            min-width: 300px;
+            width: 100%;
+            height: auto;
+        }
+
+        .modal-textA {
+            /* font-family: 'Monaco'; */
+            line-height: 11px;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .close-modal:hover {
+            /* color: green;
+             */
+        }
+
+        .flatland-mini {
+            cursor: pointer;
+
+        }
+
+        .square-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            /* background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0) 100%); */
+            bottom: 130px;
+            right: 25px;
+            background-color: green;
+            box-sizing: border-box;
+        }
+
+        .circle-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: green;
+            /* box-shadow: 0px 0px 15px 8px green; */
+            bottom: 75px;
+            right: 25px;
+            box-sizing: border-box;
+
+        }
+
+
+        .triangle-mini {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 35px solid green;
+        }
+
+        .triangle-mini::after {
+            content: '';
+            position: absolute;
+            bottom: 7px;
+            right: -13.5px;
+            width: 0;
+            height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 25px solid green;
+        }
+
+        .textB-desc {
+            display: flex;
+            justify-content: left;
+
+        }
+
+        .textB-desc img {
+            margin-right: 10px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .hover-effect {
+            background-color: black;
+            border: 3px solid green;
+        }
+
+        .triangle-hover-effect:after {
+            border-top: 25px solid black;
+        }
+
+        
+        tbody>tr {
+        color: green;
+        font-size: 4.3vw;
+        text-align: center;
+        /* margin-top: 10px; */
+        cursor: pointer;
+       
+
+    }
+
+    .hover-line {
+        position: absolute;
+        bottom: 1.3vw;
+        left: 0;
+        width: 100%;
+        height: 0.25vw;
+        background-color: green;
+        display: block;
+
+    }
+
+        .subject-cell {
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: transform 3s ease;
+    transform: translateX(0);
+}
+
+.subject-cell:hover {
+    overflow: visible;
+    white-space: normal;
+    white-space: nowrap;
+    z-index: 10;
+    transform: translateX(-15%);
+}
+
+        /* @media (max-width: 768px) {
+    .square, .circle, .triangle-svg {
+        width: 16vw;
+            height: 16vw;
+    }
+    .square{
+        bottom: 175px; 
+    }
+    .circle{
+        bottom: 95px; 
+    }
+    .triangle {
+        bottom: 25px;
+    
+    }
+
+    .square-mini, .circle-mini {
+        width: 16vw;
+            height: 16vw;
+    }
+
+    .square-mini{
+        bottom: 175px; 
+    }
+    .circle-mini{
+        bottom: 95px; 
+    }
+
+    .triangle-mini {
+        bottom: 25px;  
+        right: 25px;
+        border-left: 30px solid transparent; 
+        border-right: 30px solid transparent;
+        border-top: 50px solid green;
+    }
+
+
+    .triangle-hover-effect:after {
+            border-top:39px solid black;
+            border-left: 23px solid transparent;
+            border-right: 23px solid transparent; 
+            bottom: 8px;
+            right: -23px; 
+        }
+
+
+    table thead tr td{
+        font-size: 5.1vw;
+    }
+
+    tbody tr{
+        font-size: 4.1vw;
+        }
+
+        .modal-content {
+        margin: 10% auto;
+        width: 85%;
+    }
+    .modal-half {
+        padding: 10px; 
+    }
+
+    .modal-right {
+        margin-top: -13px; 
+    }
+
+        .modal-video, .modal-image {
+            max-width: 100%; 
+            min-width: initial; 
+        }
+
+        .modal-textA {
+            font-size: 2vw;
+            line-height: 1.5vw;
+        }
+        .modal-textC {
+            font-size: 2vw;
+            
+        }
+        .modal-title {
+            font-size: 4vw;
+          
+        }
+      
+        .modal-link {
+        
+            font-size: 4vw;
+        }
+
+
+
+        };
+
+         */
+         
+.relative-position{
+    position: relative;
+}
+</style>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <td id="sort-date" class="sortable underline" >~((DATE))~</td>
+                <td id="sort-object" class="sortable underline">~((OBJECT))~</td>
+                <td id="sort-subject" class="sortable underline" >~((SUBJECT))~</td>
+            </tr>
+        </thead>
+        <tbody id="homework-list">
+        </tbody>
+    </table>
+
+
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-half modal-left"></div>
+            <div class="modal-half modal-right">
+            </div>
+        </div>
+        <div class="flatland-mini">
+            <div class="square-mini"></div>
+            <div class="circle-mini"></div>
+            <div class="triangle-mini">
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="flatland">
+        <a href="#">
+            <div class="square"></div>
+        </a>
+        <a href="./index.html" target="_parent">
+            <div class="circle"></div>
+        </a>
+        <a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank">
+            <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
+                <defs>
+                    <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgb(0, 128, 0);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="dropshadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="40" /> <!-- 调整这里以改变模糊度 -->
+                        <feOffset dx="0" dy="0" result="offsetblur" /> <!-- 没有偏移 -->
+                        <feFlood flood-color="green" result="color" /> <!-- 绿色阴影 -->
+                        <feComposite in="color" in2="offsetblur" operator="in" result="shadow" />
+                        <feMerge>
+                            <feMergeNode in="shadow" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
+            </svg>
+        </a>
+    </div>
+    <script src="./modalContent.js"></script>
+    <script>
+        var tbody = document.getElementById('homework-list');
+        var oModal = document.querySelector('.modal');
+    var modalLeft = document.querySelector('.modal-left');
+    var modalRight = document.querySelector('.modal-right');
+    var squareMini = document.querySelector('.square-mini');
+    var circleMini = document.querySelector('.circle-mini');
+    var triangleMini = document.querySelector('.triangle-mini');
+    var flatlandMini = document.querySelector('.flatland-mini');
+    var flatLand =document.querySelector('.flatland');
+
+
+        var homeworkList = [
+        { id: 3, date: '2024.10.20', object: 'projection.', subject: 'shadow.box' },  
+        { id: 2, date: '2024.05.05', object: 'sound.', subject: 'run.out.of.time' },
+            { id: 1, date: '2024.05.01', object: 'design.', subject: 'endless.tears' }
+            
+        ];
+
+
+      
+
+        var headers = document.querySelectorAll('.sortable');
+    var sortOrder = { date: true, object: true, subject: true };
+
+    function renderTable(data) {
+        tbody.innerHTML = ''; 
+        data.forEach(function(homework) {
+            var row = document.createElement('tr');
+            row.setAttribute('data-id', homework.id);
+            
+
+            var dateCell = document.createElement('td');
+            dateCell.textContent = homework.date;
+            var objectCell = document.createElement('td');
+            objectCell.textContent = homework.object;
+            var subjectCell = document.createElement('td');
+            subjectCell.className = 'subject-cell';
+            subjectCell.textContent = homework.subject;
+
+           
+
+            row.appendChild(dateCell);
+            row.appendChild(objectCell);
+            row.appendChild(subjectCell);
+            tbody.appendChild(row);
+
+
+
+             row.classList.add('relative-position');
+
+
+            var line = document.createElement('div');
+        line.classList.add('hover-line');
+        line.style.position = 'absolute';
+        line.style.display = 'none'; 
+        
+        var forceRedraw = row.offsetHeight; 
+        row.appendChild(line);
+
+            row.addEventListener('click', function () {
+                showDetails(homework);
+            });
+            
+
+    row.addEventListener('mouseenter', function() {
+        line.style.display = 'block';
+        
+    });
+
+    row.addEventListener('mouseleave', function() {
+        line.style.display = 'none';
+    });
+});
+}
+    
+renderTable(homeworkList);
+
+
+
+
+
+
+    function sortTable(sortField) {
+        sortOrder[sortField] = !sortOrder[sortField]; 
+        homeworkList.sort(function(a, b) {
+            if (a[sortField] < b[sortField]) return sortOrder[sortField] ? -1 : 1;
+            if (a[sortField] > b[sortField]) return sortOrder[sortField] ? 1 : -1;
+            return 0;
+        });
+        renderTable(homeworkList);
+    }
+
+    headers.forEach(function(header) {
+        header.addEventListener('click', function() {
+            var sortField = header.id.replace('sort-', ''); 
+            sortTable(sortField);
+        });
+    });
+
+    
+
+
+
+     function showDetails(homework){
+                var content = modalContent.find(c => c.id === homework.id);
+
+            var mediaContentA = '';
+            if (content.imageAa) {
+            mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
+        }
+
+        if (content.iframeAa) {
+            mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
+        }
+
+        if (content.videoAa) {
+            mediaContentA += `<video controls loop class="modal-video">
+                                <source src="${content.videoAa}" type="video/mp4">
+                             </video>`;
+        }
+        if (content.videoAb) {
+            mediaContentA += `<video controls loop class="modal-video">
+                                <source src="${content.videoAb}" type="video/mp4">
+                             </video>`;
+        }
+        
+
+        modalLeft.innerHTML = mediaContentA;
+
+
+            modalLeft.innerHTML = mediaContentA;
+            modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+
+             squareMini.addEventListener('mouseenter', function () {
+                if (content) {
+                    modalLeft.innerHTML =mediaContentA;
+                    modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                }
+            }
+
+
+            );
+            circleMini.addEventListener('mouseenter', function () {
+                if (content) {
+                    modalLeft.innerHTML = `
+            <img class='modal-image' src="${content.imageB}" >`;
+                    modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <div class="modal-textB">${content.textB.replace(/\n/g, '<br>')}</div> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                }
+            }
+            );
+
+            triangleMini.addEventListener('mouseenter', function () {
+                var mediaContentC = '';
+            if (content.imageCa) {
+            mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
+        }
+
+        if (content.videoCa) {
+            mediaContentC += `<video controls loop class="modal-video">
+                                <source src="${content.videoCa}" type="video/mp4">
+                             </video>`;
+        }
+        if (content.videoCb) {
+            mediaContentC += `<video controls loop class="modal-video">
+                                <source src="${content.videoCb}" type="video/mp4">
+                             </video>`;
+        }
+
+
+
+                if (content) {
+                     modalLeft.innerHTML = mediaContentC;
+                    modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <div class="modal-textB">${content.textC.replace(/\n/g, '<br>')}</div> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                }
+            }
+            );
+
+
+
+
+            oModal.style.display = 'block';
+            squareMini.classList.add('hover-effect');
+
+            oModal.style.display = 'block';
+                flatLand.style.display = 'none';
+                squareMini.classList.add('hover-effect');
+       
+       
+               
+            };
+               
+            renderTable(homeworkList);
+
+
+
+
+        var oModalContent = document.querySelector('.modal-content');
+
+        var miniIcons = document.querySelectorAll('.flatland-mini div');
+
+
+        miniIcons.forEach(function (icon) {
+            icon.addEventListener('mouseenter', function () {
+                miniIcons.forEach(el => el.classList.remove('hover-effect', 'triangle-hover-effect'));
+                if (this === triangleMini) {
+                    this.classList.add('triangle-hover-effect');
+                } else {
+                    this.classList.add('hover-effect');
+                }
+            });
+        });
+
+
+
+        var closeModal = document.querySelector('.close-modal');
+        document.addEventListener('click', function(event) {
+            if (event.target === oModal || event.target.classList.contains('close-modal')) {
+                oModal.style.display = 'none';
+                flatLand.style.display = 'block';  
+            }
+        });
+    </script>
+</body>
+
+</html>

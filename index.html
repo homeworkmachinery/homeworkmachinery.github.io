@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="instruction-manual"
+        content="Homework Machinery serves as a refuge against depression, a haven for daydreams, and a tool for my code learning" />
+    <title>家庭作业机器</title>
+    <link rel='stylesheet' href="index.css">
+</head>
+
+
+<body>
+    <div class="header"> <a id="headerLink" class="green" href="#">~((((((CLICK HERE TO ENTER MY HOMEWORK
+            MACHINERY))))))~</a></div>
+    <hr class="purpleline">
+    <div class="instruction"> &lt;meta name="instruction-manual" content="Homework Machinery serves as a refuge against
+        depression, a haven for daydreams, and a tool for my code learning" /&gt; </div>
+    <hr class="greenline">
+
+
+    <div class="flatland ">
+        <a href="./homework.html" target="_parent">
+            <div class="square "></div>
+        </a>
+        <a href="#">
+            <div class="circle"></div>
+        </a>
+
+        <a class="triangle" href="https://www.instagram.com/savebuzhang/" target="_blank"
+            style="display: block; width: 16vw; height: 13.5vw;">
+            <svg class="triangle-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow: visible;">
+                <defs>
+                    <linearGradient id="gradient1" x1="50%" y1="0%" x2="50%" y2="100%">
+                        <stop offset="0%" style="stop-color:rgb(0, 128, 0);stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:rgb(0, 0, 0);stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="dropshadow" x="-100%" y="-100%" width="300%" height="300%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="35" /> <!-- 调整这里以改变模糊度 -->
+                        <feOffset dx="0" dy="0" result="offsetblur" /> <!-- 没有偏移 -->
+                        <feFlood flood-color="green" result="color" /> <!-- 绿色阴影 -->
+                        <feComposite in="color" in2="offsetblur" operator="in" result="shadow" />
+                        <feMerge>
+                            <feMergeNode in="shadow" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+                </defs>
+                <polygon points="50,100 100,15 0,15" fill="url(#gradient1)" />
+            </svg>
+        </a>
+    </div>
+
+
+    <div class="section center">
+        <ul class="homework">
+            <li data-id="3">
+                <div class="overlay">
+                    <span class="title">隐藏的盒子<br>shadow box</span>
+                    <span class="date">
+                    </span>
+                </div>
+
+                <img src="./shadow-box/001.gif">
+            </li>
+            <li data-id="2">
+                <div class="overlay">
+                    <span class="title">没空<br>run out of time </span>
+                    <span class="date">
+                    </span>
+                </div>
+
+                <img src="./run-out-of-time/001.gif">
+            </li>
+            <li data-id="1">
+                <div class="overlay">
+                    <span class="title">泪目<br>endless<br> tears</span>
+                    <span class="date">
+                    </span>
+                </div>
+
+                <img src="./endless-tears/1.gif">
+
+            </li>
+
+            
+
+        </ul>
+    </div>
+
+
+    <div class="modal">
+        <div class="modal-content">
+            <div class="modal-half modal-left"></div>
+            <div class="modal-half modal-right">
+            </div>
+        </div>
+        <div class="flatland-mini">
+            <div class="square-mini"></div>
+            <div class="circle-mini"></div>
+            <div class="triangle-mini">
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+<script src="./modalContent.js"></script>
+<script>
+    var oFlatland = document.querySelector('.flatland');
+    var oSection = document.querySelector('.section');
+    var oCircle = document.querySelector('.circle');
+    var oHead = document.getElementById('headerLink');
+    var aLi = document.querySelectorAll('.homework li');
+    var toggle = true;
+    var aOverlay = document.querySelectorAll('.overlay');
+    var oModal = document.querySelector('.modal');
+    var modalLeft = document.querySelector('.modal-left');
+    var modalRight = document.querySelector('.modal-right');
+    var squareMini = document.querySelector('.square-mini');
+    var circleMini = document.querySelector('.circle-mini');
+    var triangleMini = document.querySelector('.triangle-mini');
+    var flatlandMini = document.querySelector('.flatland-mini');
+
+    oHead.addEventListener('click', function () {
+        if (toggle) {
+            oFlatland.style.display = 'none';
+            oSection.style.display = 'flex';
+            toggle = false;
+        } else {
+            oFlatland.style.display = 'flex';
+            oSection.style.display = 'none';
+            toggle = true;
+        }
+    });
+
+    oCircle.addEventListener('click', function () {
+        oFlatland.style.display = 'none';
+        oSection.style.display = 'flex';
+        toggle = false;
+    }
+    );
+
+    aLi.forEach(function (li) {
+        li.addEventListener('mouseover', function () {
+            li.style.border = "3px green solid";
+            aOverlay.style.opacity = '1';
+            //     aDate.forEach(function (date) {
+            //     date.style.display = 'none';
+            // });
+        }
+        );
+        li.addEventListener('mouseout', function () {
+            li.style.border = "none";
+            aOverlay.style.opacity = '0';
+        }
+        );
+    });
+
+
+    aLi.forEach(item => {
+        item.addEventListener('click', function () {
+            var id = this.getAttribute('data-id');
+            var content = modalContent.find(c => c.id.toString() === id);
+
+            var mediaContentA = '';
+            if (content.imageAa) {
+                mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
+            }
+
+            if (content.imageAb) {
+                mediaContentA += `<img class="modal-image" src="${content.imageAb}" >`;
+            }
+
+            if (content.iframeAa) {
+                mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
+            }
+
+
+            if (content.videoAa) {
+                mediaContentA += `<video controls loop class="modal-video">
+                                <source src="${content.videoAa}" type="video/mp4">
+                             </video>`;
+            }
+            if (content.videoAb) {
+                mediaContentA += `<video controls loop class="modal-video">
+                                <source src="${content.videoAb}" type="video/mp4">
+                             </video>`;
+            }
+
+
+            modalLeft.innerHTML = mediaContentA;
+
+
+            modalLeft.innerHTML = mediaContentA;
+            modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+
+            squareMini.addEventListener('mouseenter', function () {
+                if (content) {
+                    modalLeft.innerHTML = mediaContentA;
+                    modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <p class="modal-textA">${content.textA.replace(/\n/g, '<br>')}</p> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                }
+            }
+
+
+            );
+
+            circleMini.addEventListener('mouseenter', function () {
+                if (content) {
+                    modalLeft.innerHTML = `
+            <img class='modal-image' src="${content.imageB}" >`;
+                    modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <div class="modal-textB">${content.textB.replace(/\n/g, '<br>')}</div> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                }
+            }
+            );
+
+            triangleMini.addEventListener('mouseenter', function () {
+                var mediaContentC = '';
+                if (content.imageCa) {
+                    mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
+                }
+
+                if (content.videoCa) {
+                    mediaContentC += `<video controls loop class="modal-video">
+                                <source src="${content.videoCa}" type="video/mp4">
+                             </video>`;
+                }
+                if (content.videoCb) {
+                    mediaContentC += `<video controls loop class="modal-video">
+                                <source src="${content.videoCb}" type="video/mp4">
+                             </video>`;
+                }
+
+
+
+                if (content) {
+                    modalLeft.innerHTML = mediaContentC;
+                    modalRight.innerHTML = `
+    <h1 class="modal-title">${content.title}</h1>
+    <div class="modal-textB">${content.textC.replace(/\n/g, '<br>')}</div> 
+    <a class="modal-link" href='${content.href}' target="_blank">${content.link}</a>`;
+                }
+            }
+            );
+            oModal.style.display = 'block';
+            // oModal.classList.add('show'); 
+            squareMini.classList.add('hover-effect');
+
+
+        });
+    });
+
+
+
+
+
+    var miniIcons = document.querySelectorAll('.flatland-mini div');
+
+    miniIcons.forEach(function (icon) {
+        icon.addEventListener('mouseenter', function () {
+            miniIcons.forEach(el => el.classList.remove('hover-effect', 'triangle-hover-effect'));
+            if (this === triangleMini) {
+                this.classList.add('triangle-hover-effect');
+            } else {
+                this.classList.add('hover-effect');
+            }
+        });
+    });
+
+
+
+
+    var closeModal = document.querySelector('.close-modal');
+    document.addEventListener('click', function (event) {
+        if (event.target === oModal || event.target.classList.contains('close-modal')) {
+            oModal.style.display = 'none';
+            // oModal.classList.remove('show'); 
+        }
+    });
+
+
+
+
+
+
+
+</script>
+
+</html>

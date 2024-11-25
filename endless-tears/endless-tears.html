@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="endless-tears" content="width=device-width, initial-scale=1.0"> -->
+  <title>泪目</title>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    pre {
+      margin: 0;
+    }
+
+    .centered {
+      width: 380px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #eyes {
+      padding-top: 222px;
+    }
+
+    .square {
+      position: fixed;
+      width: 35px;
+      height: 35px;
+      bottom: 130px;
+      right: 28px;
+      border: 1px dashed black;
+      cursor: pointer;
+    }
+
+    .circle {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      bottom: 75px;
+      right: 25px;
+      border: 1px dashed black;
+    }
+
+
+  .triangle {
+    width: 40px;
+    height: 35px;
+    bottom: 25px;
+    right: 25px;
+      position: fixed;
+  }
+ 
+  </style>
+</head>
+
+<body>
+  <audio id="backgroundMusic" autoplay loop>
+    <source src="./breathing.mp3" type="audio/mp3">
+</audio>
+  <div id="endless-tears">
+    <pre id="eyes" class="centered">
+  `>^.                                                         
+  `{sad/.  ,t..t..t..t..t..t^       t_____________________t
+    .”}88( >xx^^^^^^^^^^^^&?,       “tt>>>>>>>>>>>>>>>>>5?~
+        .  >?\            5?,       ">`                 5?~
+ .         >?\            -?,       ">`                 5?.
+.n%j+".    >?endless))))))5?,       “>tears(((((((((((((5?.
+  .,[#$\   >?f....…..…....-?,       “>#`````````````````5?.
+      '.   >?u            5?,       ">`                 5~.
+           >?\            -?,       “>\                 5?.
+       {?  >?k)()()()()()(5?,       “>%%wuwuwuwuwuwuwuwu-?.
+      \$+  >?u’'''''''''''5?,       “>*_<。··..’’’’’’’'''5?.
+    .x$_   >?\            5?,       “>\                 5?.
+  '#殇l    >?\            5?,       “>\                 5?.
+  ,wHY”    >?W\\\\\\\\\\\\5?,       “>\***********sadsad=?.
+ ./M`      >?u,,,,,,,,,,,,&?,       “>\….…..…..……..…..….5?.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+</pre>
+    <pre id="tears" class="centered">
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+.::        .^'            5’.       .''                 5'.
+</pre>
+
+  </div>
+  <div class="flatland">
+    <a class="square">
+
+
+    </a>
+    <a href="../index.html" target="_blank">
+      <div class="circle"></div>
+    </a>
+    <a href="./savebuzhang.zip" download="savebuzhang.zip">
+      <div class="triangle" >
+        <img src="./001.png" width='40px'
+        height= '32px'>
+    </div>
+    </a>
+  </div>
+
+  <script>
+    var content = document.getElementById('tears');
+    var contentHeight = content.offsetHeight;
+    window.addEventListener('scroll', function () {
+
+      if (window.innerHeight + window.scrollY >= contentHeight - 10) {
+        content.innerHTML += content.innerHTML;
+        contentHeight = content.offsetHeight;
+      }
+    });
+
+    var isScrolling = true;
+    var scrollSpeed = 1;
+
+    function autoScroll() {
+      if (isScrolling) {
+        window.scrollBy(0, scrollSpeed);
+        setTimeout(autoScroll, 10);
+      }
+    };
+
+    document.addEventListener('mousedown', function () {
+      isScrolling = false;
+      window.scrollTo(0, 0);
+      isScrolling = true;
+    });
+
+
+    var toggle = true;
+    var pause = document.querySelector('.square');
+    var audio = document.getElementById('backgroundMusic'); 
+
+    pause.addEventListener('click', function () {
+      if (toggle) {
+        toggle = false;
+        isScrolling = false;
+        audio.pause();
+      } else {
+        audio.play();
+        isScrolling = true;
+        toggle = true;
+        autoScroll();
+      }
+      console.log(toggle);
+    });
+
+    autoScroll();
+
+  </script>
+
+</body>
+
+</html>

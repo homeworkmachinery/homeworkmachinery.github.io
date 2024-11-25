@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恐怖分子模拟器</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        video, canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* 镜面翻转 */
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay muted></video>
+    <canvas id="canvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <script>
+        window.addEventListener('load', async () => {
+            try {
+                await tf.setBackend('webgl');
+                await tf.ready();
+                console.log('TensorFlow.js backend set to WebGL');
+                await loadModels();
+                const video = await setupCamera();
+                detectFace(video);
+            } catch (err) {
+                console.error('初始化过程中出错:', err);
+            }
+        });
+
+        async function setupCamera() {
+            const video = document.getElementById('video');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                video.srcObject = stream;
+
+                return new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        console.log('摄像头已准备就绪。');
+                        resolve(video);
+                    };
+                });
+            } catch (err) {
+                console.error('访问摄像头出错:', err);
+            }
+        }
+
+        async function loadModels() {
+            try {
+                console.log('加载模型...');
+                await faceapi.nets.tinyFaceDetector.loadFromUri('./models');
+                await faceapi.nets.faceLandmark68Net.loadFromUri('./models');
+                console.log('模型加载完成。');
+            } catch (err) {
+                console.error('加载模型出错:', err);
+                throw err;
+            }
+        }
+
+        async function detectFace(video) {
+            const canvas = document.getElementById('canvas');
+            const displaySize = { width: video.videoWidth, height: video.videoHeight };
+            faceapi.matchDimensions(canvas, displaySize);
+
+            setInterval(async () => {
+                try {
+                    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+                    const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    for (const detection of resizedDetections) {
+                        drawMask(ctx, detection);
+                        faceapi.draw.drawDetections(canvas, [detection]);
+                        faceapi.draw.drawFaceLandmarks(canvas, [detection]);
+                    }
+                } catch (err) {
+                    console.error('检测面部出错:', err);
+                }
+            }, 100);
+        }
+
+        function drawMask(ctx, detection) {
+            const landmarks = detection.landmarks;
+
+            // 获取面部轮廓
+            const jawOutline = landmarks.getJawOutline();
+            const leftEye = landmarks.getLeftEye();
+            const rightEye = landmarks.getRightEye();
+            const nose = landmarks.getNose();
+            const mouth = landmarks.getMouth();
+
+            // 计算下巴轮廓的高度
+            const jawYValues = jawOutline.map(point => point.y);
+            const jawHeight = Math.max(...jawYValues) - Math.min(...jawYValues);
+            const foreheadHeight = jawHeight / 2;
+
+            // 估计额头区域
+            const forehead = [
+                { x: jawOutline[0].x, y: jawOutline[0].y - foreheadHeight },
+                { x: jawOutline[jawOutline.length - 1].x, y: jawOutline[jawOutline.length - 1].y - foreheadHeight },
+                ...jawOutline
+            ];
+
+            // 画黑色多边形遮罩
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            drawPoints(ctx, forehead);
+            ctx.fill();
+
+            // 保持眼睛、鼻孔和嘴巴区域透明
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            drawPoints(ctx, leftEye);
+            drawPoints(ctx, rightEye);
+            drawPoints(ctx, nose);
+            drawPoints(ctx, mouth);
+            ctx.fill();
+
+            // 重置复合操作
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        function drawPoints(ctx, points) {
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.closePath();
+        }
+    </script>
+</body>
+</html>
