@@ -2,14 +2,15 @@ import * as THREE from "three";
 import Stats from "stats-gl";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as dat from "dat.gui";
-import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
+import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { GrassMaterial } from "./GrassMaterial";
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
-
+import { GUI } from 'dat.gui';
 
 
 
 export class Scene1 {
+	private isActive: boolean = true;
 	private generatedFlowerCount: number = 0;
 	private cachedNewFlower: THREE.Object3D | null = null;
 	private endMessageCompleted: boolean = false;
@@ -22,13 +23,16 @@ export class Scene1 {
 	private controlsEnabled: boolean = false;
 	private firstPersonControls: FirstPersonControls;
 	private loadingManager: THREE.LoadingManager;
+
+	private textures: { [key: string]: THREE.Texture } = {};
 	private textureLoader: THREE.TextureLoader;
+
 	private gltfLoader: GLTFLoader;
-	private camera: THREE.PerspectiveCamera;
-	private renderer: THREE.WebGLRenderer;
-	private scene: THREE.Scene;
+	private camera: THREE.PerspectiveCamera | null = null;
+	private renderer: THREE.WebGLRenderer | null = null;
+	private scene: THREE.Scene | null = null;
 	private canvas: HTMLCanvasElement;
-	private stats: Stats;
+	private stats: typeof Stats ;
 	private lastFlowerPosition: THREE.Vector3 | null = null;
 
 	private existingFlowers: THREE.Object3D[] = []; // 用于存储已生成的花朵
@@ -38,10 +42,9 @@ export class Scene1 {
 		terrainColor: "#5e875e",
 		fogDensity: 0.02,
 	};
-	private textures: { [key: string]: THREE.Texture } = {};
 	private keyStates: { [key: string]: boolean } = {};
 
-	private flowerMesh: THREE.Object3D; // 用于存储花的模型
+	private flowerMesh: THREE.Object3D = new THREE.Object3D();
 	private newFlowerMesh: THREE.Object3D | null = null; // 用于存储新花的模型
 	private targetPosition: THREE.Vector3 | null = null;
 	private raycaster = new THREE.Raycaster();
@@ -51,12 +54,13 @@ export class Scene1 {
 	private flowerPetals: THREE.Object3D[] = []; // 存储花瓣对象
 	private hasReachedTarget: boolean = false; // 跟踪相机是否到达目标位置
 
-
-	private gui: dat.GUI;
-	private sceneGUI: dat.GUI;
-	private cameraPositionGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController };
-	private cameraRotationGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController };
-	private guiControls: { positionX: number; positionY: number; positionZ: number; rotationX: number; rotationY: number; rotationZ: number; };
+	private gui: typeof GUI;
+	private sceneGUI: typeof GUI;
+	// private gui: dat.GUI;
+	// private sceneGUI: dat.GUI;
+	private cameraPositionGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController } = {} as any;
+	private cameraRotationGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController } = {} as any;
+	private guiControls: { positionX: number; positionY: number; positionZ: number; rotationX: number; rotationY: number; rotationZ: number; } = {} as any;;
 
 	// private setupCameraControls() {
 	// 	// 添加到 dat.GUI 面板
@@ -99,7 +103,9 @@ export class Scene1 {
 	private grassCount = 5000;
 
 	constructor(_canvas: HTMLCanvasElement) {
-		
+		this.textureLoader = new THREE.TextureLoader();
+		this.loadTextures();
+
 		this.onNewFlowerClick = this.onNewFlowerClick.bind(this);
 		this.onGlobalClick = this.onGlobalClick.bind(this);
 		this.terrainMesh = new THREE.Mesh(); // 地形网格初始化
@@ -108,7 +114,7 @@ export class Scene1 {
 		this.gltfLoader = new GLTFLoader(this.loadingManager);
 		this.canvas = _canvas;
 		this.disableControls();
-
+		this.initializeSquareMini();
 
 		this.stats = new Stats({ minimal: true });
 		this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -166,7 +172,7 @@ export class Scene1 {
 
 
 	private loadModels() {
-		this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value) => {
+		this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value: string) => {
 			(this.terrainMesh.material as THREE.MeshPhongMaterial).color.set(value);
 		});
 	
@@ -190,7 +196,8 @@ export class Scene1 {
 					this.terrainMesh = child; // 存储地形 Mesh
 				}
 			});
-			this.scene.add(gltf.scene);
+
+			this.scene!.add(gltf.scene);
 			console.log("Terrain loaded");
 	
 			if (onComplete) onComplete();
@@ -233,13 +240,14 @@ export class Scene1 {
 			grassInstancedMesh.setMatrixAt(i, new THREE.Matrix4().compose(position, quaternion, scale));
 		}
 
-		this.scene.add(grassInstancedMesh);
+		this.scene!.add(grassInstancedMesh);
 	}
 
 
 
 	private loadFlowers() {
-		// 使用 GLTFLoader 加载 flower.glb
+	
+	
 		this.gltfLoader.load("/flower.glb", (gltf) => {
 			this.flowerMesh = gltf.scene;
 
@@ -268,7 +276,7 @@ export class Scene1 {
 			flower.scale.set(scale, 1.8, scale);
 
 			// 将花的朝向设置为相机方向，使其面向玩家
-			flower.lookAt(this.camera.position);
+			flower!.lookAt(this.camera!.position);
 
 			// 增加倾斜效果，调整花的旋转角度
 			flower.rotateX(-Math.PI / -8); // 调整花沿 X 轴的倾斜角度
@@ -276,7 +284,7 @@ export class Scene1 {
 
 
 			// 将花添加到场景中
-			this.scene.add(flower);
+			this.scene!.add(flower);
 			this.flowerMesh = flower; // 确保 flowerMesh 引用的是场景中的对象
 
 			// 获取花瓣并存储在 flowerPetals 数组中
@@ -285,7 +293,7 @@ export class Scene1 {
 					this.flowerPetals.push(child);
 				}
 			});
-
+			
 		});
 
 	}
@@ -309,11 +317,17 @@ export class Scene1 {
 
 	// 初始的全局点击事件，监听旧花的点击
 	private onGlobalClick(event: MouseEvent) {
-
+		
 		if (this.newFlowerMesh) return; // 如果新花已加载，则忽略
 		if (!this.flowerMesh) return;
 		if (!this.controlsEnabled) return;
-		this.raycaster.setFromCamera(this.mouse, this.camera);
+		if (!this.camera) {
+			console.error("Camera is not initialized.");
+			return;
+		  }
+		  console.log('Camera:', this.camera);
+		 
+		  this.raycaster.setFromCamera(this.mouse, this.camera!);
 		const intersects = this.raycaster.intersectObject(this.flowerMesh, true);
 
 
@@ -335,13 +349,14 @@ export class Scene1 {
 				}
 			}
 		} else {
+			if (intersects.length > 0) {
 			this.moveCameraTowardsTarget(() => {
 				this.hasReachedTarget = true;
 				console.log("Camera reached target position for subsequent clicks.");
 			});
 			this.loadNewFlowerAtCenter();
 
-		}
+		}}
 		
 	}
 
@@ -350,9 +365,10 @@ export class Scene1 {
 		const text2 = "It feels so special.\nAs if fate is guiding me to pick it.";
 
 		const messageElement = document.getElementById("message-2"); // 获取显示文字的 DOM 元素
-		messageElement.style.opacity = "1"; // 确保文字可见
-
-		const audio = new Audio('./sound/message2.mp3'); // 替换为你的语音文件路径
+		
+		if (messageElement) {
+			messageElement.style.opacity = "1"; // 确保文字可见
+			const audio = new Audio('./sound/message2.mp3'); // 替换为你的语音文件路径
 		audio.play().catch((error) => {
 			console.error("Audio playback failed:", error);
 		});
@@ -380,6 +396,11 @@ export class Scene1 {
 				this.enableControls();
 			}
 		}, 60); // 调整此间隔以控制文字显示速度
+		} else {
+			console.error("没有找到 message-2 元素");
+		}
+
+		
 
 	}
 
@@ -405,22 +426,22 @@ export class Scene1 {
 		// 模拟动画移动相机到目标位置
 		const interval = setInterval(() => {
 			if (this.targetPosition) {
-				const direction = new THREE.Vector3().subVectors(this.targetPosition, this.camera.position).normalize();
+				const direction = new THREE.Vector3().subVectors(this.targetPosition, this.camera!.position).normalize();
 				// 继续进行相机移动或其他逻辑
 
-				const distance = this.camera.position.distanceTo(this.targetPosition!);
+				const distance = this.camera!.position.distanceTo(this.targetPosition!);
 
 
 				// 如果相机距离目标位置足够近，则停止移动
 				if (distance < 0.1) {
-					this.camera.position.copy(this.targetPosition!);
+					this.camera!.position.copy(this.targetPosition!);
 					clearInterval(interval);
 
 					// 调用完成后的回调
 					onComplete();
 				} else {
 					// 每帧移动
-					this.camera.position.addScaledVector(direction, 0.01);
+					this.camera!.position.addScaledVector(direction, 0.01);
 				}
 			}
 		}, 16); // 模拟每帧更新，约60fps
@@ -429,9 +450,12 @@ export class Scene1 {
 
 
 	private loadNewFlowerAtCenter() {
+		
+
+
 		if (this.flowerMesh) {
-			this.scene.remove(this.flowerMesh); // 清除旧花
-			this.flowerMesh = null;
+			this.scene!.remove(this.flowerMesh); // 清除旧花
+			this.flowerMesh!= null;
 		}
 
 		if (this.cachedNewFlower) {
@@ -465,6 +489,7 @@ export class Scene1 {
 			// 开始动画
 			this.animateFlowerAppearance(newFlower, 3); // 3秒动画
 			this.disableInteraction(); // 禁用移动和点击其他地
+			
 		});
 		this.canvas.removeEventListener("click", this.onGlobalClick);
 			this.canvas.addEventListener("click", this.onNewFlowerClick);
@@ -473,7 +498,7 @@ export class Scene1 {
 
 	private setupNewFlower(newFlower: THREE.Object3D) {
 		newFlower.position.copy(this.flowerBasePosition);
-		this.scene.add(newFlower);
+		this.scene!.add(newFlower);
 		this.newFlowerMesh = newFlower;
 
 		// 设置花的缩放大小
@@ -482,7 +507,7 @@ export class Scene1 {
 
 		// 让新花面向摄像机
 		const cameraDirection = new THREE.Vector3();
-		this.camera.getWorldDirection(cameraDirection); // 获取摄像机的朝向
+		this.camera!.getWorldDirection(cameraDirection); // 获取摄像机的朝向
 		newFlower.lookAt(newFlower.position.clone().add(cameraDirection)); // 让新花朝向摄像机
 
 		console.log("New flower added to the scene");
@@ -557,7 +582,7 @@ export class Scene1 {
 
 		this.canvas.addEventListener("click", this.onNewFlowerClick);
 
-		this.raycaster.setFromCamera(this.mouse, this.camera);
+		this.raycaster.setFromCamera(this.mouse, this.camera!);
 		const intersects = this.raycaster.intersectObject(this.newFlowerMesh, true);
 
 		// 检查是否点击到某个花瓣
@@ -675,9 +700,11 @@ export class Scene1 {
 
 	private resetToGrassland() {
 		// 移除新花
+		
+
 		if (this.newFlowerMesh) {
 			this.disposeObject(this.newFlowerMesh); // 释放资源
-			this.scene.remove(this.newFlowerMesh);
+			this.scene!.remove(this.newFlowerMesh);
 			this.newFlowerMesh = null;
 		}
 
@@ -704,6 +731,7 @@ export class Scene1 {
 
 		this.placeRandomFlower();
 		this.showResetText();
+	
 
 	}
 
@@ -812,12 +840,12 @@ export class Scene1 {
 			randomFlower.position.copy(validPosition);
 	
 			// Make the flower look at the camera and add some tilt
-			randomFlower.lookAt(this.camera.position);
+			randomFlower.lookAt(this.camera!.position);
 			randomFlower.rotateX(-Math.PI / -8);
 			randomFlower.rotateY(Math.PI / -16);
 	
 			// Add the randomly placed flower to the scene
-			this.scene.add(randomFlower);
+			this.scene!.add(randomFlower);
 			this.flowerMesh = randomFlower; // Update flowerMesh to the new flower
 	
 			this.lastFlowerPosition = randomFlower.position.clone();
@@ -827,55 +855,64 @@ export class Scene1 {
 			this.generatedFlowerCount++;
 	
 			if (this.generatedFlowerCount === 3) {
-				const squareMini = document.querySelector('.square-mini') as HTMLElement;
-				if (squareMini) {
-					squareMini.style.backgroundColor = "red"; // 更改颜色为红色
-				}
-	
-				squareMini.addEventListener('click', this.switchToScene2.bind(this));
+				this.initializeSquareMini();
 
+
+			}
+	
+			// Re-enable clicks on the newly placed flower
+			this.canvas.addEventListener("click", this.onGlobalClick);
+			
+		});
+	}
+
+	private initializeSquareMini() {
+		const squareMini = document.querySelector('.square-mini') as HTMLElement;
+		squareMini.addEventListener('click', () => {
+			this.switchToScene2();
+			squareMini.style.backgroundColor = "red";
+			
+		});
+
+		if (this.generatedFlowerCount === 3) {
+			if (squareMini) {
+				// 更改颜色为红色
+				squareMini.style.backgroundColor = "red";
+				// 播放音频
 				const hintAudio = new Audio('./sound/start.mp3'); // 替换为提示音文件路径
 				hintAudio.play().catch((error) => {
 					console.error("Failed to play hint audio:", error);
 				});
 			}
-	
-			// Re-enable clicks on the newly placed flower
-			this.canvas.addEventListener("click", this.onGlobalClick);
-		});
+		}
 	}
-
-
 
 	private switchToScene2() {
 		console.log("Switching to Scene 2...");
-	
-		// Step 1: Start fog animation
 		this.animateFogEffect().then(() => {
-			// Step 2: Dispose of Scene1 resources
+		
 			this.disposeScene1();
-	
+			this.isActive = false;
 			// Step 3: Dynamically load and initialize Scene2
-			import('./scene-2.ts').then((Scene2Module) => {
-				const Scene2 = Scene2Module.default; // Assuming Scene2 is exported as default
+			import('./scene-2').then((Scene2Module) => {
 				const canvas = document.querySelector("#canvas") as HTMLCanvasElement;
-				new Scene2(canvas); // Initialize Scene2
 			}).catch((error) => {
 				console.error("Failed to load Scene 2:", error);
 			});
 		});
+		
 	}
 	
 	private animateFogEffect(): Promise<void> {
 		return new Promise((resolve) => {
-			if (!this.scene.fog || !(this.scene.fog instanceof THREE.FogExp2)) {
-				console.error("Fog is not set or is not of type FogExp2.");
-				resolve(); // 立即结束动画
+			if (!this.scene || !this.scene.fog || !(this.scene.fog instanceof THREE.FogExp2)) {
+				console.error("Fog 没有设置或不是 FogExp2 类型.");
+				resolve(); // 如果条件不满足，立即结束动画
 				return;
 			}
 	
 			const duration = 3000; // 3 seconds
-			const fogDensityStart = this.scene.fog.density || 0.01; // 初始值
+			const fogDensityStart = this.scene!.fog.density || 0.01; // 初始值
 			const fogDensityEnd = 0.1; // 最大雾密度
 			const clock = new THREE.Clock();
 	
@@ -883,10 +920,16 @@ export class Scene1 {
 				const elapsed = clock.getElapsedTime() * 1000;
 				const progress = elapsed / duration;
 	
-				// 更新雾密度
-				if (this.scene.fog && this.scene.fog instanceof THREE.FogExp2) {
-					this.scene.fog.density = THREE.MathUtils.lerp(fogDensityStart, fogDensityEnd, progress);
-				}
+  // 更新雾密度
+  if (this.scene && this.scene.fog && this.scene.fog instanceof THREE.FogExp2) {
+	this.scene.fog.density = THREE.MathUtils.lerp(fogDensityStart, fogDensityEnd, progress);
+}
+
+
+				// // 更新雾密度
+				// if (this.scene!.fog && this.scene!.fog instanceof THREE.FogExp2) {
+				// 	this.scene!.fog.density = THREE.MathUtils.lerp(fogDensityStart, fogDensityEnd, progress);
+				// }
 	
 				// 动画结束条件
 				if (progress >= 1) {
@@ -909,10 +952,27 @@ export class Scene1 {
 
 
 
-	// Dispose all Scene1 resources
+
 	private disposeScene1() {
-		console.log("Disposing Scene1...");
+		this.isActive = false;
+
+		// 移除事件监听器
+		this.canvas.removeEventListener("mousemove", this.onMouseMove);
+		window.removeEventListener("resize", this.setAspectResolution);
+	  
+		// 清理场景中的对象
+		this.scene!.traverse((object) => {
+		  if (object instanceof THREE.Mesh) {
+			object.geometry.dispose();
+			if (object.material instanceof THREE.Material) {
+			  object.material.dispose();
+			}
+		  }
+		});
 	
+		
+
+
 		// Stop audio playback
 		this.stopAudio();
 	
@@ -930,14 +990,19 @@ export class Scene1 {
 		// this.someGlobalState = null;
 	
 		// Dispose the renderer
-		this.renderer.dispose();
+		this.renderer!.dispose();
 	
 		// Clear Scene1 references
-		this.scene = null!;
-		this.camera = null!;
-		this.renderer = null!;
+		this.scene = null;
+		this.camera = null;
+		this.renderer = null;
 	}
 	
+
+
+
+
+
 	// Stop all audio in Scene1
 	private stopAudio() {
 		const audioElements = document.querySelectorAll('audio');
@@ -959,9 +1024,8 @@ export class Scene1 {
 		});
 	}
 	
-	// Properly dispose of Three.js resources
 	private disposeSceneResources() {
-		this.scene.traverse((object) => {
+		this.scene!.traverse((object) => {
 			if (object instanceof THREE.Mesh) {
 				// Dispose geometries and materials
 				if (object.geometry) object.geometry.dispose();
@@ -974,7 +1038,17 @@ export class Scene1 {
 				}
 			}
 		});
-		this.scene.clear(); // Clear all objects from the scene
+	
+		// 确保不会销毁草地的纹理
+		if (this.textures.grassAlpha) {
+			console.log("Grass alpha texture skipped from disposal");
+		}
+		if (this.textures.perlinNoise) {
+			console.log("Perlin noise texture skipped from disposal");
+		}
+	
+		// 清理场景的所有对象
+		this.scene!.clear(); // Clear all objects from the scene
 	}
 	
 	// Remove all event listeners specific to Scene1
@@ -995,7 +1069,7 @@ export class Scene1 {
 		this.gltfLoader.load("/noflower.glb", (gltf) => {
 			const noFlower = gltf.scene;
 			noFlower.position.copy(position); // Set position to the given coordinates
-			this.scene.add(noFlower);
+			this.scene!.add(noFlower);
 		});
 	}
 
@@ -1041,10 +1115,10 @@ export class Scene1 {
 		// 使用动画逐渐靠近花
 		if (!this.targetPosition) return;
 
-		const direction = new THREE.Vector3().subVectors(this.targetPosition, this.camera.position).normalize();
-		const distance = this.camera.position.distanceTo(this.targetPosition);
+		const direction = new THREE.Vector3().subVectors(this.targetPosition, this.camera!.position).normalize();
+		const distance = this.camera!.position.distanceTo(this.targetPosition);
 		const step = Math.min(distance, 0.1); // 每帧的移动步长
-		this.camera.position.addScaledVector(direction, step);
+		this.camera!.position.addScaledVector(direction, step);
 
 		if (distance < 0.1) {
 			this.targetPosition = null;
@@ -1058,7 +1132,14 @@ export class Scene1 {
 
 	
 	private animate() {
+		if (!this.isActive) return;
+		if (!this.camera) return;
 		requestAnimationFrame(() => this.animate());
+		if (this.camera instanceof THREE.PerspectiveCamera) {
+			this.raycaster.setFromCamera(this.mouse, this.camera);
+		  } else {
+			console.error("Camera is not initialized or is not a PerspectiveCamera");
+		  }
 
 		const delta = this.clock.getDelta();
 		this.firstPersonControls.update(delta);
@@ -1128,7 +1209,7 @@ export class Scene1 {
 
 
 
-		this.renderer.render(this.scene, this.camera);
+		this.renderer!.render(this.scene!, this.camera);
 	}
 
 
@@ -1138,19 +1219,19 @@ export class Scene1 {
 
 
 	private updateCameraHeight() {
-		this.raycaster.set(this.camera.position, new THREE.Vector3(0, -1, 0));
+		this.raycaster.set(this.camera!.position, new THREE.Vector3(0, -1, 0));
 		const intersects = this.raycaster.intersectObject(this.terrainMesh, true);
 
 		if (intersects.length > 0) {
 			const terrainHeight = intersects[0].point.y;
 			const smoothFactor = 0.1;
-			this.camera.position.y += (terrainHeight + this.cameraHeightAboveTerrain - this.camera.position.y) * smoothFactor;
+			this.camera!.position.y += (terrainHeight + this.cameraHeightAboveTerrain - this.camera!.position.y) * smoothFactor;
 		}
 	}
 
 	private addLights() {
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-		this.scene.add(ambientLight);
+		this.scene!.add(ambientLight);
 
 		const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
 		directionalLight.castShadow = true;
@@ -1162,16 +1243,36 @@ export class Scene1 {
 		directionalLight.shadow.camera.bottom = -50;
 		directionalLight.shadow.mapSize.set(2048, 2048);
 
-		this.scene.add(directionalLight);
+		this.scene!.add(directionalLight);
 	}
 
-
+	private loadTextures() {
+        this.textures.perlinNoise = this.textureLoader.load("/perlinnoise.webp");
+        this.textures.grassAlpha = this.textureLoader.load("/grass.jpeg");
+    }
 
 	private setupTextures() {
-		this.textures.perlinNoise = this.textureLoader.load("/perlinnoise.webp");
-		this.textures.grassAlpha = this.textureLoader.load("/grass.jpeg");
+		if (!this.textures.perlinNoise) {
+			this.textures.perlinNoise = this.textureLoader.load("/perlinnoise.webp");
+		}
+		if (!this.textures.grassAlpha) {
+			this.textures.grassAlpha = this.textureLoader.load("/grass.jpeg");
+		}
+		
+		// 只有在纹理加载后才会设置它们
 		this.grassMaterial.setupTextures(this.textures.grassAlpha, this.textures.perlinNoise);
+
+		// this.textures.perlinNoise.flipY = false; // 禁用 Y 翻转
+		//     this.textures.grassAlpha.flipY = false; // 禁用 Y 翻转
+		//     this.textures.perlinNoise.premultiplyAlpha = false; // 禁用预乘 alpha
+		//     this.textures.grassAlpha.premultiplyAlpha = false; // 禁用预乘 alpha
 	}
+
+
+	// public getTextures() {
+    //     return this.textures;
+    // }
+
 
 	private setupGUI() {
 		const style = document.createElement("style");
@@ -1184,11 +1285,15 @@ document.head.appendChild(style);
 
 		this.gui = new dat.GUI();
 		this.sceneGUI = this.gui.addFolder("Scene Properties");
-		this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value) => {
-			this.terrainMesh.material.color.set(value);
+		this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value: string) => {
+			if (this.terrainMesh && this.terrainMesh.material && (this.terrainMesh.material as THREE.MeshPhongMaterial).color) {
+				(this.terrainMesh.material as THREE.MeshPhongMaterial).color.set(value);
+			} else {
+				console.warn("Terrain material or color is not available.");
+			}
 		});
-		this.sceneGUI.add(this.sceneProps, "fogDensity", 0, 0.05, 0.000001).onChange((value) => {
-			(this.scene.fog as THREE.FogExp2).density = value;
+		this.sceneGUI.add(this.sceneProps, "fogDensity", 0, 0.05, 0.000001).onChange((value: number) => {
+			(this.scene!.fog as THREE.FogExp2).density = value;
 		});
 	}
 
@@ -1199,9 +1304,10 @@ document.head.appendChild(style);
 	}
 
 	private setAspectResolution() {
+		if (!this.camera) return;
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.renderer!.setSize(window.innerWidth, window.innerHeight);
 	}
 
 	private init() {

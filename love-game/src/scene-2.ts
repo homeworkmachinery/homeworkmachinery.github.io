@@ -2,21 +2,25 @@ import * as THREE from "three";
 import Stats from "stats-gl";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as dat from "dat.gui";
-import { MeshSurfaceSampler } from "three/addons/math/MeshSurfaceSampler.js";
+import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { GrassMaterial } from "./GrassMaterial";
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
+import { GUI } from 'dat.gui';
+
+
 
 
 export class Scene2 {
+    private textures: { [key: string]: THREE.Texture } = {}; 
+
     private isPlaying: boolean = false;
-    private hasShownText5 = false; 
+    private hasShownText5 = false;
     private isLeftAndDownKeyActive: boolean = false; // 左和下键是否在跳动
     private canShowText4: boolean = false; // 是否可以触发 showText4
-
     private isFlowerOneClickable: boolean = false; // 控制 flowerOne 是否可点击
     private flowerOne: THREE.Object3D | null = null;
     private flowerTwo: THREE.Object3D | null = null;
-    private generatedFlowerCount: number = 0;
+    // private generatedFlowerCount: number = 0;
     private cachedNewFlower: THREE.Object3D | null = null;
     private endMessageCompleted: boolean = false;
     private allPetalsRemoved: boolean = false;
@@ -34,7 +38,7 @@ export class Scene2 {
     private renderer: THREE.WebGLRenderer;
     private scene: THREE.Scene;
     private canvas: HTMLCanvasElement;
-    private stats: Stats;
+    private stats: typeof Stats;
     private lastFlowerPosition: THREE.Vector3 | null = null;
 
     private existingFlowers: THREE.Object3D[] = []; // 用于存储已生成的花朵
@@ -44,10 +48,10 @@ export class Scene2 {
         terrainColor: "#5e875e",
         fogDensity: 0.02,
     };
-    private textures: { [key: string]: THREE.Texture } = {};
+    
     private keyStates: { [key: string]: boolean } = {};
 
-    private flowerMesh: THREE.Object3D; // 用于存储花的模型
+    private flowerMesh: THREE.Object3D = new THREE.Object3D();
     private targetPosition: THREE.Vector3 | null = null;
     private raycaster = new THREE.Raycaster();
     private mouse = new THREE.Vector2();
@@ -57,11 +61,11 @@ export class Scene2 {
     private hasReachedTarget: boolean = false; // 跟踪相机是否到达目标位置
 
 
-    private gui: dat.GUI;
-    private sceneGUI: dat.GUI;
-    private cameraPositionGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController };
-    private cameraRotationGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController };
-    private guiControls: { positionX: number; positionY: number; positionZ: number; rotationX: number; rotationY: number; rotationZ: number; };
+    private gui: typeof GUI;
+	private sceneGUI: typeof GUI;
+    private cameraPositionGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController } = {} as any;
+	private cameraRotationGUI: { x: dat.GUIController; y: dat.GUIController; z: dat.GUIController } = {} as any;
+	private guiControls: { positionX: number; positionY: number; positionZ: number; rotationX: number; rotationY: number; rotationZ: number; } = {} as any;;
 
     private setupCameraControls() {
         // 添加到 dat.GUI 面板
@@ -103,8 +107,12 @@ export class Scene2 {
     private grassGeometry = new THREE.BufferGeometry();
     private grassCount = 5000;
 
-    constructor(_canvas: HTMLCanvasElement) {
+  
 
+    
+    constructor(_canvas: HTMLCanvasElement) {
+        this.textureLoader = new THREE.TextureLoader();
+        this.loadTextures();
 
         this.onGlobalClick = this.onGlobalClick.bind(this);
         this.terrainMesh = new THREE.Mesh(); // 地形网格初始化
@@ -155,17 +163,17 @@ export class Scene2 {
         this.init();
         this.loadTerrain();
 
-  // 添加雾化动画
-  this.animateFogEffect().then(() => {
-    // 显示文字并恢复交互
-    setTimeout(() => {
-        this.showText0(() => {
-            document.getElementById("canvas").style.pointerEvents = "auto";
+        // 添加雾化动画
+        this.animateFogEffect().then(() => {
+            // 显示文字并恢复交互
+            setTimeout(() => {
+                this.showText0(() => {
+                    document.getElementById("canvas")!.style.pointerEvents = "auto";
+                });
+            }, 1500);
         });
-    }, 1500);
-});
 
-      
+        this.setupTextures();
 
     }
 
@@ -189,36 +197,36 @@ export class Scene2 {
                 resolve(); // 如果雾未初始化，立即结束动画
                 return;
             }
-    
+
             const duration = 3000; // 3秒
             const fogDensityStart = 0.3; // 初始雾密度
             const fogDensityEnd = this.sceneProps.fogDensity; // 目标雾密度
             const clock = new THREE.Clock();
-    
+
             const animate = () => {
                 const elapsed = clock.getElapsedTime() * 1000; // 已经过的时间
                 const progress = Math.min(elapsed / duration, 1); // 进度 [0, 1]
-    
+
                 // 更新雾密度
                 (this.scene.fog as THREE.FogExp2).density = THREE.MathUtils.lerp(fogDensityStart, fogDensityEnd, progress);
-    
+
                 if (progress < 1) {
                     requestAnimationFrame(animate); // 继续动画
                 } else {
                     resolve(); // 动画完成
                 }
             };
-    
+
             animate(); // 启动动画
         });
     }
-    
+
 
 
 
 
     private loadModels() {
-        this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value) => {
+        this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value: string) => {
             (this.terrainMesh.material as THREE.MeshPhongMaterial).color.set(value);
         });
 
@@ -246,6 +254,8 @@ export class Scene2 {
             console.log("Terrain loaded");
 
             if (onComplete) onComplete();
+           
+           
         });
     }
 
@@ -381,11 +391,11 @@ export class Scene2 {
 
     private onGlobalClick(event: MouseEvent) {
         if (!this.flowerOne || !this.flowerTwo) return;
-    
+
 
         if (this.isPlaying) return; // 如果正在播放，直接返回
         this.isPlaying = true; // 设置为播放中
-    
+
         // 解锁机制，延迟一段时间后允许再次触发
         setTimeout(() => {
             this.isPlaying = false; // 解锁
@@ -401,10 +411,10 @@ export class Scene2 {
             }),
             true
         );
-    
+
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
-    
+
             // 判断点击的是 flowerOne
             let isFlowerOneClicked = false;
             this.flowerOne.traverse((child) => {
@@ -412,7 +422,7 @@ export class Scene2 {
                     isFlowerOneClicked = true;
                 }
             });
-    
+
             // 判断点击的是 flowerTwo
             let isFlowerTwoClicked = false;
             this.flowerTwo.traverse((child) => {
@@ -420,7 +430,7 @@ export class Scene2 {
                     isFlowerTwoClicked = true;
                 }
             });
-    
+
             if (isFlowerOneClicked) {
                 if (this.isFlowerOneClickable) { // 检查是否可以点击 flowerOne
                     console.log("Clicked on flowerOne");
@@ -437,7 +447,7 @@ export class Scene2 {
             }
         }
     }
-    
+
 
 
     private showText0(callback?: () => void) {
@@ -558,12 +568,12 @@ export class Scene2 {
 
 
         const audio = new Audio('./sound/text3.mp3'); // 替换为你的语音文件路径
-        
-           
-            audio.play().catch((error) => {
-                console.error("Audio playback failed:", error);
-            });
-        
+
+
+        audio.play().catch((error) => {
+            console.error("Audio playback failed:", error);
+        });
+
 
 
         let currentChar = 0;
@@ -583,7 +593,7 @@ export class Scene2 {
 
                 // 显示完文字后，设置一个延迟后开始淡出
                 setTimeout(() => {
-                    this.fadeOutText(textElement); 
+                    this.fadeOutText(textElement);
                     this.canShowText4 = true;
                     this.triggerKeyBounce();  // 调用淡出方法
                 }, 1000);
@@ -596,41 +606,41 @@ export class Scene2 {
 
     private triggerKeyBounce() {
         this.isLeftAndDownKeyActive = true;
-    
+
         const leftKey = document.getElementById("arrow-left");
         const downKey = document.getElementById("arrow-down");
-    
+
         if (leftKey) leftKey.classList.add("jumping");
         if (downKey) downKey.classList.add("jumping");
     }
-    
+
     private checkKeyBounceStopConditions() {
         if (!this.isLeftAndDownKeyActive) return;
-    
+
         const leftKey = document.getElementById("arrow-left");
         const downKey = document.getElementById("arrow-down");
-    
+
         // 条件 1：当 position.x < 1 时，停止左键跳动
         if (this.camera.position.x < 1 && leftKey?.classList.contains("jumping")) {
             leftKey.classList.remove("jumping");
         }
-    
+
         // 条件 2：当 position.z > 6 时，停止下键跳动
         if (this.camera.position.z > 4 && downKey?.classList.contains("jumping")) {
             downKey.classList.remove("jumping");
         }
-    
+
         // 如果两键都不跳动，则更新状态
         const leftKeyActive = leftKey?.classList.contains("jumping");
         const downKeyActive = downKey?.classList.contains("jumping");
-    
+
         if (!leftKeyActive && !downKeyActive) {
             this.isLeftAndDownKeyActive = false; // 停止跳动状态
         }
     }
-    
-    
-    
+
+
+
     private showText4() {
         const text4 = `for I’ve found peace within myself,\nexpecting nothing from it.`;
 
@@ -693,15 +703,15 @@ export class Scene2 {
 
 
         const audio = new Audio('./sound/finaltext.mp3'); // 替换为你的语音文件路径
-       
-       
-       
-      
-         
-            audio.play().catch((error) => {
-                console.error("Audio playback failed:", error);
-            });
-        
+
+
+
+
+
+        audio.play().catch((error) => {
+            console.error("Audio playback failed:", error);
+        });
+
 
         let currentChar = 0;
         const interval = setInterval(() => {
@@ -721,28 +731,28 @@ export class Scene2 {
                 setTimeout(() => {
                     this.fadeOutText(textElement, () => {
                         setTimeout(() => {
-                       
-                        if (!this.hasShownText5) {
-                            this.hasShownText5 = true; // 标志变量置为 true，确保只执行一次
-    
-                            // 改变 mini-triangle 背景颜色
-                            const miniTriangle = document.querySelector('.triangle-mini') as HTMLElement;
-                            if (miniTriangle) {
-                                miniTriangle.style.borderTop = '35px solid red'; // 改变背景颜色
-    
-                                // 播放 start.mp3 声音
-                                const startAudio = new Audio('./sound/start.mp3');
-                                startAudio.play().catch((error) => {
-                                    console.error("Start audio playback failed:", error);
-                                });
-    
-                                // 添加点击事件监听器
-                                miniTriangle.addEventListener('click', () => {
-                                    window.location.reload(); // 刷新页面重新开始
-                                });
+
+                            if (!this.hasShownText5) {
+                                this.hasShownText5 = true; // 标志变量置为 true，确保只执行一次
+
+                                // 改变 mini-triangle 背景颜色
+                                const miniTriangle = document.querySelector('.triangle-mini') as HTMLElement;
+                                if (miniTriangle) {
+                                    miniTriangle.style.borderTop = '35px solid red'; // 改变背景颜色
+
+                                    // 播放 start.mp3 声音
+                                    const startAudio = new Audio('./sound/start.mp3');
+                                    startAudio.play().catch((error) => {
+                                        console.error("Start audio playback failed:", error);
+                                    });
+
+                                    // 添加点击事件监听器
+                                    miniTriangle.addEventListener('click', () => {
+                                        window.location.reload(); // 刷新页面重新开始
+                                    });
+                                }
                             }
-                        }
-                    },2000);
+                        }, 2000);
                     });
                 }, 1000);
                 this.enableControls();
@@ -877,7 +887,7 @@ export class Scene2 {
         window.addEventListener("keyup", this.preventKeyEvent, true);
         this.isInteractionEnabled = false;
         this.firstPersonControls.enabled = false; // 禁用第一人称控制
-      
+
     }
 
     private enableInteraction() {
@@ -888,7 +898,7 @@ export class Scene2 {
         window.removeEventListener("keyup", this.preventKeyEvent, true);
         this.isInteractionEnabled = true;
         this.firstPersonControls.enabled = true; // 启用第一人称控制
-      
+
     }
 
 
@@ -923,9 +933,9 @@ export class Scene2 {
 
         const delta = this.clock.getDelta();
         this.firstPersonControls.update(delta);
-      
 
-       
+
+
         // this.cameraPositionGUI.x.setValue(this.camera.position.x);
         // this.cameraPositionGUI.y.setValue(this.camera.position.y);
         // this.cameraPositionGUI.z.setValue(this.camera.position.z);
@@ -937,20 +947,20 @@ export class Scene2 {
 
         const flowers = [this.flowerOne, this.flowerTwo];
         let isHovering = false;
-    
+
         flowers.forEach((flower) => {
-            if (flower && this.isFlowerOneClickable) { 
+            if (flower && this.isFlowerOneClickable) {
                 this.raycaster.setFromCamera(this.mouse, this.camera);
                 const intersects = this.raycaster.intersectObject(flower, true);
-    
+
                 if (intersects.length > 0) {
                     isHovering = true;
                 }
-    
+
                 // 模拟花的风吹效果
                 const windStrength = 0.05; // 摆动的强度
                 const windFrequency = 1.5; // 摆动的频率
-    
+
                 flower.rotation.y = Math.sin(this.clock.elapsedTime * windFrequency) * windStrength;
                 flower.rotation.z = Math.sin(this.clock.elapsedTime * windFrequency * 0.3) * windStrength;
             }
@@ -967,10 +977,10 @@ export class Scene2 {
         if (this.grassMaterial && this.grassMaterial.uniforms) {
             this.grassMaterial.uniforms.uTime.value += delta * 0.4;
         }
-     
-       
 
-   
+
+
+
 
         this.checkKeyBounceStopConditions();
 
@@ -1011,13 +1021,42 @@ export class Scene2 {
         this.scene.add(directionalLight);
     }
 
+    //  private setupTextures() {
+    //     console.log(this.textures); // 调试，查看传入的纹理对象
 
+    //     // 示例：创建一个材质，使用传入的纹理
+    //     const material = new THREE.MeshBasicMaterial({
+    //         map: this.textures.perlinNoise, // 使用传入的纹理
+    //     });
+
+    //     // 创建一个平面几何体来显示纹理
+    //     const geometry = new THREE.PlaneGeometry(10, 10);
+    //     const plane = new THREE.Mesh(geometry, material);
+    //     this.scene.add(plane);  // 将它添加到场景中
+    // }
+   
+    private loadTextures() {
+        this.textures.perlinNoise = this.textureLoader.load("/perlinnoise.webp");
+        this.textures.grassAlpha = this.textureLoader.load("/grass.jpeg");
+    }
 
     private setupTextures() {
         this.textures.perlinNoise = this.textureLoader.load("/perlinnoise.webp");
-        this.textures.grassAlpha = this.textureLoader.load("/grass.jpeg");
-        this.grassMaterial.setupTextures(this.textures.grassAlpha, this.textures.perlinNoise);
+		this.textures.grassAlpha = this.textureLoader.load("/grass.jpeg");
+		this.grassMaterial.setupTextures(this.textures.grassAlpha, this.textures.perlinNoise);
+        
+    
+        // 2. 禁用不适用的标志
+        // this.textures.perlinNoise.flipY = false; // 禁用 Y 翻转
+        // this.textures.grassAlpha.flipY = false; // 禁用 Y 翻转
+        // this.textures.perlinNoise.premultiplyAlpha = false; // 禁用预乘 alpha
+        // this.textures.grassAlpha.premultiplyAlpha = false; // 禁用预乘 alpha
+    
+
     }
+    
+
+    
 
     private setupGUI() {
         const style = document.createElement("style");
@@ -1027,13 +1066,18 @@ export class Scene2 {
             }
         `;
         document.head.appendChild(style);
-        
+
         this.gui = new dat.GUI();
         this.sceneGUI = this.gui.addFolder("Scene Properties");
-        this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value) => {
-            this.terrainMesh.material.color.set(value);
+
+        this.sceneGUI.addColor(this.sceneProps, "terrainColor").onChange((value: string)=> {
+             if (this.terrainMesh && this.terrainMesh.material && (this.terrainMesh.material as THREE.MeshPhongMaterial).color) {
+            (this.terrainMesh.material as THREE.MeshPhongMaterial).color.set(value);
+        } else {
+            console.warn("Terrain material or color is not available.");
+        }
         });
-        this.sceneGUI.add(this.sceneProps, "fogDensity", 0, 0.05, 0.000001).onChange((value) => {
+        this.sceneGUI.add(this.sceneProps, "fogDensity", 0, 0.05, 0.000001).onChange((value: number) => {
             (this.scene.fog as THREE.FogExp2).density = value;
         });
     }
@@ -1058,10 +1102,10 @@ export class Scene2 {
     }
 
     private init() {
-        this.gui = new dat.GUI();
+        this.setupTextures();
+        // this.gui = new dat.GUI();
         this.setupGUI();
         this.setupCameraControls();
-        this.setupTextures();
         this.loadModels();
         this.setupEventListeners();
         this.addLights();
@@ -1159,7 +1203,8 @@ export class Scene2 {
 
         // 监听按键按下事件
         window.addEventListener("keydown", (event) => {
-            const key = arrowKeys[event.key];
+            const key = arrowKeys[event.key as keyof typeof arrowKeys];
+
             if (key) {
                 const element = document.getElementById(key);
                 if (element) {
@@ -1179,7 +1224,8 @@ export class Scene2 {
 
         // 监听按键松开事件
         window.addEventListener("keyup", (event) => {
-            const key = arrowKeys[event.key];
+            const key = arrowKeys[event.key as keyof typeof arrowKeys];
+
             if (key) {
                 const element = document.getElementById(key);
                 if (element) {

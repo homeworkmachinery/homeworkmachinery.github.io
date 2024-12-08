@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="stylesheet" href="/src/style.css">
+ 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>爱情游戏</title>
 
@@ -225,7 +226,7 @@
 
 </div>
 <div class="flatland-mini">
-  <div class="square-mini" > </div>
+  <div id="square-mini" class="square-mini" > </div>
   <a href="https://homeworkmachinery.github.io/" target="_blank">
     <div class="circle-mini"></div>
   </a>
@@ -250,6 +251,13 @@
       });
     });
 
+  // 初始时禁用 square-mini 按钮
+  const squareMini = document.getElementById('square-mini');
+  squareMini.style.pointerEvents = 'none'; // 禁用交互
+
+
+
+
     let hoverAudio = null;
 
 function playHoverSound() {
@@ -267,18 +275,26 @@ function playHoverSound() {
 }
   </script>
 
+<script type="module" src="/src/scene-1.ts"></script> 
 
   <script type="module">
     import { Scene1 } from '/src/scene-1.ts';
-  
+   
     const canvas = document.querySelector("#canvas");
     const app = new Scene1 (canvas);
   
-    document.getElementById("start").addEventListener("click", () => {
-      startGame();
-      app.enableControls();  
-     
-    });
+    let squareMiniEnabled = false; 
+
+  
+  document.getElementById("start").addEventListener("click", () => {
+    startGame();
+    squareMini.style.pointerEvents = 'auto';  // 启用 square-mini 的交互
+    squareMiniEnabled = true;  // 启用点击事件
+    app.enableControls();  
+  });
+
+
+
   
     function startGame() {
       

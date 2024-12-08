@@ -265,15 +265,15 @@ export class GrassMaterial {
 		this.uniforms.noiseTexture.value = noiseTexture;
 	}
 
-	setupGUI(gui: GUI) {
+	setupGUI(gui: typeof GUI) {
 		const folder = gui.addFolder("Grass Props");
-		folder.addColor(this.grassColorProps, "baseColor").onChange((value) => {
+		folder.addColor(this.grassColorProps, "baseColor").onChange((value: string) => {
 			this.uniforms.baseColor.value.set(value);
 		});
-		folder.addColor(this.grassColorProps, "tipColor1").onChange((value) => {
+		folder.addColor(this.grassColorProps, "tipColor1").onChange((value: string) => {
 			this.uniforms.tipColor1.value.set(value);
 		});
-		folder.addColor(this.grassColorProps, "tipColor2").onChange((value) => {
+		folder.addColor(this.grassColorProps, "tipColor2").onChange((value: string) => {
 			this.uniforms.tipColor2.value.set(value);
 		});
 		folder.add(this.uniforms.uNoiseScale, "value", 0, 5).name("Noise Scale");
