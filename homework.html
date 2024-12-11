@@ -460,6 +460,7 @@
 
 
         var homeworkList = [
+        { id: 4, date: '2024.12.12', object: 'game.', subject: 'love.game' },  
         { id: 3, date: '2024.10.20', object: 'projection.', subject: 'shadow.box' },  
         { id: 2, date: '2024.05.05', object: 'sound.', subject: 'run.out.of.time' },
             { id: 1, date: '2024.05.01', object: 'design.', subject: 'endless.tears' }
@@ -558,6 +559,9 @@ renderTable(homeworkList);
             if (content.imageAa) {
             mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
         }
+        if (content.imageAb) {
+                mediaContentA += `<img class="modal-image" src="${content.imageAb}" >`;
+            }
 
         if (content.iframeAa) {
             mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
@@ -610,10 +614,13 @@ renderTable(homeworkList);
 
             triangleMini.addEventListener('mouseenter', function () {
                 var mediaContentC = '';
-            if (content.imageCa) {
+           
+                if (content.imageCa) {
             mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
         }
-
+        if (content.iframeCa) {
+                    mediaContentC += `<iframe class="modal-iframe" src="${content.iframeCa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
+                }
         if (content.videoCa) {
             mediaContentC += `<video controls loop class="modal-video">
                                 <source src="${content.videoCa}" type="video/mp4">

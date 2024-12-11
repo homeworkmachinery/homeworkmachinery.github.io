@@ -54,6 +54,16 @@
 
     <div class="section center">
         <ul class="homework">
+           
+            <li data-id="4">
+                <div class="overlay">
+                    <span class="title">爱情游戏<br>love game</span>
+                    <span class="date">
+                    </span>
+                </div>
+
+                <img src="./love-game/001.gif">
+            </li>
             <li data-id="3">
                 <div class="overlay">
                     <span class="title">隐藏的盒子<br>shadow box</span>
@@ -229,7 +239,9 @@
                 if (content.imageCa) {
                     mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
                 }
-
+                if (content.iframeCa) {
+                    mediaContentC += `<iframe class="modal-iframe" src="${content.iframeCa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
+                }
                 if (content.videoCa) {
                     mediaContentC += `<video controls loop class="modal-video">
                                 <source src="${content.videoCa}" type="video/mp4">
