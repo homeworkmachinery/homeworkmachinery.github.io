@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>涟漪的声音</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .flatland-mini {
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .square-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            bottom: 130px;
+            right: 25px;
+            background-color: rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+
+        }
+
+        .recording-border {
+    border: 2px solid rgba(255, 255, 255, 0.8); 
+}
+
+        .circle-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            bottom: 75px;
+            right: 25px;
+            box-sizing: border-box;
+
+        }
+
+
+        .triangle-mini {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 35px solid rgba(0, 0, 0, 0.5);
+        }
+
+
+        .triangle-mini::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            right: -18px;
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+
+
+        }
+
+
+        @media (max-width: 768px) {
+            .flatland-mini {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .square-mini{
+                width: 50px;
+                height: 50px; 
+                bottom: 145px;
+            }
+            .circle-mini
+             {
+                width: 50px;
+                height: 50px;
+                bottom: 80px;
+                
+            }
+
+            .triangle-mini {
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-top: 42px solid rgba(0, 0, 0, 0.5);
+               
+            }
+
+            #midiStatus,
+            #midiInput {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="flatland-mini">
+        <div class="square-mini" onclick="toggleRecording(this)"> </div>
+        <a href="../index.html" target="_blank">
+            <div class="circle-mini"></div>
+        </a>
+        <div class="triangle-mini" onclick="triggerFileUpload()">
+        </div>
+        <div id="midiStatus"
+            style="position: fixed; top: 10px; left: 10px; background-color: rgba(0, 0, 0, 0.5); color: white; padding: 1px; font-size: 16px; display: none;">
+        </div>
+        <div id="midiInput"
+            style="position: fixed; top: 40px; left: 10px; background-color: rgba(0, 0, 0, 0.5); color: white; padding: 1px; font-size: 16px; display: none;">
+        </div>
+    </div>
+
+    <canvas id="waveCanvas"></canvas>
+    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="uploadBackground(event)" />
+    <script>
+        
+      
+        
+        //=====
+        let isRecording = false;
+let mediaRecorder;
+let recordedChunks = [];
+let videoStream;
+let audioStream;
+
+// 获取屏幕和音频流
+function getScreenAndAudioStream() {
+    return navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true // 捕获系统音频
+    }).then(stream => {
+        videoStream = stream;
+        return stream;
+    }).catch(err => {
+        console.error("Error getting screen and audio stream:", err);
+        return null;
+    });
+}
+
+// 开始录制
+function startRecording() {
+    
+    getScreenAndAudioStream().then(stream => {
+        if (!stream) {
+            console.error("Failed to get screen and audio stream.");
+            return;
+        }
+
+        recordedChunks = []; // 每次录制时清空
+
+        // 创建 MediaRecorder 实例
+        mediaRecorder = new MediaRecorder(stream, {
+            mimeType: "video/webm; codecs=vp8" // 确保支持的视频格式
+        });
+
+        // 数据可用时保存到 recordedChunks
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        // 录制停止时处理数据
+        mediaRecorder.onstop = () => {
+            console.log("Recording stopped");
+            const button = document.querySelector('.square-mini');
+            if (button) {
+                button.classList.remove('recording-border');
+            }
+            saveRecording(); // 保存录制的文件
+        };
+
+        mediaRecorder.start(); // 开始录制
+        isRecording = true;
+        const button = document.querySelector('.square-mini');
+        if (button) {
+            button.classList.add('recording-border');
+        }
+        console.log("Recording started");
+    }).catch(err => {
+        console.error("Error starting recording:", err);
+    });
+}
+
+// 停止录制
+function stopRecording() {
+    if (mediaRecorder) {
+        mediaRecorder.stop(); // 停止录制
+        videoStream.getTracks().forEach(track => track.stop()); // 停止流的所有轨道
+        isRecording = false; // 更新录制状态
+    }
+}
+
+// 保存录制的文件
+function saveRecording() {
+    if (recordedChunks.length > 0) {
+        // 创建 Blob 文件
+        const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
+        const videoUrl = URL.createObjectURL(videoBlob);
+
+        // 创建下载链接
+        const downloadLink = document.createElement("a");
+        downloadLink.href = videoUrl;
+        downloadLink.download = "ripple.webm"; // 设置下载文件名
+        downloadLink.style.display = "none"; // 隐藏链接
+
+        document.body.appendChild(downloadLink);
+        downloadLink.click(); // 自动触发下载
+        document.body.removeChild(downloadLink); // 下载后移除链接
+    } else {
+        console.error("No recorded chunks available");
+    }
+}
+
+// 切换录制状态
+function toggleRecording(button) {
+    if (isRecording) {
+        stopRecording(); 
+       
+    } else {
+        startRecording(); 
+        
+    }
+}
+
+// 清除页面内容
+function clearPage() {
+    document.body.innerHTML = "";
+}
+
+
+
+        //====
+        const maxDrops = 100;
+        const shadersSource = {
+            simple: {
+                vertex: {
+                    type: "VERTEX_SHADER",
+                    source: `
+				attribute vec2 position;
+				attribute vec2 texCoord;
+				uniform vec2 resolution;
+				varying vec2 texCoordV;
+				void main() {
+					gl_Position = vec4(((position / resolution) * 2.0 - 1.0) * vec2(1, -1), 0, 1);
+					texCoordV = texCoord;
+				}`
+                },
+                fragment: {
+                    type: "FRAGMENT_SHADER",
+                    source: `
+				precision mediump float;
+				uniform sampler2D texture0;
+				uniform float amount;
+				uniform float time;
+				uniform vec3 drops[${maxDrops}]; // x,y are pos z is age
+				uniform float aspect;
+				varying vec2 texCoordV;
+
+				vec2 offset;
+				float dist;
+				float wave;
+				vec2 surf;
+				vec2 dir;
+				vec2 txC;
+				float w;
+				float cau;
+
+				void main() {
+					txC = texCoordV * vec2(1.0, aspect);
+					cau = distance(vec2(-1.0, -1.0), txC) * 20.0 + time;
+					surf = vec2(sin(cau), cos(cau)) * 0.01;
+					cau = distance(vec2(1.0, 1.0), txC) * 30.0 + time;
+					surf += vec2(sin(cau), cos(cau)) * 0.02;
+					for(int i = 0; i < ${maxDrops}; i+= 1){
+						if(drops[i].z > -90.0){
+							dir = drops[i].xy - txC;
+							dist = length(dir);
+							dir = normalize(dir);
+                            
+							w = cos((4.0 / (1.0 + pow(2.0, dist * 200.0 - drops[i].z))) * ${(Math.PI * 2).toFixed(6)}) * -0.5 + 0.5;
+
+							wave = w * pow(8.0, -dist * 8.0);
+							surf += dir * wave;
+						}
+					}
+					offset = texCoordV + surf * amount;
+					vec3 tx = vec3(texCoordV, 0.0);
+					vec3 norm = normalize(vec3(surf, 1.0));
+					vec3 toLight = normalize(vec3(0.0, -0.0, 1.0) - tx);
+					vec3 toCamera = normalize(vec3(0.0, 0.0, 1.0) - tx);
+					vec3 lRef = normalize(2.0 * dot(norm, toLight) * norm - toLight);
+					float spec = dot(lRef, toCamera) * 2.0;
+					spec = clamp(spec, 0.0, 1.3) - 0.6;
+					spec = pow(spec, 8.0) * 4.0;           
+					vec4 col = texture2D(texture0, offset);
+					col.xyz = col.xyz + spec;
+					gl_FragColor = col;
+				}`
+                }
+            }
+        }
+
+
+
+
+
+        const U = undefined;
+        const doFor = (count, callback) => { var i = 0; while (i < count && callback(i++) !== true); }; // the ; after while loop is important don't remove
+        const eachOf = (array, callback) => { var i = 0; const len = array.length; while (i < len && callback(array[i], i++, len) !== true); };
+        const randI = (min, max = min + (min = 0)) => (Math.random() * (max - min) + min) | 0;
+        const rand = (min, max = min + (min = 0)) => Math.random() * (max - min) + min;
+        const odds = (val) => Math.random() < val;
+        const clamp = (v, min = 1, max = min + (min = 0)) => v < min ? min : v > max ? max : v;
+        const hsla = (h, s = h.s, l = h.l, a = (a = h.a, h = h.h, a)) => a === U ? `hsl(${h | 0},${s | 0}%,${l | 0}%)` : `hsla(${h | 0},${s | 0}%,${l | 0}%,${a})`;
+        const rgba = (r, g = r.g, b = r.b, a = (a = r.a, r = r.r, a)) => a === U ? `rgb(${r | 0},${g | 0},${b | 0})` : `rgba(${r | 0},${g | 0},${b | 0},${a})`;
+        const str2Hex = (str, i, l = 2) => parseInt(str.substr(i, l), 16);
+        const RGBA = { r: 0, g: 0, b: 0, a: U };
+        const HSLA = { h: 0, s: 0, l: 0, a: U };
+        const hex2rgb = (hex, rgb = {}) => {
+            if (hex.length >= 7) {
+                rgb.r = str2Hex(hex, 1);
+                rgb.g = str2Hex(hex, 3);
+                rgb.b = str2Hex(hex, 5);
+                if (hex.length === 7) { return rgb }
+                rgb.a = str2Hex(hex, 7) / 255;
+                return rgb;
+            }
+            rgb.r = str2Hex(hex, 1, 1);
+            rgb.g = str2Hex(hex, 2, 1);
+            rgb.b = str2Hex(hex, 3, 1);
+            if (hex.length === 4) { return rgb };
+            rgb.a = str2Hex(hex, 4, 1) / 15;
+            return rgb;
+        }
+        function createGradient(ctx, type, x, y, xx, yy, colours) {
+            var i, g, c;
+            const len = colours.length;
+            if (type[0].toLowerCase() === "l") { g = ctx.createLinearGradient(x, y, xx, yy) }
+            else { g = ctx.createRadialGradient(x, y, xx, x, y, yy) }
+            eachOf(colours, (col, i, len) => { if (col) { g.addColorStop(Math.min(1, i / (len - 1)), col) } });
+            return g;
+        }
+        function createCanvas() {
+            var c, cs;
+            cs = (c = document.createElement("canvas")).style;
+            cs.position = "absolute";
+            cs.top = cs.left = "0px";
+            c.ctx = c.getContext("2d");
+            document.body.appendChild(c);
+            return c;
+        }
+        function resizeCanvas() {
+            ch = (h = canvas.height = innerHeight) / 2;
+            cw = (w = canvas.width = innerWidth) / 2;
+        }
+        function createMouse() {
+            function preventDefault(e) { e.preventDefault() }
+            const mouse = { x: 0, y: 0, buttonRaw: 0 };
+            const bm = [1, 2, 4, 6, 5, 3]; // bit masks for mouse buttons
+            const mouseEvents = "mousemove,mousedown,mouseup".split(",");
+            const m = mouse;
+            function mouseMove(e) {
+                m.bounds = m.element.getBoundingClientRect();
+                m.x = e.pageX - m.bounds.left - scrollX;
+                m.y = e.pageY - m.bounds.top - scrollX;
+                if (e.type === "mousedown") { m.buttonRaw |= bm[e.which - 1] }
+                else if (e.type === "mouseup") { m.buttonRaw &= bm[e.which + 2] }
+                e.preventDefault();
+            }
+            m.start = function (element, blockContextMenu) {
+                m.element = element;
+                mouseEvents.forEach(n => document.addEventListener(n, mouseMove));
+                if (blockContextMenu === true) { document.addEventListener("contextmenu", preventDefault, false) }
+                return m
+            }
+            return m;
+        }
+        function update(timer) { // Main update loop
+            globalTime = timer + 120000;
+            if (w !== innerWidth || h !== innerHeight) { resizeCanvas() }
+            display(); // call demo code
+            requestAnimationFrame(update);
+        }
+        /* From groover JS_GL beta */
+        function createProgram(gl, pname) {
+            const getLocs = (type, source) => {
+                var lines = source.split(type);
+                lines.shift();
+                lines.forEach(str => locs[type + "s"].push(str.split(";")[0].split(" ").pop().split("[")[0]));
+            }
+            const shaders = [];
+            const locs = { uniforms: [], attributes: [] };
+            [shadersSource[pname].vertex, shadersSource[pname].fragment].forEach(script => {
+                var shader = gl.createShader(gl[script.type]);
+                gl.shaderSource(shader, script.source);
+                gl.compileShader(shader);
+                shaders.push(shader);
+                getLocs("uniform", script.source);
+                getLocs("attribute", script.source);
+            });
+            var program = gl.createProgram();
+            shaders.forEach((shader) => gl.attachShader(program, shader));
+            gl.linkProgram(program);
+            program.locations = {};
+            locs.uniforms.forEach(uname => program.locations[uname] = gl.getUniformLocation(program, uname));
+            locs.attributes.forEach(uname => program.locations[uname] = gl.getAttribLocation(program, uname));
+            if (gl.programs === undefined) { gl.programs = {} } // please don use gl.programs = gl.programs || {}
+            gl.programs[pname] = program;
+            return program;
+        }
+        function createTexture(gl, image, settings) {
+            settings = Object.assign({ wrap: "CLAMP_TO_EDGE", filter: "LINEAR", textureNum: 1 }, settings);
+            const texture = gl.createTexture();
+            const tn = settings.textureNum;
+            if (tn) {
+                gl.activeTexture(gl.TEXTURE0 + tn);
+                if (gl.currentProgram.locations["texture" + tn]) {
+                    gl.uniform1i(gl.currentProgram.locations["texture" + tn], tn);
+                }
+            }
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, settings.wrap ? gl[settings.wrap] : gl[settings.wrapS]);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, settings.wrap ? gl[settings.wrap] : gl[settings.wrapT]);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, settings.filter ? gl[settings.filter] : gl[settings.filterMin]);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, settings.filter ? gl[settings.filter] : gl[settings.filterMag]);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            return texture;
+        }
+        function setVertexBuffer(gl, settings) {
+            settings = Object.assign({ type: "FLOAT", size: 2 }, settings);
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, settings.data, gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(gl.currentProgram.locations[settings.name]);
+            gl.vertexAttribPointer(gl.currentProgram.locations[settings.name], settings.size, gl[settings.type], false, 0, 0);
+        }
+        /* end groover JS_GL beta */
+
+        //========================================================================================================
+        // Demo code starts here
+        // globals w = width, h = height, t = top,  l = left, cw = center width, ch = center height, ctx = context
+        var w, h, t, l, cw, ch, ctx, globalTime = 0;
+        var webGL;
+
+        const aspect = 250 / 1500;
+
+        var drops = new Float32Array(3 * maxDrops);
+        doFor(maxDrops, i => {
+            i *= 3;
+            drops[i++] = Math.random();
+            drops[i++] = Math.random();
+            drops[i] = -100;
+        });
+        var currentDrop = 0;
+        drops[0] = 0.5;
+        drops[1] = 0.1;
+        drops[2] = -2;
+
+        var pool = document.createElement("canvas");
+        const c = pool.ctx = pool.getContext("2d");
+
+        const iw = pool.width = 1024;
+        const ih = pool.height = 512;
+
+        const img = new Image();
+        img.src = './0.PNG';  // 图片路径，根据实际情况修改
+        img.onload = function () {
+            // 当图片加载完成后绘制到临时画布上
+            c.drawImage(img, 0, 0, iw, ih);
+
+            startWebGL([{ image: pool, wrap: "MIRRORED_REPEAT" }]);
+            requestAnimationFrame(update);
+        };
+       
+        function triggerFileUpload() {
+            document.getElementById('fileInput').click(); // 模拟点击文件上传框
+        }
+
+     // 上传并设置背景图
+function uploadBackground(event) {
+    const file = event.target.files[0]; // 获取用户选择的文件
+    if (file) {
+        const reader = new FileReader(); // 创建 FileReader 对象
+        reader.onload = function (e) {
+            // 将读取的文件设置为 img.src 的背景图
+            img.src = e.target.result; // 将用户选择的图片设置为 img.src
+            img.onload = function () {
+                // 当图片加载完成后绘制到临时画布上
+                c.drawImage(img, 0, 0, iw, ih);
+
+                // 重新启动 WebGL 渲染
+                startWebGL([{ image: pool, wrap: "MIRRORED_REPEAT" }]);
+                requestAnimationFrame(update);
+            };
+        };
+        reader.readAsDataURL(file); // 读取文件内容为 DataURL
+    }
+}
+          
+
+
+        const canvas = createCanvas();
+        ctx = canvas.ctx;
+
+        resizeCanvas();
+
+        const mouse = createMouse().start(canvas, true);
+        startWebGL([{ image: pool, wrap: "MIRRORED_REPEAT" }]);
+        requestAnimationFrame(update);
+
+
+        function display() {
+            ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
+            ctx.globalAlpha = 1; // reset alpha
+            ctx.clearRect(0, 0, w, h);
+            if (webGL !== undefined) { webGLRender() }
+        }
+
+        function startWebGL(images, width, height) {
+            webGL = document.createElement("canvas");
+            const w = webGL.width = width ? width : images[0].image.width;
+            const h = webGL.height = height ? height : images[0].image.height;
+            webGL.gl = webGL.getContext("webgl");
+            const gl = webGL.gl;
+            const program = createProgram(gl, "simple");
+            gl.useProgram(program);
+            gl.currentProgram = program;
+            setVertexBuffer(gl, { name: "texCoord", data: new Float32Array([0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0]) });
+            setVertexBuffer(gl, { name: "position", data: new Float32Array([0, 0, w, 0, 0, h, 0, h, w, 0, w, h]) });
+            eachOf(images, (imageDesc, i) => createTexture(gl, imageDesc.image, Object.assign({ textureNum: i }, imageDesc)));
+            gl.uniform2f(program.locations.resolution, w, h);
+        }
+
+        function webGLRender() {
+            var gl = webGL.gl;
+            if (mouse.buttonRaw !== 0) {
+                mouse.buttonRaw = 0;
+                var x = mouse.x / canvas.width;
+                var y = mouse.y / canvas.height;
+                var ind = (currentDrop++ % maxDrops) * 3;
+                drops[ind] = x;
+                drops[ind + 1] = y * (h / w * 2);
+                drops[ind + 2] = -2;
+
+                const randomNote = Math.floor(Math.random() * (70 - 55 + 1)) + 55;
+                console.log("Playing note: " + randomNote); 
+        playSound(randomNote);  // 播放音符
+
+
+
+            }
+
+
+            // animate drops
+            for (var i = 0; i < maxDrops; i++) {
+                if (drops[i * 3 + 2] > -90) {
+                    drops[i * 3 + 2] += 0.1;
+                    if (drops[i * 3 + 2] > 50) {
+                        drops[i * 3 + 2] = -100;
+                    }
+                }
+            }
+            const loc = gl.currentProgram.locations;
+            gl.uniform1f(loc.aspect, h / w * 2);
+            gl.uniform1f(loc.amount, 0.1);
+            gl.uniform1f(loc.time, globalTime / 1000);
+            gl.uniform3fv(loc.drops, drops);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            ctx.drawImage(webGL, 0, 0, canvas.width, canvas.height);
+        }
+
+
+
+
+        //=====
+        // Web MIDI API setup
+        let midiAccess = null;
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let sounds = {};
+        let audioBuffer = null;
+
+
+
+
+        fetch('./1.mp3')
+            .then(response => response.arrayBuffer())
+            .then(data => audioContext.decodeAudioData(data))
+            .then(buffer => {
+                audioBuffer = buffer;
+                console.log('mp3 file loaded');
+            })
+            .catch(err => console.error('Error loading audio:', err));
+
+
+        navigator.requestMIDIAccess().then((access) => {
+            midiAccess = access;
+            console.log('MIDI Access Granted');
+            document.getElementById('midiStatus').style.display = 'block';
+            document.getElementById('midiStatus').innerText = 'MIDI Connected';
+
+            const inputs = midiAccess.inputs.values();
+            let deviceFound = false;  // 标记是否找到了 MIDI 输入设备
+
+// 检查是否有设备连接
+for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
+    deviceFound = true;  // 找到设备，更新标记
+                document.getElementById('midiInput').style.display = 'block';
+                document.getElementById('midiInput').innerText = input.value.name;
+
+                input.value.onmidimessage = handleMIDIMessage;
+                console.log('Connected MIDI input: ', input.value.name);
+            }
+            if (!deviceFound) {
+        document.getElementById('midiInput').style.display = 'block';
+        document.getElementById('midiInput').innerText = 'Device Disconnected';
+    }
+        }, (error) => {
+            // 失败时，显示错误信息
+            document.getElementById('midiStatus').style.display = 'block';
+            document.getElementById('midiStatus').innerText = 'MIDI Connection Failed';
+            console.error('MIDI Access Error:', error);
+        });
+
+
+
+
+        // 处理 MIDI 消息
+        function handleMIDIMessage(event) {
+            let data = event.data;
+            let status = data[0];
+            let note = data[1];
+            let velocity = data[2];
+            console.log('MIDI Message:', status, note, velocity);
+
+            if (note === undefined || note < 0 || note > 127) {
+                console.error('Invalid MIDI note received:', note); // Debug message if note is invalid
+                return;
+            }
+
+            if (status === 144) {  // Note On message
+                console.log('Note On:', note, 'Velocity:', velocity);
+                if (velocity > 0) {
+                    playSound(note); // 播放声音
+                    createDropForMIDI(note);
+                } else {
+                    stopSound(note); // 停止声音
+                }
+            }
+            else if (status === 128 || (status === 144 && velocity === 0)) {  // Note Off message or velocity 0 for Note On
+                console.log('Note Off:', note);  // 打印音符
+                stopSound(note);  // 停止声音
+            }
+        }
+
+
+        function createDropForMIDI(note) {
+            var x = (note % 12) / 12; // 使用音符值来设置 X 坐标 (0-1)
+            var y = Math.random() * 1 + 0.25; // 随机设置 Y 坐标 (0.25 - 0.75)
+
+            // 将涟漪数据插入到 drops 数组
+            var ind = (currentDrop++ % maxDrops) * 3;
+            drops[ind] = x;
+            drops[ind + 1] = y;
+            drops[ind + 2] = -2; // 使涟漪下沉
+
+            // 更新 WebGL 渲染
+            webGLRender();
+        }
+
+        const midiNoteToName = {
+            0: "C1", 1: "C#1", 2: "D1", 3: "D#1", 4: "E1", 5: "F1", 6: "F#1", 7: "G1", 8: "G#1", 9: "A1", 10: "A#1", 11: "B1",
+            12: "C0", 13: "C#0", 14: "D0", 15: "D#0", 16: "E0", 17: "F0", 18: "F#0", 19: "G0", 20: "G#0", 21: "A0", 22: "A#0", 23: "B0",
+            24: "C1", 25: "C#1", 26: "D1", 27: "D#1", 28: "E1", 29: "F1", 30: "F#1", 31: "G1", 32: "G#1", 33: "A1", 34: "A#1", 35: "B1",
+            36: "C2", 37: "C#2", 38: "D2", 39: "D#2", 40: "E2", 41: "F2", 42: "F#2", 43: "G2", 44: "G#2", 45: "A2", 46: "A#2", 47: "B2",
+            48: "C3", 49: "C#3", 50: "D3", 51: "D#3", 52: "E3", 53: "F3", 54: "F#3", 55: "G3", 56: "G#3", 57: "A3", 58: "A#3", 59: "B3",
+            60: 'C4', 61: "C#4", 62: "D4", 63: "D#4", 64: "E4", 65: "F4", 66: "F#4", 67: "G4", 68: "G#4", 69: "A4", 70: "A#4", 71: "B4",
+            72: "C5", 73: "C#5", 74: "D5", 75: "D#5", 76: "E5", 77: "F5", 78: "F#5", 79: "G5", 80: "G#5", 81: "A5", 82: "A#5", 83: "B5",
+            84: "C6", 85: "C#6", 86: "D6", 87: "D#6", 88: "E6", 89: "F6", 90: "F#6", 91: "G6", 92: "G#6", 93: "A6", 94: "A#6", 95: "B6",
+            96: "C7", 97: "C#7", 98: "D7", 99: "D#7", 100: "E7", 101: "F7", 102: "F#7", 103: "G7", 104: "G#7", 105: "A7", 106: "A#7", 107: "B7",
+            108: "C8", 109: "C#8", 110: "D8", 111: "D#8", 112: "E8", 113: "F8", 114: "F#8", 115: "G8", 116: "G#8", 117: "A8", 118: "A#8", 119: "B8",
+            120: "C9", 121: "C#9", 122: "D9", 123: "D#9", 124: "E9", 125: "F9", 126: "F#9", 127: "G9"
+        };
+
+        const noteFrequencies = {
+    'C0': 16.35, 'C#0': 17.32, 'D0': 18.35, 'D#0': 19.45, 'E0': 20.60, 'F0': 21.83, 'F#0': 23.12, 'G0': 24.50,
+    'G#0': 25.96, 'A0': 27.50, 'A#0': 29.14, 'B0': 30.87, 'C1': 32.70, 'C#1': 34.65, 'D1': 36.71, 'D#1': 38.89,
+    'E1': 41.20, 'F1': 43.65, 'F#1': 46.25, 'G1': 49.00, 'G#1': 51.91, 'A1': 55.00, 'A#1': 58.27, 'B1': 61.74,
+    'C2': 65.41, 'C#2': 69.30, 'D2': 73.42, 'D#2': 77.78, 'E2': 82.41, 'F2': 87.31, 'F#2': 92.50, 'G2': 98.00,
+    'G#2': 103.83, 'A2': 110.00, 'A#2': 116.54, 'B2': 123.47, 'C3': 130.81, 'C#3': 138.59, 'D3': 146.83, 'D#3': 155.56,
+    'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'G3': 196.00, 'G#3': 207.65, 'A3': 220.00, 'A#3': 233.08, 'B3': 246.94,
+    'C4': 261.63, 'C#4': 277.18, 'D4': 293.66, 'D#4': 311.13, 'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'G4': 392.00,
+    'G#4': 415.30, 'A4': 440.00, 'A#4': 466.16, 'B4': 493.88, 'C5': 523.25, 'C#5': 554.37, 'D5': 587.33, 'D#5': 622.25,
+    'E5': 659.26, 'F5': 698.46, 'F#5': 739.99, 'G5': 784.00, 'G#5': 830.61, 'A5': 880.00, 'A#5': 932.33, 'B5': 987.77,
+    'C6': 1046.50, 'C#6': 1108.73, 'D6': 1174.66, 'D#6': 1244.51, 'E6': 1318.51, 'F6': 1396.91, 'F#6': 1479.98, 'G6': 1568.00,
+    'G#6': 1661.22, 'A6': 1760.00, 'A#6': 1864.66, 'B6': 1975.53, 'C7': 2093.00, 'C#7': 2217.46, 'D7': 2349.32, 'D#7': 2489.02,
+    'E7': 2637.02, 'F7': 2793.83, 'F#7': 2959.96, 'G7': 3136.00, 'G#7': 3322.44, 'A7': 3520.00, 'A#7': 3729.31, 'B7': 3951.07,
+    'C8': 4186.01, 'C#8': 4434.92, 'D8': 4698.63, 'D#8': 4978.03, 'E8': 5274.04, 'F8': 5587.65, 'F#8': 5919.91, 'G8': 6272.00,
+    'G#8': 6644.89, 'A8': 7040.00, 'A#8': 7458.62, 'B8': 7902.13, 'C9': 8372.02, 'C#9': 8869.84, 'D9': 9397.27, 'D#9': 9956.06,
+    'E9': 10548.08, 'F9': 11175.30, 'F#9': 11839.82, 'G9': 12544.00
+};
+
+
+        function noteToFrequency(note) {
+            if (note === undefined || note < 0 || note > 127) {
+                console.error('Invalid MIDI note received:', note);  // Debugging invalid notes
+                return NaN;  // Return NaN to signal an invalid frequency
+            }
+
+            const name = midiNoteToName[note];
+
+            if (!name) {
+                console.error('Unknown note name for MIDI note:', note);
+                return NaN;  // If name is not found, return NaN
+            }
+
+            const frequency = noteFrequencies[name];
+
+            if (!frequency) {
+                console.error('Frequency not found for note:', name);
+                return NaN;  // If frequency is not found, return NaN
+            }
+
+            return frequency;
+        }
+
+
+        // 播放音符的声音
+        function playSound(note) {
+            // 如果该音符已经在播放，避免重复播放
+            if (sounds[note]) {
+                return;
+            }
+
+
+            // 获取音符的频率
+            const frequency = noteToFrequency(note);
+
+            if (!isFinite(frequency) || frequency <= 0) {
+                console.error('Invalid frequency for note:', note, 'Frequency:', frequency);
+                return;  // Don't continue if the frequency is invalid
+            }
+
+
+
+            if (audioBuffer) {
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+
+                // 计算需要的播放速率
+                const playbackRate = frequency / 440; // A4 (440 Hz) 为基准音高
+
+                if (!isFinite(playbackRate)) {
+                    console.error('Invalid playback rate for note:', note, 'Playback Rate:', playbackRate);
+                    return;
+                }
+
+                source.playbackRate.setValueAtTime(playbackRate, audioContext.currentTime); // 设置播放速率
+                source.connect(audioContext.destination);
+
+
+    
+                source.start();
+                sounds[note] = { source };
+
+                source.onended = () => {
+        delete sounds[note];  
+    };
+
+
+            }
+        }
+
+
+        function stopSound(note) {
+            if (sounds[note]) {
+                const { source } = sounds[note];  // Get the audio source
+
+                // Stop the source only if it exists
+                if (source) {
+                    delete sounds[note];
+
+                    setTimeout(() => {
+                        source.stop();
+                    }, 5000);
+                } else {
+                    console.error("No valid source found for note:", note);
+                }
+            } else {
+                console.error("Sound not found for note:", note);  // If no sound is playing, log the error
+            }
+        }
+
+
+
+    </script>
+</body>
+
+</html>
