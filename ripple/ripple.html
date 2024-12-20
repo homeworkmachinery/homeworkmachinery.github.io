@@ -14,6 +14,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            user-select: none; /* 禁止选中文本 */
+    -webkit-user-select: none; /* 禁止在 Safari 和 Chrome 上选中文本 */
+    -ms-user-select: none; /* 禁止在 IE 上选中文本 */
+    -moz-user-select: none; /* 禁止在 Firefox 上选中文本 */
+    touch-action: manipulation; /* 防止双击或缩放 */
 
         }
 
@@ -126,7 +131,7 @@
         </div>
     </div>
 
-    <canvas id="waveCanvas"></canvas>
+    <!-- <canvas id="waveCanvas"></canvas> -->
     <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="uploadBackground(event)" />
     <script>
         
@@ -480,7 +485,7 @@ function clearPage() {
         const ih = pool.height = 512;
 
         const img = new Image();
-        img.src = './0.PNG';  // 图片路径，根据实际情况修改
+        img.src = './0.png';  // 图片路径，根据实际情况修改
         img.onload = function () {
             // 当图片加载完成后绘制到临时画布上
             c.drawImage(img, 0, 0, iw, ih);
@@ -519,6 +524,7 @@ function uploadBackground(event) {
         const canvas = createCanvas();
         ctx = canvas.ctx;
 
+        
         resizeCanvas();
 
         const mouse = createMouse().start(canvas, true);
