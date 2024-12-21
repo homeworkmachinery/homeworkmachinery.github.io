@@ -137,7 +137,9 @@ body {
      transition: transform 0.3s ease;
  }
 
- 
+ .homework li:last-child {
+    margin-right: 0;
+}
 
  .overlay {
      position: absolute;
