@@ -305,5 +305,66 @@ function playSound() {
 `,
     link: "LOVE GAME",
     href: "./love-game"
+},
+{id: 5,
+    imageAa: "",
+    imageAb: "",
+    imageB: "./ripple/001.png",
+    imageCa: "./ripple/004.png",
+    imageCb: "./ripple/003.png",
+    iframeCa:"//player.bilibili.com/player.html?isOutside=true&aid=113690250581264&bvid=BV19ukbYmE4W&cid=27456309026&p=1",
+    videoAa: `./ripple/1.mp4`,
+    videoAb: "",
+    videoC: "",
+    title: "涟漪的声音",
+    textA: `<pre>
+     O 
+
+                                      (O)
+
+                    (())  
+
+        (((O)))          
+
+                             (((())))
+
+()
+
+       o                               (((o)))
+
+
+O                 ()
+
+(((O)))
+
+
+                                      (O)
+                        o
+              O       
+              </pre>
+`,
+    textB: `[操作指南]
+
+<div class='textB-desc'>
+<img src='./ripple/002.png' width='55px'>
+开始/停止录制(下载)
+
+
+进入家庭作业机器
+
+
+自定义背景图片
+</div>
+`,
+    textC: `[README]
+    ((利用WEB MIDI API控制声效))
+    MIDI（ Musical Instrument Digital Interface ）是一个广泛使用的音乐标准，它定义了 128 个音符 ，从 0 到 127 。 每个音符对应一个特定的音符名称（如 C0 、 C#0 、 D0 等）和一个 频率 （单位为赫兹，Hz）。频率的定义遵循 十二平均律 （ Equal Temperament ），即每个音符之间的间隔是相等的。 最常用的音符范围是 C3 到 C6， A4 （标准音）的 MIDI 编号是 69 ，其频率为 440Hz 。 Web MIDI API 会将 MIDI 编号 （如 60）转换为相应的音符名称（如 "C4"）并将其传递给相关的音频合成器或音频处理系统。
+    比如，你千辛万苦求得ripple.mp3。 通过 Web Audio API ，你可以加载该文件并创建一个 音频源 来播放它 。
+    然后，通过 MIDI 键盘发送的 'Note On' 和 'Note Off' 消息，控制音符的播放和停止。 当按下键盘上的某个音符时， 'Note On' 消息携带音符编号和力度（velocity）信息，触发该音符的播放，并根据力度值控制音量和音效。当键盘释放某个音符时， 'Note Off' 消息将终止音符的播放，确保音符的精确结束。
+    这样一来，你可以实现任何声音的音高控制，并通过你的MIDI设备对此进行操作，打造你属于你自己的网页合成器。不妨一试！
+
+`,
+    link: "(((RIPPLE)))",
+    href: "./ripple/ripple.html"
 }
 ];

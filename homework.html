@@ -460,7 +460,8 @@
 
 
         var homeworkList = [
-        { id: 4, date: '2024.12.12', object: 'game.', subject: 'love.game' },  
+        { id: 5, date: '2024.12.21', object: 'sound.', subject: 'ripple.' }, 
+        { id: 4, date: '2024.12.11', object: 'game.', subject: 'love.game' },  
         { id: 3, date: '2024.10.20', object: 'projection.', subject: 'shadow.box' },  
         { id: 2, date: '2024.05.05', object: 'sound.', subject: 'run.out.of.time' },
             { id: 1, date: '2024.05.01', object: 'design.', subject: 'endless.tears' }
@@ -618,6 +619,9 @@ renderTable(homeworkList);
                 if (content.imageCa) {
             mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
         }
+        if (content.imageCb) {
+                    mediaContentC += `<img class="modal-image" src="${content.imageCb}" >`;
+                }
         if (content.iframeCa) {
                     mediaContentC += `<iframe class="modal-iframe" src="${content.iframeCa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
                 }
