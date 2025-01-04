@@ -249,7 +249,7 @@
                     }
 
                     // 切换摄像头模式
-                    currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+                    currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
 
                     // 获取新的媒体流
                     const newStream = await navigator.mediaDevices.getUserMedia({
