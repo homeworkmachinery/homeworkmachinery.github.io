@@ -217,7 +217,7 @@
     <!-- <div id="output"></div> -->
     <div id="textContainer"></div>
     <video id="videoElement" autoplay muted playsinline></video>
-    <button id="startButton">ENTER</button>
+    <!-- <button id="startButton">ENTER</button> -->
 
 
 
@@ -232,37 +232,37 @@
 
         <script>
 
-            async function startCamera() {
-                try {
-                    // 获取摄像头流
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: "environment" }, // 使用后置摄像头
-                        audio: true // 如果不需要音频，可以设置为 false
-                    });
+        //     async function startCamera() {
+        //         try {
+        //             // 获取摄像头流
+        //             const stream = await navigator.mediaDevices.getUserMedia({
+        //                 video: { facingMode: "environment" }, // 使用后置摄像头
+        //                 audio: true // 如果不需要音频，可以设置为 false
+        //             });
 
-                    // 将视频流设置为 videoElement 的源
-                    const videoElement = document.getElementById("videoElement");
-                    videoElement.srcObject = stream;
+        //             // 将视频流设置为 videoElement 的源
+        //             const videoElement = document.getElementById("videoElement");
+        //             videoElement.srcObject = stream;
 
-                    // 自动播放视频
-                    await videoElement.play();
+        //             // 自动播放视频
+        //             await videoElement.play();
 
-                    const startButton = document.getElementById("startButton");
-        startButton.style.display = 'none';
+        //             const startButton = document.getElementById("startButton");
+        // startButton.style.display = 'none';
 
 
-                    console.log("摄像头已启动");
-                } catch (error) {
-                    console.error("启动摄像头失败:", error);
-                    alert("无法访问摄像头，请检查设备权限设置！");
-                }
-            }
+        //             console.log("摄像头已启动");
+        //         } catch (error) {
+        //             console.error("启动摄像头失败:", error);
+        //             alert("无法访问摄像头，请检查设备权限设置！");
+        //         }
+        //     }
 
-            // 在页面加载后立即启动摄像头
-            window.onload = startCamera;
+        //     // 在页面加载后立即启动摄像头
+        //     window.onload = startCamera;
 
-            const startButton = document.getElementById("startButton");
-            startButton.addEventListener('click', startCamera);
+        //     const startButton = document.getElementById("startButton");
+        //     startButton.addEventListener('click', startCamera);
 
 
             function handleCircleClick() {
