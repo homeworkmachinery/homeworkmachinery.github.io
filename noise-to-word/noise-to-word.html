@@ -241,46 +241,51 @@
 
             let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
 
-            async function toggleCamera() {
-                try {
-                    // 停止当前的媒体流（如果有）
-                    if (window.currentStream) {
-                        window.currentStream.getTracks().forEach((track) => track.stop());
-                    }
+            async function startCamera(facingMode = "environment") {
+            try {
+                // 停止当前的媒体流（如果有）
+                if (window.currentStream) {
+                    window.currentStream.getTracks().forEach((track) => track.stop());
+                }
 
-                    // 切换摄像头模式
-                    currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+                // 获取新的媒体流
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: facingMode }, // 设置摄像头模式
+                    audio: true, // 如果需要音频
+                });
 
-                    // 获取新的媒体流
-                    const newStream = await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: currentFacingMode, // 设置摄像头模式
-                        },
-                        audio: true, // 保持音频
-                    });
+                // 设置新的视频流
+                const videoElement = document.getElementById("videoElement");
+                videoElement.srcObject = stream;
 
-                    // 设置新的视频流
-                    const videoElement = document.getElementById("videoElement");
-                    videoElement.srcObject = newStream;
+                // 保存当前的媒体流
+                window.currentStream = stream;
 
+                // 如果是前置摄像头，启用镜像模式
+                if (facingMode === "user") {
+                    videoElement.style.transform = "scaleX(-1)"; // 镜像自拍模式
+                } else {
+                    videoElement.style.transform = "scaleX(1)"; // 恢复正常模式
+                }
 
-                    // 保存当前的媒体流
-                    window.currentStream = newStream;
-                
-                    if (currentFacingMode === "user") {
-            videoElement.style.transform = "scaleX(-1)"; // 镜像自拍模式
-        } else {
-            videoElement.style.transform = "scaleX(1)"; // 恢复正常模式
+                console.log(`摄像头启动成功，模式：${facingMode === "user" ? "前置" : "后置"}`);
+            } catch (err) {
+                console.error("启动摄像头失败：", err);
+                alert("无法启动摄像头，请检查设备权限设置！");
+            }
         }
 
+        // 切换摄像头模式
+        async function toggleCamera() {
+            currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+            await startCamera(currentFacingMode);
+        }
 
-                    
-                    console.log(`摄像头切换到：${currentFacingMode === "user" ? "前置" : "后置"}`);
-                } catch (err) {
-                    console.error("切换摄像头失败：", err);
-                    alert("无法切换摄像头，请检查设备支持情况！");
-                }
-            }
+        // 页面加载时自动启动后置摄像头
+        window.onload = () => {
+            startCamera("environment"); // 默认启动后置摄像头
+        };
+
 
             // triangle-mini 的点击事件绑定
             document.querySelector(".triangle-mini").addEventListener("click", toggleCamera);
@@ -521,9 +526,7 @@
 
 
 
-            // window.onload = function () {
-            //     startMediaStream();
-            // };
+         
 
 
 
