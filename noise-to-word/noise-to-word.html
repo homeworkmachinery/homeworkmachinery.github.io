@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>噪音转文字</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+            display: flex;
+            -webkit-user-select: none;
+            /* 禁止在 Safari 和 Chrome 上选中文本 */
+            -ms-user-select: none;
+            /* 禁止在 IE 上选中文本 */
+            -moz-user-select: none;
+            /* 禁止在 Firefox 上选中文本 */
+            touch-action: manipulation;
+            /* 防止双击或缩放 */
+            overflow: hidden;
+        }
+
+        #canvasElement {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            overflow: auto;
+            display: flex;
+            flex-wrap: wrap;
+            /* 文字自动换行 */
+            justify-content: flex-start;
+            align-items: flex-start;
+            max-height: 100vh;
+        }
+
+        #output {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            font-size: 20px;
+            border-radius: 5px;
+            max-width: 90%;
+            word-wrap: break-word;
+            z-index: 1;
+        }
+
+        .randomText {
+
+            top: 20px;
+            left: 10px;
+            color: white;
+            font-size: 40px;
+            font-weight: 250;
+            display: block;
+            max-width: 100%;
+            font-family: times;
+
+        }
+
+
+
+        #textContainer {
+            position: fixed;
+            overflow: auto;
+            display: flex;
+            flex-wrap: wrap;
+            /* 文字自动换行 */
+            justify-content: flex-start;
+            align-items: flex-start;
+            max-height: 100vh;
+
+        }
+
+        #videoElement {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .flatland-mini {
+            cursor: pointer;
+            z-index: 10;
+            position: fixed;
+            pointer-events: auto;
+        }
+
+        .square-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            bottom: 130px;
+            right: 25px;
+            background-color: rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+
+        }
+
+
+        .circle-mini {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            bottom: 75px;
+            right: 25px;
+            box-sizing: border-box;
+
+        }
+
+
+        .triangle-mini {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 35px solid rgba(0, 0, 0, 0.5);
+        }
+
+
+        .triangle-mini::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            right: -18px;
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+
+
+        }
+
+
+        @media (max-width: 768px) {
+            .flatland-mini {
+                bottom: 10px;
+                right: 10px;
+            }
+
+            .square-mini {
+                width: 50px;
+                height: 50px;
+                bottom: 145px;
+            }
+
+            .circle-mini {
+                width: 50px;
+                height: 50px;
+                bottom: 80px;
+
+            }
+
+            .triangle-mini {
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-top: 42px solid rgba(0, 0, 0, 0.5);
+
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvasElement"></canvas>
+    <!-- <div id="output"></div> -->
+    <div id="textContainer"></div>
+    <video id="videoElement" autoplay muted></video>
+
+
+
+
+    <div class="flatland-mini">
+        <div class="square-mini" onclick="toggleRecording(this) " ontouchstart="toggleRecording(this)"> </div>
+        <div class="circle-mini" onclick="handleCircleClick()" ontouchstart="handleCircleTouch()"> </div>
+
+
+
+        <div class="triangle-mini" >
+        </div>
+
+        <script>
+function handleCircleClick() {
+    window.open("../index.html", "_blank");
+}
+
+
+            let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
+        
+            async function toggleCamera() {
+                try {
+                    // 停止当前的媒体流（如果有）
+                    if (window.currentStream) {
+                        window.currentStream.getTracks().forEach((track) => track.stop());
+                    }
+        
+                    // 切换摄像头模式
+                    currentFacingMode = currentFacingMode === "user" ? "environment" : "user";
+        
+                    // 获取新的媒体流
+                    const newStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: currentFacingMode, // 设置摄像头模式
+                        },
+                        audio: true, // 保持音频
+                    });
+        
+                    // 设置新的视频流
+                    const videoElement = document.getElementById("videoElement");
+                    videoElement.srcObject = newStream;
+        
+                    // 保存当前的媒体流
+                    window.currentStream = newStream;
+        
+                    console.log(`摄像头切换到：${currentFacingMode === "user" ? "前置" : "后置"}`);
+                } catch (err) {
+                    console.error("切换摄像头失败：", err);
+                    alert("无法切换摄像头，请检查设备支持情况！");
+                }
+            }
+        
+            // triangle-mini 的点击事件绑定
+            document.querySelector(".triangle-mini").addEventListener("click", toggleCamera);
+        </script>
+        
+
+        <script>
+
+
+
+
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const analyser = audioContext.createAnalyser();
+            const outputDiv = document.getElementById("output");
+
+
+
+
+            let mediaRecorder;
+            let recordedChunks = [];
+            let isRecording = false;
+
+            let textArray = [];  // 用于保存所有显示的文字
+            let lineHeight = 50;
+
+            // 随机文字数组
+            const randomTexts = [
+
+                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲", "罘", "旳", "迩", "臫", "de", "觜", "→", "↘", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "莮", "婹", "豞", "屍", "沵", "焱", "厷", "狆國", "ㄖ", "匚", "淼", "侞", "㤙", "峎", "鰥", "〇", "卝", "錢", "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂", "杺", "喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮"
+
+            ];
+
+            const textElements = [];
+
+
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ log: true });
+            async function convertWebmToMp4(blob) {
+    try {
+        // 检查 FFmpeg 是否已经加载
+        if (!ffmpeg.isLoaded()) {
+            console.log("正在加载 FFmpeg...");
+            await ffmpeg.load();
+        }
+
+        console.log("开始转换 WebM 到 MP4...");
+        
+        // 将 Blob 转换为 FFmpeg 可处理的文件
+        const webmFile = new File([blob], "recording.webm", { type: "video/webm" });
+        ffmpeg.FS("writeFile", "input.webm", await fetchFile(webmFile));
+
+        // 执行转换命令
+        await ffmpeg.run("-i", "input.webm", "-c:v", "libx264", "-preset", "fast", "-crf", "28", "-c:a", "aac", "output.mp4");
+
+        // 获取输出文件
+        const mp4Data = ffmpeg.FS("readFile", "output.mp4");
+
+        console.log("转换完成！正在生成 Blob...");
+
+        // 转换为 MP4 Blob 并返回
+        return new Blob([mp4Data.buffer], { type: "video/mp4" });
+    } catch (error) {
+        console.error("转换失败：", error);
+        alert("视频转换失败，请检查日志！");
+    }
+}
+
+
+            async function startRecording() {
+                // const canvas = document.createElement("canvas");
+                // const ctx = canvas.getContext("2d");
+                // const videoStream = canvas.captureStream(30); // 30 FPS
+
+                // async function renderToCanvas() {
+                //     const textContainer = document.getElementById("textContainer");
+                //     const canvasContent = await html2canvas(document.body);
+                //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+                //     canvas.width = canvasContent.width;
+                //     canvas.height = canvasContent.height;
+                //     ctx.drawImage(canvasContent, 0, 0);
+
+                //     if (isRecording) {
+                //         requestAnimationFrame(renderToCanvas);
+                //     }
+                // }
+                // renderToCanvas();
+
+
+                // 获取音频流
+                // const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                // const audioTrack = audioStream.getAudioTracks()[0];
+                // videoStream.addTrack(audioTrack);
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = function (event) {
+                    recordedChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async function () {
+                    // const blob = new Blob(recordedChunks, { type: "video/webm" });
+                    // const url = URL.createObjectURL(blob);
+                    // const a = document.createElement("a");
+                    // a.href = url;
+                    // a.download = "recording.webm";
+                    // document.body.appendChild(a);
+                    // a.click();
+                    // document.body.removeChild(a);
+                    // recordedChunks = [];
+                    const webmBlob = new Blob(recordedChunks, { type: "video/webm" });
+
+                    const mp4Blob = await convertWebmToMp4(webmBlob);
+
+                    const mp4Url = URL.createObjectURL(mp4Blob);
+                    const a = document.createElement("a");
+                    a.href = mp4Url;
+                    a.download = "recording.mp4";
+            
+                    // document.body.appendChild(a);
+                    a.click();
+                    // document.body.removeChild(a);
+                    // document.getElementById("output").textContent = "转换完成！";
+                  
+                };
+                recordedChunks = []; 
+                mediaRecorder.start();
+            }
+
+
+
+
+
+
+
+            navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+                .then(stream => {
+                    const videoElement = document.getElementById("videoElement");
+                    const canvasElement = document.getElementById("canvasElement");
+                    const ctx = canvasElement.getContext("2d");
+                    videoElement.srcObject = stream;
+
+                    const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+                    mediaStreamSource.connect(analyser);
+
+                    // 设置 AnalyserNode 属性
+                    analyser.fftSize = 2048;  // 设置频谱大小
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+
+                    mediaRecorder = new MediaRecorder(stream);
+
+                    mediaRecorder.ondataavailable = function (event) {
+                        recordedChunks.push(event.data);
+                    };
+
+
+                    videoElement.onloadedmetadata = function () {
+                        updateCanvasSize();
+                        detectNoise();  // 启动音频检测
+                    };
+
+
+                    // 每次更新音频强度
+                    function detectNoise() {
+                        analyser.getByteFrequencyData(dataArray);
+
+                        // 计算音频强度：获取频谱数据的平均值
+                        let total = 0;
+                        for (let i = 0; i < bufferLength; i++) {
+                            total += dataArray[i];
+                        }
+                        const average = total / bufferLength;
+
+                      
+                        console.log(`音量强度 (平均值): ${average}`);
+
+
+                        const threshold = 80;
+                        if (average > threshold) {
+                            const randomIndex = Math.floor(Math.random() * randomTexts.length);
+                            const randomText = randomTexts[randomIndex];
+
+
+                            const newTextDiv = document.createElement("div");
+                            newTextDiv.className = "randomText";  // 设置类名
+                            newTextDiv.textContent = randomText;
+                            document.getElementById('textContainer').appendChild(newTextDiv);
+                            textElements.push(newTextDiv);
+
+                            textContainer.scrollTop = textContainer.scrollHeight;
+
+
+
+                        }
+
+
+                        // 更新音量显示
+                        // outputDiv.textContent = `音量强度: ${Math.floor(average)}`;
+
+
+                        requestAnimationFrame(detectNoise);
+                    }
+
+                    // 启动音频检测
+                    detectNoise();
+                })
+                .catch(err => {
+                    console.error("获取麦克风权限失败:", err);
+                    outputDiv.textContent = "无法获取麦克风权限";
+                });
+
+
+
+
+
+            function toggleRecording(button) {
+                if (isRecording) {
+                    // 停止录制
+                    mediaRecorder.stop();
+                    button.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // 改变按钮样式
+
+                } else {
+                    // 开始录制
+                    startRecording();
+                    button.style.backgroundColor = "red"; // 改变按钮样式
+
+                }
+                isRecording = !isRecording;
+            }
+
+
+
+            // window.onload = function () {
+            //     startMediaStream();
+            // };
+
+
+
+            function updateCanvasSize() {
+                const videoElement = document.getElementById('videoElement');
+                const canvasElement = document.getElementById('canvasElement');
+                canvasElement.width = videoElement.videoWidth;
+                canvasElement.height = videoElement.videoHeight;
+            }
+
+
+            window.addEventListener("resize", updateCanvasSize);
+            updateCanvasSize();  // 初始化 canvas 大小
+
+
+
+
+
+        </script>
+</body>
+
+</html>
