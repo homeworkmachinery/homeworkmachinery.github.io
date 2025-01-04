@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
     <title>噪音转文字</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js"></script>
@@ -25,6 +26,9 @@
             touch-action: manipulation;
             /* 防止双击或缩放 */
             overflow: hidden;
+            position: relative;
+    display: block; /* 确保子元素布局正常 */
+            
         }
 
         #canvasElement {
@@ -68,7 +72,7 @@
 
         }
 
-
+        
 
         #textContainer {
             position: fixed;
@@ -91,6 +95,26 @@
             object-fit: cover;
             z-index: -1;
         }
+
+        #startButton {
+            position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    background-color: transparent; /* 移除按钮背景 */
+    border: none; /* 移除按钮边框 */
+    text-decoration: underline; /* 添加下划线 */
+    outline: none; /* 移除按钮的默认点击样式 */
+    padding: 0; /* 移除默认按钮内边距 */
+    white-space: nowrap; /* 确保文字不换行 */
+    text-align: center; /* 确保文字居中 */
+        }
+
+
 
         .flatland-mini {
             cursor: pointer;
@@ -185,7 +209,7 @@
     <!-- <div id="output"></div> -->
     <div id="textContainer"></div>
     <video id="videoElement" autoplay muted></video>
-
+    <button id="startButton">点击</button>
 
 
 
@@ -199,6 +223,32 @@
         </div>
 
         <script>
+
+async function startCamera() {
+            try {
+                // 获取摄像头流
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }, // 使用后置摄像头
+                    audio: true 
+                });
+
+                // 将视频流设置为 videoElement 的源
+                videoElement.srcObject = stream;
+
+                // 隐藏启动按钮
+                startButton.style.display = 'none';
+
+                console.log("摄像头已启动");
+            } catch (error) {
+                console.error("启动摄像头失败:", error);
+                alert("无法访问摄像头，请检查设备权限设置！");
+            }
+        }
+
+        // 绑定点击事件到按钮
+        startButton.addEventListener('click', startCamera);
+
+
 function handleCircleClick() {
     window.open("../index.html", "_blank");
 }
@@ -265,7 +315,7 @@ function handleCircleClick() {
             // 随机文字数组
             const randomTexts = [
 
-                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲", "罘", "旳", "迩", "臫", "de", "觜", "→", "↘", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "莮", "婹", "豞", "屍", "沵", "焱", "厷", "狆國", "ㄖ", "匚", "淼", "侞", "㤙", "峎", "鰥", "〇", "卝", "錢", "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂", "杺", "喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮"
+                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲", "罘", "旳", "迩", "臫", "de", "觜", "→\uFE0E", "↘\uFE0E", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "莮", "婹", "豞", "屍", "沵", "焱", "厷", "狆國", "ㄖ", "匚", "淼", "侞", "㤙", "峎", "鰥", "〇", "卝", "錢", "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂", "杺", "喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮","媽"
 
             ];
 
@@ -373,6 +423,8 @@ function handleCircleClick() {
 
             navigator.mediaDevices.getUserMedia({ audio: true, video: true })
                 .then(stream => {
+                     console.log("麦克风已成功连接");
+
                     const videoElement = document.getElementById("videoElement");
                     const canvasElement = document.getElementById("canvasElement");
                     const ctx = canvasElement.getContext("2d");
@@ -414,7 +466,7 @@ function handleCircleClick() {
                         console.log(`音量强度 (平均值): ${average}`);
 
 
-                        const threshold = 80;
+                        const threshold = 80 ;
                         if (average > threshold) {
                             const randomIndex = Math.floor(Math.random() * randomTexts.length);
                             const randomText = randomTexts[randomIndex];
@@ -456,12 +508,18 @@ function handleCircleClick() {
                 if (isRecording) {
                     // 停止录制
                     mediaRecorder.stop();
-                    button.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; // 改变按钮样式
+                    button.style.backgroundColor = "rgba(0, 0, 0, 0.5)"; 
+                    button.style.borderColor = ""; // 移除边框颜色
+        button.style.borderWidth = ""; // 移除边框宽度
+        button.style.borderStyle = ""; 
 
                 } else {
                     // 开始录制
                     startRecording();
-                    button.style.backgroundColor = "red"; // 改变按钮样式
+        //             button.style.borderColor = "white"; // 将边框设置为白色
+        // button.style.borderWidth = "1px"; // 设置边框宽度为3px
+        // button.style.borderStyle = "solid";
+ button.style.backgroundColor = "rgba(255, 255, 255, 0.6)"; 
 
                 }
                 isRecording = !isRecording;
