@@ -217,7 +217,7 @@
     <!-- <div id="output"></div> -->
     <div id="textContainer"></div>
     <video id="videoElement" autoplay muted playsinline></video>
-   
+
 
 
 
@@ -231,9 +231,6 @@
         </div>
 
         <script>
-
-      
-
             function handleCircleClick() {
                 window.open("../index.html", "_blank");
             }
@@ -242,67 +239,63 @@
             let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
 
             async function startCamera(facingMode = "environment") {
-            try {
-                // 停止当前的媒体流（如果有）
-                if (window.currentStream) {
-                    window.currentStream.getTracks().forEach((track) => track.stop());
+                try {
+
+                    // 停止当前的媒体流（如果有）
+                    if (window.currentStream) {
+                        window.currentStream.getTracks().forEach((track) => track.stop());
+                    }
+
+                    // 获取新的媒体流
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: facingMode }, // 设置摄像头模式
+                        audio: true, // 如果需要音频
+                    });
+
+                    // 设置新的视频流
+                    const videoElement = document.getElementById("videoElement");
+                    videoElement.srcObject = stream;
+
+                    // 保存当前的媒体流
+                    window.currentStream = stream;
+
+                    // 如果是前置摄像头，启用镜像模式
+                    if (facingMode === "user") {
+                        videoElement.style.transform = "scaleX(-1)"; // 镜像自拍模式
+                    } else {
+                        videoElement.style.transform = "scaleX(1)"; // 恢复正常模式
+                    }
+
+                    return stream;
+
+                } catch (err) {
+                    console.error("启动摄像头失败：", err);
+                    alert("无法启动摄像头，请检查设备权限设置！");
                 }
-
-                // 获取新的媒体流
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: facingMode }, // 设置摄像头模式
-                    audio: true, // 如果需要音频
-                });
-
-                // 设置新的视频流
-                const videoElement = document.getElementById("videoElement");
-                videoElement.srcObject = stream;
-
-                // 保存当前的媒体流
-                window.currentStream = stream;
-
-                // 如果是前置摄像头，启用镜像模式
-                if (facingMode === "user") {
-                    videoElement.style.transform = "scaleX(-1)"; // 镜像自拍模式
-                } else {
-                    videoElement.style.transform = "scaleX(1)"; // 恢复正常模式
-                }
-
-                console.log(`摄像头启动成功，模式：${facingMode === "user" ? "前置" : "后置"}`);
-            } catch (err) {
-                console.error("启动摄像头失败：", err);
-                alert("无法启动摄像头，请检查设备权限设置！");
             }
-        }
-
-        // 切换摄像头模式
-        async function toggleCamera() {
-            currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
-            await startCamera(currentFacingMode);
-        }
-
-        // 页面加载时自动启动后置摄像头
-        window.onload = () => {
-            startCamera("environment"); // 默认启动后置摄像头
-        };
 
 
-            // triangle-mini 的点击事件绑定
+
+            async function toggleCamera() {
+                currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+                await startCamera(currentFacingMode);
+            }
+
+
+            window.onload = () => {
+                startCamera("environment"); // 默认启动后置摄像头
+            };
+
+
             document.querySelector(".triangle-mini").addEventListener("click", toggleCamera);
         </script>
 
 
+
         <script>
-
-
-
-
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const analyser = audioContext.createAnalyser();
             const outputDiv = document.getElementById("output");
-
-
-
 
             let mediaRecorder;
             let recordedChunks = [];
@@ -321,103 +314,99 @@
             const textElements = [];
 
 
-            const { createFFmpeg, fetchFile } = FFmpeg;
-            const ffmpeg = createFFmpeg({ log: true });
-            async function convertWebmToMp4(blob) {
-                try {
-                    // 检查 FFmpeg 是否已经加载
-                    if (!ffmpeg.isLoaded()) {
-                        console.log("正在加载 FFmpeg...");
-                        await ffmpeg.load();
-                    }
+            // const { createFFmpeg, fetchFile } = FFmpeg;
+            // const ffmpeg = createFFmpeg({ log: true });
+            // async function convertWebmToMp4(blob) {
+            //     try {
+            //         // 检查 FFmpeg 是否已经加载
+            //         if (!ffmpeg.isLoaded()) {
+            //             console.log("正在加载 FFmpeg...");
+            //             await ffmpeg.load();
+            //         }
 
-                    console.log("开始转换 WebM 到 MP4...");
+            //         console.log("开始转换 WebM 到 MP4...");
 
-                    // 将 Blob 转换为 FFmpeg 可处理的文件
-                    const webmFile = new File([blob], "recording.webm", { type: "video/webm" });
-                    ffmpeg.FS("writeFile", "input.webm", await fetchFile(webmFile));
+            //         // 将 Blob 转换为 FFmpeg 可处理的文件
+            //         const webmFile = new File([blob], "recording.webm", { type: "video/webm" });
+            //         ffmpeg.FS("writeFile", "input.webm", await fetchFile(webmFile));
 
-                    // 执行转换命令
-                    await ffmpeg.run("-i", "input.webm", "-c:v", "libx264", "-preset", "fast", "-crf", "28", "-c:a", "aac", "output.mp4");
+            //         // 执行转换命令
+            //         await ffmpeg.run("-i", "input.webm", "-c:v", "libx264", "-preset", "fast", "-crf", "28", "-c:a", "aac", "output.mp4");
 
-                    // 获取输出文件
-                    const mp4Data = ffmpeg.FS("readFile", "output.mp4");
+            //         // 获取输出文件
+            //         const mp4Data = ffmpeg.FS("readFile", "output.mp4");
 
-                    console.log("转换完成！正在生成 Blob...");
+            //         console.log("转换完成！正在生成 Blob...");
 
-                    // 转换为 MP4 Blob 并返回
-                    return new Blob([mp4Data.buffer], { type: "video/mp4" });
-                } catch (error) {
-                    console.error("转换失败：", error);
-                    alert("视频转换失败，请检查日志！");
-                }
-            }
+            //         // 转换为 MP4 Blob 并返回
+            //         return new Blob([mp4Data.buffer], { type: "video/mp4" });
+            //     } catch (error) {
+            //         console.error("转换失败：", error);
+            //         alert("视频转换失败，请检查日志！");
+            //     }
+            // }
 
 
             async function startRecording() {
-                // const canvas = document.createElement("canvas");
-                // const ctx = canvas.getContext("2d");
-                // const videoStream = canvas.captureStream(30); // 30 FPS
+                const videoStream = await startCamera();
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
 
-                // async function renderToCanvas() {
-                //     const textContainer = document.getElementById("textContainer");
-                //     const canvasContent = await html2canvas(document.body);
-                //     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                //     canvas.width = canvasContent.width;
-                //     canvas.height = canvasContent.height;
-                //     ctx.drawImage(canvasContent, 0, 0);
+                // 设置 Canvas 大小为屏幕大小
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
 
-                //     if (isRecording) {
-                //         requestAnimationFrame(renderToCanvas);
-                //     }
-                // }
-                // renderToCanvas();
+                // 从 Canvas 捕获视频流
+                const canvasStream = canvas.captureStream(30); // 30 FPS
 
+                // 合并音频流
+                const audioTrack = videoStream.getAudioTracks()[0];
+                canvasStream.addTrack(audioTrack);
 
-                // 获取音频流
-                // const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                // const audioTrack = audioStream.getAudioTracks()[0];
-                // videoStream.addTrack(audioTrack);
+                // 使用 html2canvas 动态绘制页面内容到 Canvas
+                async function renderToCanvas() {
+                    await html2canvas(document.body, { canvas });
+                    if (isRecording) {
+                        requestAnimationFrame(renderToCanvas);
+                    }
+                }
 
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.ondataavailable = function (event) {
-                    recordedChunks.push(event.data);
-                };
+                renderToCanvas();
 
-                mediaRecorder.onstop = async function () {
-                    // const blob = new Blob(recordedChunks, { type: "video/webm" });
-                    // const url = URL.createObjectURL(blob);
-                    // const a = document.createElement("a");
-                    // a.href = url;
-                    // a.download = "recording.webm";
-                    // document.body.appendChild(a);
-                    // a.click();
-                    // document.body.removeChild(a);
-                    // recordedChunks = [];
-                    const webmBlob = new Blob(recordedChunks, { type: "video/webm" });
-
-                    const mp4Blob = await convertWebmToMp4(webmBlob);
-
-                    const mp4Url = URL.createObjectURL(mp4Blob);
-                    const a = document.createElement("a");
-                    a.href = mp4Url;
-                    a.download = "recording.mp4";
-
-                    // document.body.appendChild(a);
-                    a.click();
-                    // document.body.removeChild(a);
-                    // document.getElementById("output").textContent = "转换完成！";
-
-                };
+                // 初始化 MediaRecorder
+                mediaRecorder = new MediaRecorder(canvasStream);
                 recordedChunks = [];
+
+                // 收集录制片段
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                // 停止录制时生成视频文件
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: "video/webm" });
+                    const url = URL.createObjectURL(blob);
+
+                    // 创建下载链接
+                    const a = document.createElement("a");
+                    a.style.display = "none";
+                    a.href = url;
+                    a.download = "recording.webm";
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // 清理
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    console.log("录制完成，已下载视频");
+                };
+
+                // 开始录制
                 mediaRecorder.start();
+                console.log("开始录制");
             }
-
-
-
-
-
 
 
             navigator.mediaDevices.getUserMedia({ audio: true, video: true })
@@ -465,7 +454,7 @@
                         console.log(`音量强度 (平均值): ${average}`);
 
 
-                        const threshold = 80;
+                        const threshold = 70;
                         if (average > threshold) {
                             const randomIndex = Math.floor(Math.random() * randomTexts.length);
                             const randomText = randomTexts[randomIndex];
@@ -479,14 +468,10 @@
 
                             textContainer.scrollTop = textContainer.scrollHeight;
 
-
-
                         }
-
 
                         // 更新音量显示
                         // outputDiv.textContent = `音量强度: ${Math.floor(average)}`;
-
 
                         requestAnimationFrame(detectNoise);
                     }
@@ -526,7 +511,7 @@
 
 
 
-         
+
 
 
 
