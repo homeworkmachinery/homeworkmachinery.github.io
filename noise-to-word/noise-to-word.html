@@ -7,7 +7,6 @@
 
     <title>噪音转文字</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
     <style>
         body {
@@ -299,7 +298,6 @@
             const outputDiv = document.getElementById("output");
 
             let mediaRecorder;
-
             let isRecording = false;
             let textArray = [];  // 用于保存所有显示的文字
             let lineHeight = 50;
@@ -334,14 +332,31 @@
                 canvasStream.addTrack(audioTrack);
 
                 // 使用 html2canvas 动态绘制页面内容到 Canvas
-                async function renderToCanvas() {
-                    await html2canvas(document.body, { canvas });
-                    if (isRecording) {
-                        requestAnimationFrame(renderToCanvas);
-                    }
-                }
+                // async function renderToCanvas() {
+                //     await html2canvas(document.body, { canvas });
+                //     if (isRecording) {
+                //         requestAnimationFrame(renderToCanvas);
+                //     }
+                // }
 
-                renderToCanvas();
+                // renderToCanvas();
+
+
+                async function renderToCanvas(videoElement, canvas) {
+        const ctx = canvas.getContext("2d");
+
+        async function drawFrame() {
+            if (isRecording) {
+                ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(drawFrame);
+            }
+        }
+
+        drawFrame();
+    }
+
+    renderToCanvas(document.getElementById("videoElement"), canvas);
+
 
                 // 初始化 MediaRecorder
                 try {
@@ -431,7 +446,7 @@
                         console.log(`音量强度 (平均值): ${average}`);
 
 
-                        const threshold = 50;
+                        const threshold = 60;
                         if (average > threshold) {
                             const randomIndex = Math.floor(Math.random() * randomTexts.length);
                             const randomText = randomTexts[randomIndex];
