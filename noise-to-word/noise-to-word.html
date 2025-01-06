@@ -222,8 +222,11 @@
 
 
     <div class="flatland-mini">
-        <div class="square-mini" onclick="toggleRecording(this) "> </div>
+        <div class="square-mini" onclick="toggleRecording(this) " ontouchstart="toggleRecording(this)"> </div>
         <div class="circle-mini" onclick="handleCircleClick()" ontouchstart="handleCircleTouch()"> </div>
+
+
+
         <div class="triangle-mini">
         </div>
 
@@ -231,6 +234,17 @@
             function handleCircleClick() {
                 window.open("../index.html", "_blank");
             }
+            const recordButton = document.querySelector('.square-mini');
+
+recordButton.addEventListener('touchstart', (event) => {
+    event.preventDefault(); // 防止触发其他默认行为
+    toggleRecording(recordButton);
+});
+
+recordButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleRecording(recordButton);
+});
 
 
             let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
