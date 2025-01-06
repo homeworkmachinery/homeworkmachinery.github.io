@@ -222,7 +222,8 @@
 
 
     <div class="flatland-mini">
-        <div class="square-mini" onclick="toggleRecording(this) " ontouchstart="toggleRecording(this)"> </div>
+        <!-- <div class="square-mini" onclick="toggleRecording(this) " ontouchstart="toggleRecording(this)"> </div> -->
+        <div class="square-mini"> </div>
         <div class="circle-mini" onclick="handleCircleClick()" ontouchstart="handleCircleTouch()"> </div>
 
 
@@ -234,17 +235,6 @@
             function handleCircleClick() {
                 window.open("../index.html", "_blank");
             }
-            const recordButton = document.querySelector('.square-mini');
-
-recordButton.addEventListener('touchstart', (event) => {
-    event.preventDefault(); // 防止触发其他默认行为
-    toggleRecording(recordButton);
-});
-
-recordButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    toggleRecording(recordButton);
-});
 
 
             let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
@@ -309,16 +299,15 @@ recordButton.addEventListener('click', (event) => {
             const outputDiv = document.getElementById("output");
 
             let mediaRecorder;
-          
-            let isRecording = false;
 
+            let isRecording = false;
             let textArray = [];  // 用于保存所有显示的文字
             let lineHeight = 50;
 
             // 随机文字数组
             const randomTexts = [
 
-                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲","錢", "罘", "旳", "迩", "臫", "de", "觜", "→\uFE0E", "↘\uFE0E", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉","鑫","森","淼","焱","垚","莮", "婹", "豞", "屍", "沵","厷", "狆國", "ㄖ", "匚", "侞", "㤙", "峎",  "杺", "鰥", "〇", "卝",  "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂","喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮"
+                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲", "錢", "罘", "旳", "迩", "臫", "de", "觜", "→\uFE0E", "↘\uFE0E", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "鑫", "森", "淼", "焱", "垚", "莮", "婹", "豞", "屍", "沵", "厷", "狆國", "ㄖ", "匚", "侞", "㤙", "峎", "杺", "鰥", "〇", "卝", "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂", "喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮"
 
             ];
 
@@ -331,7 +320,7 @@ recordButton.addEventListener('click', (event) => {
                 const ctx = canvas.getContext("2d");
 
                 const mimeType = MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : "video/webm";
-            const options = { mimeType };
+                const options = { mimeType };
 
                 // 设置 Canvas 大小为屏幕大小
                 canvas.width = window.innerWidth;
@@ -356,14 +345,14 @@ recordButton.addEventListener('click', (event) => {
 
                 // 初始化 MediaRecorder
                 try {
-        mediaRecorder = new MediaRecorder(canvasStream, options);
-    } catch (error) {
-        console.error("初始化 MediaRecorder 失败:", error);
-        alert("无法启动录制，可能是浏览器不支持录制功能。");
-        return;
-    }
+                    mediaRecorder = new MediaRecorder(canvasStream, options);
+                } catch (error) {
+                    console.error("初始化 MediaRecorder 失败:", error);
+                    alert("无法启动录制，可能是浏览器不支持录制功能。");
+                    return;
+                }
 
-    recordedChunks = [];
+                recordedChunks = [];
 
                 // 收集录制片段
                 mediaRecorder.ondataavailable = (event) => {
@@ -386,9 +375,9 @@ recordButton.addEventListener('click', (event) => {
                     a.click();
 
                     setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
                 };
 
                 // 开始录制
@@ -474,28 +463,30 @@ recordButton.addEventListener('click', (event) => {
 
 
 
+            const recordButton = document.querySelector('.square-mini');
 
-
-            function toggleRecording(button) {
+            // 绑定点击事件
+            recordButton.addEventListener('click', () => {
                 if (isRecording) {
                     // 停止录制
                     mediaRecorder.stop();
-                    button.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-                    button.style.borderColor = ""; // 移除边框颜色
-                    button.style.borderWidth = ""; // 移除边框宽度
-                    button.style.borderStyle = "";
 
+                    // 恢复样式
+                    recordButton.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+            
                 } else {
                     // 开始录制
                     startRecording();
-                    //             button.style.borderColor = "white"; // 将边框设置为白色
-                    // button.style.borderWidth = "1px"; // 设置边框宽度为3px
-                    // button.style.borderStyle = "solid";
-                    button.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
 
+                    // 修改按钮样式
+                    recordButton.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
                 }
+
+                // 切换录制状态
                 isRecording = !isRecording;
-            }
+            });
+
+
 
 
 
