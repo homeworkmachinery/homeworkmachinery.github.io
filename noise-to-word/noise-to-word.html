@@ -7,7 +7,7 @@
 
     <title>噪音转文字</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
     <style>
         body {
@@ -298,7 +298,7 @@
             const outputDiv = document.getElementById("output");
 
             let mediaRecorder;
-            let recordedChunks = [];
+          
             let isRecording = false;
 
             let textArray = [];  // 用于保存所有显示的文字
@@ -307,50 +307,20 @@
             // 随机文字数组
             const randomTexts = [
 
-                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲", "罘", "旳", "迩", "臫", "de", "觜", "→\uFE0E", "↘\uFE0E", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "莮", "婹", "豞", "屍", "沵", "焱", "厷", "狆國", "ㄖ", "匚", "淼", "侞", "㤙", "峎", "鰥", "〇", "卝", "錢", "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂", "杺", "喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮", "媽"
+                "岢", "龘", "媿", "冭", "囬", "愺", "硪", "鎬", "丄", "弑", "乂", "㈠", "龜", "恏", "庅", "婲","錢", "罘", "旳", "迩", "臫", "de", "觜", "→\uFE0E", "↘\uFE0E", "亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "氣", "，", "You", "狔", "棏", "口", "。", "！", "潑", "犇", "骉","鑫","森","淼","焱","垚","莮", "婹", "豞", "屍", "沵","厷", "狆國", "ㄖ", "匚", "侞", "㤙", "峎",  "杺", "鰥", "〇", "卝",  "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "楩", "吖", "隂","喪", "浕", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "ミ衮"
 
             ];
 
             const textElements = [];
 
 
-            // const { createFFmpeg, fetchFile } = FFmpeg;
-            // const ffmpeg = createFFmpeg({ log: true });
-            // async function convertWebmToMp4(blob) {
-            //     try {
-            //         // 检查 FFmpeg 是否已经加载
-            //         if (!ffmpeg.isLoaded()) {
-            //             console.log("正在加载 FFmpeg...");
-            //             await ffmpeg.load();
-            //         }
-
-            //         console.log("开始转换 WebM 到 MP4...");
-
-            //         // 将 Blob 转换为 FFmpeg 可处理的文件
-            //         const webmFile = new File([blob], "recording.webm", { type: "video/webm" });
-            //         ffmpeg.FS("writeFile", "input.webm", await fetchFile(webmFile));
-
-            //         // 执行转换命令
-            //         await ffmpeg.run("-i", "input.webm", "-c:v", "libx264", "-preset", "fast", "-crf", "28", "-c:a", "aac", "output.mp4");
-
-            //         // 获取输出文件
-            //         const mp4Data = ffmpeg.FS("readFile", "output.mp4");
-
-            //         console.log("转换完成！正在生成 Blob...");
-
-            //         // 转换为 MP4 Blob 并返回
-            //         return new Blob([mp4Data.buffer], { type: "video/mp4" });
-            //     } catch (error) {
-            //         console.error("转换失败：", error);
-            //         alert("视频转换失败，请检查日志！");
-            //     }
-            // }
-
-
             async function startRecording() {
                 const videoStream = await startCamera();
                 const canvas = document.createElement("canvas");
                 const ctx = canvas.getContext("2d");
+
+                const mimeType = MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : "video/webm";
+            const options = { mimeType };
 
                 // 设置 Canvas 大小为屏幕大小
                 canvas.width = window.innerWidth;
@@ -374,8 +344,15 @@
                 renderToCanvas();
 
                 // 初始化 MediaRecorder
-                mediaRecorder = new MediaRecorder(canvasStream);
-                recordedChunks = [];
+                try {
+        mediaRecorder = new MediaRecorder(canvasStream, options);
+    } catch (error) {
+        console.error("初始化 MediaRecorder 失败:", error);
+        alert("无法启动录制，可能是浏览器不支持录制功能。");
+        return;
+    }
+
+    recordedChunks = [];
 
                 // 收集录制片段
                 mediaRecorder.ondataavailable = (event) => {
@@ -386,21 +363,21 @@
 
                 // 停止录制时生成视频文件
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: "video/webm" });
+                    const blob = new Blob(recordedChunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
 
                     // 创建下载链接
                     const a = document.createElement("a");
                     a.style.display = "none";
                     a.href = url;
-                    a.download = "recording.webm";
+                    a.download = "recording.mp4";
                     document.body.appendChild(a);
                     a.click();
 
-                    // 清理
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    console.log("录制完成，已下载视频");
+                    setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
                 };
 
                 // 开始录制
