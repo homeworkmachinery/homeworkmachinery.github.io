@@ -162,7 +162,8 @@ function handleCircleTouch(event) {
         function getScreenAndAudioStream() {
             return navigator.mediaDevices.getDisplayMedia({
                 video: true,
-                audio: true // 捕获系统音频
+                audio: true, 
+                preferCurrentTab: true
             }).then(stream => {
                 videoStream = stream;
                 return stream;
@@ -185,7 +186,7 @@ function handleCircleTouch(event) {
 
                 // 创建 MediaRecorder 实例
                 mediaRecorder = new MediaRecorder(stream, {
-                    mimeType: "video/webm; codecs=vp8" // 确保支持的视频格式
+                    mimeType: "video/mp4" // 确保支持的视频格式
                 });
 
                 // 数据可用时保存到 recordedChunks
@@ -230,13 +231,13 @@ function handleCircleTouch(event) {
         function saveRecording() {
             if (recordedChunks.length > 0) {
                 // 创建 Blob 文件
-                const videoBlob = new Blob(recordedChunks, { type: "video/webm" });
+                const videoBlob = new Blob(recordedChunks, { type: "video/mp4" });
                 const videoUrl = URL.createObjectURL(videoBlob);
 
                 // 创建下载链接
                 const downloadLink = document.createElement("a");
                 downloadLink.href = videoUrl;
-                downloadLink.download = "ripple.webm"; // 设置下载文件名
+                downloadLink.download = "ripple.mp4"; // 设置下载文件名
                 downloadLink.style.display = "none"; // 隐藏链接
 
                 document.body.appendChild(downloadLink);
