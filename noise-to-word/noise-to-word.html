@@ -229,11 +229,20 @@
 
     <div class="flatland-mini">
         <div class="square-mini" onclick="toggleRecording(this) " ontouchstart="toggleRecording(this)"> </div>
-        <div class="circle-mini"> </div>
+        <div class="circle-mini" onclick="handleCircleClick()" ontouchstart="handleCircleTouch()"> </div>
         <div class="triangle-mini">
         </div>
 
         <script>
+function handleCircleClick() {
+    window.open("../index.html", "_blank");
+}
+
+function handleCircleTouch(event) {
+    window.open("../index.html", "_blank"); 
+}
+
+
             let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
 
             async function startCamera(facingMode = "environment") {
