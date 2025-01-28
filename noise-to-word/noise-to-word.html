@@ -529,7 +529,7 @@ function handleCircleTouch(event) {
                         console.log(`音量强度 (平均值): ${average}`);
 
 
-                        const threshold = 70;
+                        const threshold = 60;
                         if (average > threshold) {
                             const randomIndex = Math.floor(Math.random() * randomTexts.length);
                             const randomText = randomTexts[randomIndex];
