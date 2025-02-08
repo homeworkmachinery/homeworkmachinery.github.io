@@ -216,16 +216,16 @@
 
             .randomText {
 
-top: 20px;
-left: 10px;
-color: white;
-font-size: 32.5px;
-font-weight: 250;
-display: block;
-max-width: 100%;
-font-family: times;
+                top: 20px;
+                left: 10px;
+                color: white;
+                font-size: 32.5px;
+                font-weight: 250;
+                display: block;
+                max-width: 100%;
+                font-family: times;
 
-}
+            }
 
 
         }
@@ -249,13 +249,13 @@ font-family: times;
         </div>
 
         <script>
-function handleCircleClick() {
-    window.open("../index.html", "_blank");
-}
+            function handleCircleClick() {
+                window.open("../index.html", "_blank");
+            }
 
-function handleCircleTouch(event) {
-    window.open("../index.html", "_blank"); 
-}
+            function handleCircleTouch(event) {
+                window.open("../index.html", "_blank");
+            }
 
 
             let currentFacingMode = "environment"; // 初始摄像头模式，"user" 是前置摄像头，"environment" 是后置摄像头
@@ -322,166 +322,167 @@ function handleCircleTouch(event) {
             const videoElement = document.getElementById("videoElement");
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
-            
 
 
-            let textArray = [];  
+
+            let textArray = [];
             let lineHeight = 50;
 
-           
+
             const randomTexts = [
-
-            "岢", "龘", "媿", "冭", "囬", "硪", "鎬", "丄", "弑", "乂", "㈠", "恏", "庅", "婲", "罘", "旳", "迩", "臫", "觜", "→\uFE0E", "↘\uFE0E", "囡","亾", "呮", "兲", "つ", "ㄝ", "ㄉ", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "，", "耦", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "鑫", "森", "淼", "焱", "垚", "莮", "婹", "豞", "屍", "沵", "厷", "狆國", "ㄖ", "匚", "侞", "㤙", "峎", "杺", "〇", "卝", "口", "の", "尐", "ゐ", "①", "徊", "哽", "汏", "莈", "慬", "莂", "趉", "孒", "蛧", "伖", "煩", "掱","悩", "ミ衮", "彳亍", "噺姩赽泺"
-
+            "岢", "龘", "媿", "冭", "囬", "硪", "鎬", "丄", "弑", "乂", "㈠", "恏", "庅", "罘", "旳", "迩", "臫", "觜", "→\uFE0E", "↘\uFE0E", "囡", "亾", "呮", "兲", "ㄋ", "伱", "倣", "庇", "迡", "臥", "囍", "，", "耦", "狔", "棏", "口", "。", "！", "潑", "犇", "骉", "鑫", "森", "淼", "焱", "垚", "莮", "婹", "豞", "屍", "沵", "厷", "匚", "侞", "㤙", "峎", "杺", "〇", "卝", "口", "の", "尐", "①", "徊", "哽", "汏", "懂？", "趉", "孒", "蛧", "伖", "煩", "掱", "ミ衮", "彳亍", "噺姩赽泺","唵嘛呢叭咪吽"  
             ];
-
+            
 
             const textElements = [];
-//
             let isRecording = false;
-        let mediaRecorder;
-        let recordedChunks = [];
-        let videoStream;
-        let audioStream;
+            let mediaRecorder;
+            let recordedChunks = [];
+            let videoStream;
+            let audioStream;
 
-        async function getScreenAndAudioStream() {
-    try {
-        // 获取屏幕流
-        screenStream = await navigator.mediaDevices.getDisplayMedia({
-            video: true,
-            audio: true,
-            preferCurrentTab: true
-        });
 
-        // 获取麦克风音频流
-        audioStream = await navigator.mediaDevices.getUserMedia({
-            audio: true
-        });
 
-        // 合并屏幕音频和麦克风音频
-        const audioContext = new AudioContext();
-        const destination = audioContext.createMediaStreamDestination();
 
-        // 获取屏幕音频轨道（如果有）
-        if (screenStream.getAudioTracks().length > 0) {
-            const screenAudioSource = audioContext.createMediaStreamSource(screenStream);
-            screenAudioSource.connect(destination);
-        }
+            
+            async function getScreenAndAudioStream() {
+                try {
+                    // 获取屏幕流
+                    screenStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: true,
+                        audio: true,
+                        preferCurrentTab: true
+                    });
 
-        // 获取麦克风音频轨道
-        if (audioStream.getAudioTracks().length > 0) {
-            const micAudioSource = audioContext.createMediaStreamSource(audioStream);
-            micAudioSource.connect(destination);
-        }
+                    // 获取麦克风音频流
+                    audioStream = await navigator.mediaDevices.getUserMedia({
+                        audio: true
+                    });
 
-        // 创建新的合并流，包含屏幕视频轨道和合并后的音频轨道
-        const combinedStream = new MediaStream([
-            ...screenStream.getVideoTracks(), // 添加屏幕视频轨道
-            ...destination.stream.getAudioTracks() // 添加合并的音频轨道
-        ]);
+                    // 合并屏幕音频和麦克风音频
+                    const audioContext = new AudioContext();
+                    const destination = audioContext.createMediaStreamDestination();
 
-        return combinedStream;
-        
-    } catch (err) {
-        console.error("Error getting screen and audio stream:", err);
-        return null;
-    }
-}
-
-        // 开始录制
-        function startRecording() {
-
-            getScreenAndAudioStream().then(stream => {
-                if (!stream) {
-                    console.error("Failed to get screen and audio stream.");
-                    return;
-                }  
-    
-                recordedChunks = []; // 每次录制时清空
-
-                // 创建 MediaRecorder 实例
-                mediaRecorder = new MediaRecorder(stream, {
-                    mimeType: "video/mp4" // 确保支持的视频格式
-                });
-
-                // 数据可用时保存到 recordedChunks
-                mediaRecorder.ondataavailable = event => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
+                    // 获取屏幕音频轨道（如果有）
+                    if (screenStream.getAudioTracks().length > 0) {
+                        const screenAudioSource = audioContext.createMediaStreamSource(screenStream);
+                        screenAudioSource.connect(destination);
                     }
-                };
 
-                // 录制停止时处理数据
-                mediaRecorder.onstop = () => {
-                    console.log("Recording stopped");
+                    // 获取麦克风音频轨道
+                    if (audioStream.getAudioTracks().length > 0) {
+                        const micAudioSource = audioContext.createMediaStreamSource(audioStream);
+                        micAudioSource.connect(destination);
+                    }
+
+                    // 创建新的合并流，包含屏幕视频轨道和合并后的音频轨道
+                    const combinedStream = new MediaStream([
+                        ...screenStream.getVideoTracks(), // 添加屏幕视频轨道
+                        ...destination.stream.getAudioTracks() // 添加合并的音频轨道
+                    ]);
+
+                    return combinedStream;
+
+                } catch (err) {
+                    console.error("Error getting screen and audio stream:", err);
+                    return null;
+                }
+            }
+
+            // 开始录制
+            function startRecording() {
+
+                getScreenAndAudioStream().then(stream => {
+                    if (!stream) {
+                        console.error("Failed to get screen and audio stream.");
+                        return;
+                    }
+
+                    recordedChunks = []; // 每次录制时清空
+
+                    // 创建 MediaRecorder 实例
+                    mediaRecorder = new MediaRecorder(stream, {
+                        mimeType: "video/mp4" // 确保支持的视频格式
+                    });
+
+                    // 数据可用时保存到 recordedChunks
+                    mediaRecorder.ondataavailable = event => {
+                        if (event.data.size > 0) {
+                            recordedChunks.push(event.data);
+                        }
+                    };
+
+                    // 录制停止时处理数据
+                    mediaRecorder.onstop = () => {
+                        console.log("Recording stopped");
+                        const button = document.querySelector('.square-mini');
+                        if (button) {
+                            button.classList.remove('recording-border');
+                        }
+                        saveRecording(); // 保存录制的文件
+                    };
+
+                    mediaRecorder.start(); // 开始录制
+                    isRecording = true;
                     const button = document.querySelector('.square-mini');
                     if (button) {
-                        button.classList.remove('recording-border');
+                        button.classList.add('recording-border');
                     }
-                    saveRecording(); // 保存录制的文件
-                };
+                    console.log("Recording started");
+                }).catch(err => {
+                    console.error("Error starting recording:", err);
+                });
+            }
 
-                mediaRecorder.start(); // 开始录制
-                isRecording = true;
-                const button = document.querySelector('.square-mini');
-                if (button) {
-                    button.classList.add('recording-border');
+            // 停止录制
+            function stopRecording() {
+                if (mediaRecorder) {
+                    mediaRecorder.stop(); // 停止录制
+                    if (screenStream) {
+                        screenStream.getTracks().forEach(track => track.stop()); // 停止屏幕流的所有轨道
+                    }
+                    if (audioStream) {
+                        audioStream.getTracks().forEach(track => track.stop()); // 停止麦克风流的所有轨道
+                    }
+                    isRecording = false; // 更新录制状态
                 }
-                console.log("Recording started");
-            }).catch(err => {
-                console.error("Error starting recording:", err);
-            });
-        }
-
-        // 停止录制
-        function stopRecording() {
-            if (mediaRecorder) {
-                mediaRecorder.stop(); // 停止录制
-                if (screenStream) {
-            screenStream.getTracks().forEach(track => track.stop()); // 停止屏幕流的所有轨道
-        }
-        if (audioStream) {
-            audioStream.getTracks().forEach(track => track.stop()); // 停止麦克风流的所有轨道
-        }
-                isRecording = false; // 更新录制状态
             }
-        }
 
-        // 保存录制的文件
-        function saveRecording() {
-            if (recordedChunks.length > 0) {
-                // 创建 Blob 文件
-                const videoBlob = new Blob(recordedChunks, { type: "video/mp4" });
-                const videoUrl = URL.createObjectURL(videoBlob);
+            // 保存录制的文件
+            function saveRecording() {
+                if (recordedChunks.length > 0) {
+                    // 创建 Blob 文件
+                    const videoBlob = new Blob(recordedChunks, { type: "video/mp4" });
+                    const videoUrl = URL.createObjectURL(videoBlob);
 
-                // 创建下载链接
-                const downloadLink = document.createElement("a");
-                downloadLink.href = videoUrl;
-                downloadLink.download = "noise-to-word.mp4"; // 设置下载文件名
-                downloadLink.style.display = "none"; // 隐藏链接
+                    // 创建下载链接
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = videoUrl;
+                    downloadLink.download = "noise-to-word.mp4"; // 设置下载文件名
+                    downloadLink.style.display = "none"; // 隐藏链接
 
-                document.body.appendChild(downloadLink);
-                downloadLink.click(); // 自动触发下载
-                document.body.removeChild(downloadLink); // 下载后移除链接
-            } else {
-                console.error("No recorded chunks available");
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click(); // 自动触发下载
+                    document.body.removeChild(downloadLink); // 下载后移除链接
+                } else {
+                    console.error("No recorded chunks available");
+                }
             }
-        }
 
-        // 切换录制状态
-        function toggleRecording(button) {
-            if (isRecording) {
-                stopRecording();
+            // 切换录制状态
+            function toggleRecording(button) {
+                if (isRecording) {
+                    stopRecording();
 
-            } else {
-                startRecording();
+                } else {
+                    startRecording();
 
+                }
             }
-        }      
 
 
 
-//
+            //
 
 
             navigator.mediaDevices.getUserMedia({ audio: true, video: true })
