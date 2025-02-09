@@ -10,7 +10,9 @@ margin-bottom: 8px;
 }
 
 .green {
-font-size: 6vw;
+    /* font-size: clamp(16px, 6vw, 62px); */
+    font-size: clamp(16px, 6vw, 77px);
+    /* font-size:6vw; */
 color: green;
 text-decoration: underline;
 text-decoration-thickness: 0.45vw;
@@ -31,7 +33,9 @@ border: none;
 }
 
 .instruction {
-font-size: 3.3vw;
+    /* font-size: clamp(12px, 3.3vw, 34px); */
+    font-size: clamp(12px, 3.3vw, 42px); 
+    /* font-size:3.3vw; */
 color: green;
 text-decoration: underline;
 text-align: center;
@@ -41,15 +45,22 @@ text-decoration-thickness: 0.25vw;
 }
 
 .green:hover {
-color: red;
+/* color: rgb(254,92,0); */
+/* background-color: green;*/
+color: red; 
+/* color: rgb(167,0,205); */
 }
 
 body {
      background-color: black;
+     touch-action: manipulation;
+     margin: 0 auto;
+     max-width: 1200px;
+   
  }
 
  .center {
-     width: 1000px;
+    max-width: 1200px;
      margin: 0 auto;
  }
 
@@ -57,6 +68,7 @@ body {
      background: linear-gradient(to top, rgba(0, 128, 0, .8) 40%, rgba(0, 0, 0, 0)100%);
      width: 16vw;
      height: 16vw;
+    
      /* transition: all 0.2s linear; */
  }
 
@@ -116,19 +128,29 @@ body {
 
  .section {
      display: none;
-     margin-left: 5px;
+    
+     
+     
+   
  }
 
  .homework {
      display: flex;
      flex-wrap: wrap;
+     align-items: center;
+     max-width: 1200px; 
+    
+     box-sizing: border-box;
+   
     
  }
 
  .homework li {
      position: relative;
-     width: 16vw;
-     height: 16vw;
+     /* width: 16vw;
+     height: 16vw; */
+     width: clamp(16px, 16vw, 200px);
+     height: clamp(16px, 16vw, 200px);
      display: flex;
      margin-right: 2vw;
      margin-bottom: 2vw;
@@ -194,6 +216,8 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
+    
+
     /* transform: scale(0);
     transition: transform 0.5s ease; */
 }
@@ -223,6 +247,8 @@ body {
      border: 1px solid #888;
      width: 80%;
      display: flex;
+     max-width: 870px;
+     
  }
 
  .modal-title {
