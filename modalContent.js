@@ -37,7 +37,7 @@ var modalContent = [
 <span class="close-modal">“X”</span><br>
 (ambient synths slowly dissolve, fading into silence)
 `,
-        textB: `[操作指南]
+        textB: `[用户指南]
 
 <div class='textB-desc'>
 <img src='./endless-tears/002.png' width='55px'>
@@ -108,7 +108,7 @@ var modalContent = [
 06:00 没有时间了
 07:00 没有时间了
 `,
-    textB: `[操作指南]
+    textB: `[用户指南]
 
 <div class='textB-desc'>
 <img src='./run-out-of-time/001.png' width='55px'>
@@ -187,7 +187,7 @@ function playSound() {
 
     而真相可能隐藏在无法打开的盒子里。
 `,
-    textB: `[操作指南]
+    textB: `[用户指南]
 <div class='textB-desc'>
 <img src='./shadow-box/001.png' width='55px'>
 停止/开始旋转
@@ -282,7 +282,7 @@ function playSound() {
 
 我也只是这草坪上的另一朵丑花
 `,
-    textB: `[操作指南]
+    textB: `[用户指南]
 
 <div class='textB-desc'>
 <img src='./love-game/001.png' width='55px'>
@@ -343,7 +343,7 @@ O                 ()
               O       
               </pre>
 `,
-    textB: `[操作指南]
+    textB: `[用户指南]
 
 <div class='textB-desc'>
 <img src='./ripple/002.png' width='55px'>
@@ -387,7 +387,7 @@ O                 ()
 
             ];
 `,
-    textB: `[操作指南]
+    textB: `[用户指南]
 
 <div class='textB-desc'>
 <img src='./ripple/002.png' width='55px'>
