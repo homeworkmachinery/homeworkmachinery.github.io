@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>和弦仪式</title>
+  <style>
+    body {
+      background-color: black;
+      user-select: none;
+      /* 禁止选中文本 */
+      -webkit-user-select: none;
+      /* 禁止在 Safari 和 Chrome 上选中文本 */
+      -ms-user-select: none;
+      /* 禁止在 IE 上选中文本 */
+      -moz-user-select: none;
+      /* 禁止在 Firefox 上选中文本 */
+      touch-action: manipulation;
+      /* 防止双击或缩放 */
+      overflow: hidden;
+
+    }
+
+    .heptagram {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      position: relative;
+
+    }
+
+    .rotate {
+      animation: rotateContainer 10s infinite linear;
+    }
+
+
+
+    img {
+      max-width: 70%;
+      max-height: 70%;
+      object-fit: contain;
+      transition: transform 0.1s linear;
+      position: relative;
+
+    }
+
+    .dot {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      background-color: white;
+      border-radius: 50%;
+      opacity: 0.7;
+      box-shadow: 0 0 20px 20px rgba(255, 255, 255, 0.9);
+      transition: all 0.2s ease-in-out;
+      animation: flicker 2s infinite;
+    }
+
+    @keyframes flicker {
+      0% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.9;
+        /* Flash brighter in the middle */
+      }
+
+      100% {
+        opacity: 0.5;
+      }
+    }
+
+
+
+
+    .flatland-mini {
+      cursor: pointer;
+      z-index: 2;
+      position: relative;
+    }
+
+    .square-mini {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      bottom: 130px;
+      right: 25px;
+      background-color: black;
+      box-sizing: border-box;
+      border: 2px white solid;
+    }
+
+    .circle-mini {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: black;
+      bottom: 75px;
+      right: 25px;
+      box-sizing: border-box;
+      border: 2px white solid;
+    }
+
+    .triangle-mini {
+      position: fixed;
+      bottom: 25px;
+      right: 24px;
+      width: 0;
+      height: 0;
+      border-left: 21px solid transparent;
+      border-right: 21px solid transparent;
+      border-top: 36px solid white;
+    }
+
+    .triangle-mini::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      right: -18px;
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 31px solid black;
+    }
+
+    .tonic {
+      position: fixed;
+      top: 35px;
+      right: 105px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 1px;
+      font-size: 16px;
+    }
+
+    .scale {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 1px;
+      font-size: 16px;
+    }
+
+    .hint {
+      position: fixed;
+      bottom: 25px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 1px;
+      font-size: 16px;
+
+    }
+
+    @media (max-width: 768px) {
+      .flatland-mini {
+        bottom: 10px;
+        right: 10px;
+      }
+
+      .square-mini {
+        width: 50px;
+        height: 50px;
+        bottom: 145px;
+      }
+
+      .circle-mini {
+        width: 50px;
+        height: 50px;
+        bottom: 80px;
+
+      }
+
+      .triangle-mini {
+        position: fixed;
+        bottom: 25px;
+        right: 24px;
+        width: 0;
+        height: 0;
+        border-left: 26px solid transparent;
+        border-right: 26px solid transparent;
+        border-top: 40px solid white;
+      }
+
+      .triangle-mini::after {
+        content: '';
+        position: absolute;
+        bottom: 3px;
+        right: -21px;
+        width: 0;
+        height: 0;
+        border-left: 21px solid transparent;
+        border-right: 21px solid transparent;
+        border-top: 35px solid black;
+      }
+
+      #midiStatus,
+      #midiInput,
+      .hint {
+        font-size: 12px;
+      }
+
+
+      .tonic,
+      .scale {
+        font-size: 12px;
+      }
+
+
+    }
+  </style>
+</head>
+
+<body>
+  <div class="heptagram" id="heptagramImg">
+    <img id="scaleImage" src="./img/Major.png">
+    <div class="dot" id="dot1"></div>
+    <div class="dot" id="dot2"></div>
+    <div class="dot" id="dot3"></div>
+    <div class="dot" id="dot4"></div>
+    <div class="dot" id="dot5"></div>
+    <div class="dot" id="dot6"></div>
+    <div class="dot" id="dot7"></div>
+  </div>
+
+  <div class="tonic">
+    <label for="tonic">Tonic</label>
+    <select id="tonic">
+      <option value="C">C</option>
+      <option value="C#">C#</option>
+      <option value="D">D</option>
+      <option value="D#">D#</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="F#">F#</option>
+      <option value="G">G</option>
+      <option value="G#">G#</option>
+      <option value="A">A</option>
+      <option value="A#">A#</option>
+      <option value="B">B</option>
+    </select>
+  </div>
+
+  <div class="scale">
+    <label for="scale">Scale</label>
+    <select id="scale">
+      <option value="Major">Major</option>
+      <option value="Minor">Minor</option>
+      <option value="Dorian">Dorian</option>
+      <option value="Phrygian">Phrygian</option>
+      <option value="Lydian">Lydian</option>
+      <option value="Mixolydian">Mixolydian</option>
+      <option value="Locrian">Locrian</option>
+      <option value="Harmonic Minor">Harmonic Minor</option>
+      <option value="Phrygian Dominant">Phrygian Dominant</option>
+    </select>
+  </div>
+
+
+
+  <div class="hint" id="hint"></div>
+
+  <div class="flatland-mini">
+    <div class="square-mini"> </div>
+    <a href="../index.html" target="_blank">
+      <div class="circle-mini"></div>
+    </a>
+    <a href="https://www.instagram.com/savebuzhang/" target="_blank">  <div class="triangle-mini">
+     
+    </div> </a>
+    
+    <div id="midiStatus"
+      style="position: fixed; top: 10px; left: 10px; background-color: rgba(0, 0, 0, 0.5); color: white; padding: 1px; font-size: 16px; display: none;">
+    </div>
+    <div id="midiInput"
+      style="position: fixed; top: 40px; left: 10px; background-color: rgba(0, 0, 0, 0.5); color: white; padding: 1px; font-size: 16px; display: none;">
+    </div>
+
+  </div>
+  <script>
+
+    const hint = document.getElementById('hint');
+    const midiStatus = document.getElementById('midiStatus');
+    const midiInput = document.getElementById('midiInput');
+    const tonic = document.querySelector('.tonic');
+    const scale = document.querySelector('.scale');
+    const scaleImage = document.getElementById('scaleImage');
+
+
+    scale.addEventListener('change', (e) => {
+      const selectedScale = e.target.value;
+
+   
+      scaleImage.src = `./img/${selectedScale}.png`;
+
+    
+    });
+
+
+
+
+    document.querySelector('.square-mini').addEventListener('click', function () {
+
+      const isHidden = hint.style.display === 'none';
+
+
+      hint.style.display = isHidden ? 'block' : 'none';
+      midiStatus.style.display = isHidden ? 'block' : 'none';
+      midiInput.style.display = isHidden ? 'block' : 'none';
+      tonic.style.display = isHidden ? 'block' : 'none';
+      scale.style.display = isHidden ? 'block' : 'none';
+    });
+
+
+
+
+
+    const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    const noteNamesToMidi = {
+      "C": 60, "C#": 61, "D": 62, "D#": 63, "E": 64, "F": 65,
+      "F#": 66, "G": 67, "G#": 68, "A": 69, "A#": 70, "B": 71
+    };
+
+    
+    function getScaleMidi(tonic, scale) {
+      const scalePatterns = {
+        "Major": [0, 2, 4, 5, 7, 9, 11, 12],
+        "Minor": [0, 2, 3, 5, 7, 8, 10, 12],
+        "Dorian": [0, 2, 3, 5, 7, 9, 10, 12],
+        "Phrygian": [0, 1, 3, 5, 7, 8, 10, 12],
+        "Lydian": [0, 2, 4, 6, 7, 9, 11, 12],
+        "Mixolydian": [0, 2, 4, 5, 7, 9, 10, 12],
+        "Locrian": [0, 1, 3, 5, 6, 8, 10, 12],
+        "Harmonic Minor": [0, 2, 3, 5, 7, 8, 11, 12],
+        "Phrygian Dominant": [0, 1, 4, 5, 7, 8, 10, 12]
+      };
+      let tonicMidi = noteNamesToMidi[tonic];
+      let pattern = scalePatterns[scale];
+      let scaleMidi = pattern.map(interval => tonicMidi + interval);
+      return scaleMidi;
+    }
+
+ 
+    const chordDegrees = {
+      "I": [1, 3, 5],
+      "ii": [2, 4, 6],
+      "iii": [3, 5, 7],
+      "IV": [4, 6, 8],
+      "V": [5, 7, 9],
+      "vi": [6, 8, 10],
+      "vii°": [7, 9, 11]
+    };
+
+
+    let chordMapping = {};  
+    function updateChordMapping(tonic, scale) {
+      let scaleMidi = getScaleMidi(tonic, scale);  
+      let newMapping = {};
+      for (let chordName in chordDegrees) {
+        let degrees = chordDegrees[chordName];
+        newMapping[chordName] = degrees.map(degree => {
+          if (degree <= scaleMidi.length) {
+            return scaleMidi[degree - 1];
+          } else {
+          
+            let d = degree - (scaleMidi.length - 1);
+            return scaleMidi[d - 1] + 12;
+          }
+        });
+      }
+      chordMapping = newMapping;
+      console.log("Updated chordMapping:", chordMapping);
+      updateHint();
+    }
+
+
+    function midiToNoteName(midi) {
+   
+      return noteNames[midi % 12];
+    }
+
+    function updateHint() {
+     
+      let scaleMidi = getScaleMidi(tonicSelected.value, scaleSelected.value);
+    
+      let displayMidi = scaleMidi.slice(0, scaleMidi.length - 1);
+    
+      let noteList = displayMidi.map(midiToNoteName);
+     
+      document.getElementById('hint').innerText = noteList.join("-");
+    }
+
+
+
+  
+    let tonicSelected = document.getElementById('tonic');
+    let scaleSelected = document.getElementById('scale');
+    tonicSelected.addEventListener('change', (e) => {
+      let newTonic = e.target.value;
+      updateChordMapping(newTonic, scaleSelected.value);
+    });
+    scaleSelected.addEventListener('change', (e) => {
+      let newScale = e.target.value;
+      updateChordMapping(tonicSelected.value, newScale);
+    });
+
+  
+    updateChordMapping(tonicSelected.value, scaleSelected.value);
+
+
+
+
+
+  </script>
+
+  <script>
+    function positionDots() {
+      const img = document.getElementById('heptagramImg');
+      const imgContainer = document.querySelector('.heptagram');
+      const imgWidth = imgContainer.clientWidth;
+      const imgHeight = imgContainer.clientHeight;
+
+      const centerX = imgWidth / 2;
+      const centerY = imgHeight / 2;
+      const radius = Math.min(imgWidth, imgHeight) / 4.1;
+
+      const offsetX = 0;
+      const offsetY = 0;
+
+      const dotPositions = [
+        { id: 'dot1', angle: 177 },
+        { id: 'dot2', angle: 229 },
+        { id: 'dot3', angle: 284 },
+        { id: 'dot4', angle: 336 },
+        { id: 'dot5', angle: 389 },
+        { id: 'dot6', angle: 439 },
+        { id: 'dot7', angle: 488 },
+      ];
+
+      dotPositions.forEach(({ id, angle }) => {
+        const dot = document.getElementById(id);
+        const radians = (angle - 90) * Math.PI / 180;  // Convert to radians and adjust for center
+        const x = centerX + radius * Math.cos(radians) + offsetX;
+        const y = centerY + radius * Math.sin(radians) + offsetY;
+
+        dot.style.left = `${x}px`;
+        dot.style.top = `${y}px`;
+        // 存储原始位置
+        dot.dataset.originalLeft = `${x}px`;
+        dot.dataset.originalTop = `${y}px`;
+      });
+    }
+
+    // Call the function on load and on resize
+
+    window.onload = positionDots;
+    window.onresize = positionDots;
+
+
+
+
+    // Web MIDI API setup
+
+
+    let midiAccess = null;
+    let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    let sounds = {}; // 用于存储已播放的声音
+    let gainNode = audioContext.createGain(); // 用于控制音量
+    let activeChords = {};
+    // 用于跟踪当前按下的 MIDI 音符
+    let activeNotes = new Set();
+
+
+
+
+    gainNode.gain.setValueAtTime(0.5, audioContext.currentTime); // 设置为中等音量
+    gainNode.connect(audioContext.destination); // 将增益节点连接到输出设备
+
+
+
+
+    navigator.requestMIDIAccess().then((access) => {
+      midiAccess = access;
+      console.log('MIDI Access Granted');
+      document.getElementById('midiStatus').style.display = 'block';
+      document.getElementById('midiStatus').innerText = 'MIDI Connected';
+
+      const inputs = midiAccess.inputs.values();
+      let deviceFound = false;  // 标记是否找到了 MIDI 输入设备
+
+
+
+      // 检查是否有设备连接
+      for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
+        deviceFound = true;  // 找到设备，更新标记
+        document.getElementById('midiInput').style.display = 'block';
+        document.getElementById('midiInput').innerText = input.value.name;
+
+        input.value.onmidimessage = handleMIDIMessage;
+        console.log('Connected MIDI input: ', input.value.name);
+      }
+
+
+
+      if (!deviceFound) {
+        document.getElementById('midiInput').style.display = 'block';
+        document.getElementById('midiInput').innerText = 'Device Disconnected';
+      }
+
+    }, (error) => {
+      // 失败时，显示错误信息
+      document.getElementById('midiStatus').style.display = 'block';
+      document.getElementById('midiStatus').innerText = 'MIDI Connection Failed';
+      console.error('MIDI Access Error:', error);
+    });
+
+
+    const chordAngles = {
+      "I": 177,
+      "ii": 229,
+      "iii": 284,
+      "IV": 336,
+      "V": 389,
+      "vi": 439,
+      "vii°": 488
+    };
+
+
+    const chordToDot = {
+      "I": "dot1",
+      "ii": "dot2",
+      "iii": "dot3",
+      "IV": "dot4",
+      "V": "dot5",
+      "vi": "dot6",
+      "vii°": "dot7"
+    };
+
+
+    function updateChordDots() {
+      for (let chordName in chordMapping) {
+        const chordNotes = chordMapping[chordName];
+        const dotId = chordToDot[chordName];
+        const dot = document.getElementById(dotId);
+        if (activeNotes.size === 0) {
+          // 无按键时全部显示
+          dot.style.display = "block";
+        } else {
+          // 如果 activeNotes 中的每个音符都在该和弦中，则显示，否则隐藏
+          let show = true;
+          activeNotes.forEach(n => {
+            if (!chordNotes.includes(n)) {
+              show = false;
+            }
+          });
+          dot.style.display = show ? "block" : "none";
+        }
+      }
+    }
+
+
+
+
+    // 将容器旋转到对应和弦的角度：使该和弦的 dot 移动到活动位置（即 I 的位置）
+    function rotateContainerToChord(chordName) {
+      const container = document.querySelector('.heptagram');
+      // 计算旋转角度：活动位置为 I 的角度（177°）减去当前和弦的角度
+      let rotation = chordAngles["I"] - chordAngles[chordName];
+      // 使用 CSS 过渡实现平滑旋转
+      container.style.transition = "transform 4s ease";
+      container.style.transform = `rotate(${rotation}deg)`;
+    }
+
+
+
+
+    function handleMIDIMessage(event) {
+      let data = event.data;
+      let status = data[0];
+      let note = data[1];
+      let velocity = data[2];
+      console.log('MIDI Message:', status, note, velocity);
+      const img = document.getElementById('heptagramImg');
+
+
+      if (note === undefined || note < 0 || note > 127) {
+        console.error('Invalid MIDI note received:', note);
+        return;
+      }
+
+      // const noteFrequency = midiNoteToFrequency(note);
+      const audioUrl = audioFiles[note];
+      if (!audioUrl) {
+        console.error('No audio file found for note:', note);
+        return;
+      }
+
+
+      // Note On
+      if (status === 144 && velocity > 0) {
+        activeNotes.add(note);
+        console.log('Note On:', note, 'Velocity:', velocity);
+        playPianoSound(audioUrl, velocity);
+        updateChordDots();
+
+        for (let chordName in chordMapping) {
+          const chordNotes = chordMapping[chordName];
+          if (chordNotes.every(n => activeNotes.has(n))) {
+            if (!activeChords[chordName]) {
+              rotateContainerToChord(chordName);
+            }
+          }
+        }
+      }
+
+      // Note Off
+      else if (status === 128 || (status === 144 && velocity === 0)) {
+        activeNotes.delete(note);
+        console.log('Note Off:', note);
+        // 停止单音
+        stopSound(note);
+
+        if (activeNotes.size === 0) {
+          // 没有按键时，恢复所有 dot 显示
+          Object.values(chordToDot).forEach(dotId => {
+            const dot = document.getElementById(dotId);
+            dot.style.display = "block";
+          });
+        } else {
+          // 如果还有其他按键，则更新 dot 状态（仅更新匹配的和弦 dot）
+          updateChordDots();
+        }
+
+
+
+
+        for (let chordName in activeChords) {
+          const chordNotes = chordMapping[chordName];
+          if (!chordNotes.every(n => activeNotes.has(n))) {
+            stopSound(note);
+
+          }
+        }
+      }
+    }
+
+
+
+    const audioFiles = {
+      48: "./keys/C3.mp3",   // C3
+      49: "./keys/Db3.mp3",  // Db3
+      50: "./keys/D3.mp3",   // D3
+      51: "./keys/Eb3.mp3",  // Eb3
+      52: "./keys/E3.mp3",   // E3
+      53: "./keys/F3.mp3",   // F3
+      54: "./keys/Gb3.mp3",  // Gb3
+      55: "./keys/G3.mp3",   // G3
+      56: "./keys/Ab3.mp3",  // Ab3
+      57: "./keys/A3.mp3",   // A3
+      58: "./keys/Bb3.mp3",  // Bb3
+      59: "./keys/B3.mp3",   // B3
+      60: "./keys/C4.mp3",   // C4
+      61: "./keys/Db4.mp3",  // Db4
+      62: "./keys/D4.mp3",   // D4
+      63: "./keys/Eb4.mp3",  // Eb4
+      64: "./keys/E4.mp3",   // E4
+      65: "./keys/F4.mp3",   // F4
+      66: "./keys/Gb4.mp3",  // Gb4
+      67: "./keys/G4.mp3",   // G4
+      68: "./keys/Ab4.mp3",  // Ab4
+      69: "./keys/A4.mp3",   // A4
+      70: "./keys/Bb4.mp3",  // Bb4
+      71: "./keys/B4.mp3",   // B4
+      72: "./keys/C5.mp3",   // C5
+      73: "./keys/Db5.mp3",  // Db5
+      74: "./keys/D5.mp3",   // D5
+      75: "./keys/Eb5.mp3",  // Eb5
+      76: "./keys/E5.mp3",   // E5
+      77: "./keys/F5.mp3",   // F5
+      78: "./keys/Gb5.mp3",  // Gb5
+      79: "./keys/G5.mp3",   // G5
+      80: "./keys/Ab5.mp3",  // Ab5
+      81: "./keys/A5.mp3",   // A5
+      82: "./keys/Bb5.mp3",  // Bb5
+      83: "./keys/B5.mp3"    // B5
+    };
+
+
+
+
+    function playPianoSound(audioUrl, velocity) {
+      const audio = new Audio(audioUrl);
+      audio.play();
+    }
+
+    function stopSound(note) {
+      if (sounds[note]) {
+        sounds[note].pause();
+        sounds[note] = null;
+      }
+    }
+
+
+
+
+  </script>
+
+
+</body>
+
+</html>
