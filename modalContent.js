@@ -402,6 +402,7 @@ O                 ()
 `,
     textC: `[README]
    好吧。这实际上是个千锤百炼下失败的手机端产品。无奈手机浏览器不支持getDisplayMedia的录屏功能，所以「█」按钮的录屏功能只能在电脑上实现。
+
    我也懒得去想怎么办了，唵嘛呢叭咪吽，9这样8，886。
 
    [佷想換個冼扆僟哋説=..=]
@@ -409,6 +410,63 @@ O                 ()
 `,
     link: "NOISE-TO-WORD",
     href: "./noise-to-word/noise-to-word.html"
+},
+{id: 7,
+    imageAa: "",
+    imageAb: "",
+    imageB: "./chord-ritual/1.png",
+    imageCa: "",
+    imageCb: "",
+    iframeCa:"",
+    videoAa: `./chord-ritual/1.mp4`,
+    videoAb: "",
+    videoCa: "./chord-ritual/1.mp4",
+    title: "和弦仪式",
+    textA: ` const scalePatterns = {
+
+            "Major": [0, 2, 4, 5, 7, 9, 11, 12],
+            "Minor": [0, 2, 3, 5, 7, 8, 10, 12],
+            "Dorian": [0, 2, 3, 5, 7, 9, 10, 12],
+            "Phrygian": [0, 1, 3, 5, 7, 8, 10, 12],
+            "Lydian": [0, 2, 4, 6, 7, 9, 11, 12],
+            "Mixolydian": [0, 2, 4, 5, 7, 9, 10, 12],
+            "Locrian": [0, 1, 3, 5, 6, 8, 10, 12], 
+            "Harmonic Minor": [0, 2, 3, 5, 7, 8, 11, 12], 
+            "Phrygian Dominant": [0, 1, 4, 5, 7, 8, 10, 12]
+        
+        };
+`,
+    textB: `[用户指南]
+
+<div class='textB-desc'>
+<img src='./chord-ritual/001.png' width='55px'>
+隐藏提示
+
+
+进入家庭作业机器
+
+
+联系
+</div>
+`,
+    textC: `[README]
+    在古希腊和古罗马时期，“行星”（Planetai，意为“游移者”）是指在夜空中相对于恒星背景会移动的光点。在这一定义下，七大行星包括：
+
+    太阳（Sun）
+    月亮（Moon）   
+    水星（Mercury）  
+    金星（Venus）   
+    火星（Mars）   
+    木星（Jupiter） 
+    土星（Saturn） 
+    
+    这些天体都在天空中移动，而地球并不显现在天际中，因此不被列入这一体系。由于地球是观察者所在的基点，在当时它本身并不被视为行星，而是“万物的舞台”。在这个体系中，地球（“我”）是观察的起点。
+
+    基于这一观察视角，“我”将七级和弦同七大行星进行类比。在不同的调式中，这些和弦的作用各有不同。
+
+`,
+    link: "Chord Ritual",
+    href: "./chord-ritual/chord-ritual.html"
 }
 
 

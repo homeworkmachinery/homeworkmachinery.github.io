@@ -47,8 +47,9 @@ text-decoration-thickness: 0.25vw;
 .green:hover {
 /* color: rgb(254,92,0); */
 /* background-color: green;*/
-color: red; 
+/* color: red;  */
 /* color: rgb(167,0,205); */
+text-shadow:0 0 3px green; 
 }
 
 body {
