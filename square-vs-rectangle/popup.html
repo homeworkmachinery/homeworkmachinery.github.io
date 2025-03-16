@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Square vs Rectangle</title>
+  <style>
+    body {
+      width: 200px;
+      height: 100px;
+      font-family: Arial, sans-serif;
+      padding: 10px 0 20px 0 ;
+   
+    }
+    .s-r{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+  
+    #square, #rectangle {
+      width: 45%;
+      background-color: black; 
+      border: none;
+      cursor: pointer;
+      position: relative; /* 便于定位伪元素 */
+      overflow: hidden;   /* 防止伪元素溢出 */
+    }
+    
+    #square {
+      aspect-ratio: 1 / 1;
+    }
+    #rectangle {
+      aspect-ratio: 4 / 5;
+    }
+    /* 默认不显示内容 */
+    #square::after,
+#rectangle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  -webkit-line-clamp: 13;
+  word-break: break-all;  
+  color: black;
+  font-size: 14px;
+  text-align: center;
+  padding: 5px;
+  box-sizing: border-box;
+  background-color: white;
+  /* transition: opacity 0.3s ease; */
+  opacity: 0;
+}
+    /* 悬停时显示文字 */
+    #square:hover::after {
+      
+      content: "squaresquaresquaresquaresquaresquaresquaresquaresquaresquaresquaresquare";
+      opacity: 1;
+    }
+    #rectangle:hover::after {
+    
+      content: "rectanglerectanglerectanglerectanglerectanglerectanglerectanglerectanglerectanglerectangle "; 
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="s-r">
+  <button id="square"></button>
+  <button id="rectangle"></button>
+</div>
+  <script src="popup.js"></script> 
+</body>
+</html>
