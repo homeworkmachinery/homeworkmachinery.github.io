@@ -467,6 +467,97 @@ O                 ()
 `,
     link: "Chord Ritual",
     href: "./chord-ritual/chord-ritual.html"
+},
+{id: 8,
+    imageAa: "",
+    imageAb: "",
+    imageB: "./square-vs-rectangle/1.png",
+    imageCa: "",
+    imageCb: "",
+    iframeCa:"",
+    videoAa: `./square-vs-rectangle/1.mp4`,
+    videoAb: "",
+    videoCa: "./square-vs-rectangle/1.mp4",
+    title: "正方形大战长方形",
+    textA: `{
+        "manifest_version": 3,
+        "name": "Square vs Rectangle",
+        "version": "1.0",
+        "description": "’Square vs Rectangle‘ is a strikeback against Instagram’s new layout",
+        "permissions": [
+          "activeTab"
+        ],
+        
+        "host_permissions": [
+          "*://*.instagram.com/*"
+        ],
+        "background": {
+          "service_worker": "background.js"
+        },
+        "action": {
+          "default_popup": "popup.html",
+          "default_icon": {
+            "16": "./square.png",
+            "32": "./square.png",
+            "48": "./square.png",
+            "128": "./square.png"
+          }
+        }
+        "content_scripts": [
+          {
+            "matches": ["*://*.instagram.com/*"],
+            "css": ["style.css"],
+            "js": ["content.js"]
+          }
+        ]
+      }
+`,
+    textB: `[用户指南]
+
+<div class='textB-desc'>
+<img src='./square-vs-rectangle/2.png' width='255px'>
+
+</div>
+`,
+    textC: `[README]
+    好像从我开始尝试做图起，用的都是方形排版。搞来搞去还是看不惯IG的4:5排版，就干脆做了个Chrome插件自用了。
+
+    在谷歌扩展程序商城添加插件后，固定插件在Chrome浏览器上。点击正方形排版刷新切换成正方形，点击长方形切换成长方形。轻松应对视觉强迫症。...
+   
+    口口口, NO MATTER WHAT, I WILL ALWAY LOVE U T..T
+`,
+    link: "square-vs-rectangle",
+    href: "https://chromewebstore.google.com/detail/square-vs-rectangle/dndkmkklfkpaidkkajognhnpadpjmkpb?utm_source=item-share-cb"
+},
+{id: 9 ,
+    imageAa: "",
+    imageAb: "",
+    imageB: "./",
+    imageCa: "",
+    imageCb: "",
+    iframeCa:"",
+    videoAa: `.`,
+    videoAb: "",
+    videoCa: ".",
+    title: "问号盒子",
+    textA: `
+`,
+    textB: `[用户指南]
+
+<div class='textB-desc'>
+<img src='./square-vs-rectangle/2.png' width='255px'>
+
+</div>
+`,
+    textC: `[README]
+    好像从我开始尝试做图起，用的都是方形排版。搞来搞去还是看不惯IG的4:5排版，就干脆做了个Chrome插件自用了。
+
+    在谷歌扩展程序商城添加插件后，固定插件在Chrome浏览器上。点击正方形排版刷新切换成正方形，点击长方形切换成长方形。轻松应对视觉强迫症。...
+   
+    口口口, NO MATTER WHAT, I WILL ALWAY LOVE U T..T
+`,
+    link: "'?'BOX",
+    href: "https://chromewebstore.google.com/detail/square-vs-rectangle/dndkmkklfkpaidkkajognhnpadpjmkpb?utm_source=item-share-cb"
 }
 
 
