@@ -1,6 +1,6 @@
 import GUI from "https://cdn.jsdelivr.net/npm/lil-gui@0.18.2/+esm"
 
-
+let ghostAnimationActive = false;
 
 const canvasEl = document.querySelector("#ghost");
 
@@ -75,7 +75,7 @@ let simulatedMouse = {
     x: 586,
     y: 332
 };
-let ghostAnimationActive = false;
+
 let ghostVisible = false; // 记录 ghost 当前是否可见
 let ghostAnimating = false; 
 
