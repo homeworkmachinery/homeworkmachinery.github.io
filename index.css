@@ -129,7 +129,7 @@ body {
 
  .section {
      display: none;
-    
+     
      
      
    
@@ -140,10 +140,9 @@ body {
      flex-wrap: wrap;
      align-items: center;
      max-width: 1200px; 
-    
+     list-style-type: none; 
      box-sizing: border-box;
-   
-    
+  
  }
 
  .homework li {
@@ -160,9 +159,9 @@ body {
      transition: transform 0.3s ease;
  }
 
- .homework li:last-child {
-    margin-right: 0;
-}
+ /* .homework li:nth-child(5n+1) {
+    margin-left: 2vw;
+} */
 
  .overlay {
      position: absolute;

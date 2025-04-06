@@ -54,15 +54,15 @@
 
     <div class="section center">
         <ul class="homework">
-            <!-- <li data-id="9">
+            <li data-id="9">
                 <div class="overlay">
-                    <span class="title">问号盒子<br>'?'box</span>
+                    <span class="title">问题盒子<br>'?'box</span>
                     <span class="date">
                     </span>
                 </div>
-                <img src=".">
+                <img src="./question-box/1.gif">
                
-            </li> -->
+            </li>
 
             <li data-id="8">
                 <div class="overlay">
@@ -226,10 +226,7 @@
                 mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
             }
 
-            if (content.imageAb) {
-                mediaContentA += `<img class="modal-image" src="${content.imageAb}" >`;
-            }
-
+          
             if (content.iframeAa) {
                 mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
             }
@@ -240,6 +237,11 @@
                                 <source src="${content.videoAa}" type="video/mp4">
                              </video>`;
             }
+            if (content.imageAb) {
+                mediaContentA += `<img class="modal-image" src="${content.imageAb}" >`;
+            }
+
+
             if (content.videoAb) {
                 mediaContentA += `<video controls loop class="modal-video">
                                 <source src="${content.videoAb}" type="video/mp4">
@@ -286,9 +288,7 @@
                 if (content.imageCa) {
                     mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
                 }
-                if (content.imageCb) {
-                    mediaContentC += `<img class="modal-image" src="${content.imageCb}" >`;
-                }
+             
                 if (content.iframeCa) {
                     mediaContentC += `<iframe class="modal-iframe" src="${content.iframeCa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
                 }
@@ -297,12 +297,15 @@
                                 <source src="${content.videoCa}" type="video/mp4">
                              </video>`;
                 }
+                 if (content.imageCb) {
+                    mediaContentC += `<img class="modal-image" src="${content.imageCb}" >`;
+                }
                 if (content.videoCb) {
                     mediaContentC += `<video controls loop class="modal-video">
                                 <source src="${content.videoCb}" type="video/mp4">
                              </video>`;
                 }
-
+               
 
 
                 if (content) {

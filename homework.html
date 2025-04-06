@@ -465,7 +465,7 @@
 
 
         var homeworkList = [
-        { id: 9, date: '2025.04.01', object: 'design.', subject: `'?'box`}, 
+        { id: 9, date: '2025.04.06', object: 'design.', subject: `'?'box`}, 
         { id: 8, date: '2025.03.15', object: 'extension.', subject: 'square.vs.rectangle' }, 
         { id: 7, date: '2025.02.22', object: 'sound.', subject: 'chord.ritual' }, 
         { id: 6, date: '2025.02.09', object: 'camera.', subject: 'noise.to.word' }, 
@@ -569,9 +569,7 @@ renderTable(homeworkList);
             if (content.imageAa) {
             mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
         }
-        if (content.imageAb) {
-                mediaContentA += `<img class="modal-image" src="${content.imageAb}" >`;
-            }
+       
 
         if (content.iframeAa) {
             mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
@@ -582,6 +580,9 @@ renderTable(homeworkList);
                                 <source src="${content.videoAa}" type="video/mp4">
                              </video>`;
         }
+        if (content.imageAb) {
+                mediaContentA += `<img class="modal-image" src="${content.imageAb}" >`;
+            }
         if (content.videoAb) {
             mediaContentA += `<video controls loop class="modal-video">
                                 <source src="${content.videoAb}" type="video/mp4">
@@ -628,9 +629,7 @@ renderTable(homeworkList);
                 if (content.imageCa) {
             mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
         }
-        if (content.imageCb) {
-                    mediaContentC += `<img class="modal-image" src="${content.imageCb}" >`;
-                }
+        
         if (content.iframeCa) {
                     mediaContentC += `<iframe class="modal-iframe" src="${content.iframeCa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
                 }
@@ -639,6 +638,9 @@ renderTable(homeworkList);
                                 <source src="${content.videoCa}" type="video/mp4">
                              </video>`;
         }
+        if (content.imageCb) {
+                    mediaContentC += `<img class="modal-image" src="${content.imageCb}" >`;
+                }
         if (content.videoCb) {
             mediaContentC += `<video controls loop class="modal-video">
                                 <source src="${content.videoCb}" type="video/mp4">
