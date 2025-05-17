@@ -551,27 +551,35 @@ O                 ()
 微商之道
 
 不显于言
+
 而藏于行
 
 要从无中找有
+
 有中辩无
 
 我中找你
+
 你中找我
 
 虚实结合
+
 阴阳相生
 
 方其识人真面目
+
 与其结友之
 
 以精神化物质
+
 以物质养精神
 
 循环往复
+
 以成方圆
 
 不争一时高下
+
 只赢一生沉浮
 `,
     textB: `[用户指南]
@@ -597,7 +605,60 @@ O                 ()
 `,
     link: "'?'BOX",
     href: "./question-box/question-box.html"
+},
+
+{id: 10 ,
+    imageAa: "./gui-face/1.gif",
+    imageAb: "",
+    iframeAa:"//player.bilibili.com/player.html?isOutside=true&aid=114521763025724&bvid=BV1h8JcznEgt&cid=30002973103&p=1",
+    imageB: "./gui-face/1.png",
+    imageCa: "",
+    imageCb: "",
+    iframeCa:"",
+    videoAa: ``,
+    videoAb: "",
+    videoCa: "./gui-face/1.mp4",
+    title: "鬼魂的表情",
+    textA: `
+&lt;img id="gif1" src="sweating.gif" /&gt;
+&lt;img id="gif2" src="shy.gif" /&gt;
+&lt;img id="gif3" src="thanks.gif" /&gt;
+&lt;img id="gif4" src="cry.gif" /&gt;
+&lt;img id="gif5" src="terrified.gif" /&gt;
+&lt;img id="gif6" src="sleepy.gif" /&gt;
+&lt;img id="gif7" src="nope.gif" /&gt;
+&lt;img id="gif8" src="angry.gif" /&gt;
+&lt;img id="gif9" src="sigh.gif" /&gt;
+&lt;img id="gif10" src="observe.gif" /&gt;
+&lt;img id="gif11" src="dizzy.gif" /&gt;
+&lt;img id="gif12" src="wow.gif" /&gt;
+&lt;img id="gif13" src="awkward.gif" /&gt;
+&lt;img id="gif14" src="speechless.gif" /&gt;
+&lt;img id="gif15" src="ok.gif" /&gt;
+&lt;img id="gif16" src="bye.gif" /&gt;
+`,
+    textB: `[用户指南]
+
+    <div class='textB-desc'>
+<img src='./endless-tears/002.png' width='55px'>
+    黑夜/白天
+    
+    
+    进入家庭作业机器
+    
+    
+    下载表情包
+    </div>
+`,
+    textC: `[README]
+ 除了情绪丰富外，目前确实没什么人性的光辉
+ 微信表情包请复制下载链接：https://sticker.weixin.qq.com/cgi-bin/mmemoticon-bin/emoticonview?oper=single&t=shop/detail&productid=aL2PCfwK/89qO7sF6/+I+UDhfwEjhec2ZNvdnLLJRd/PHmWrRrfQjDtbbyihdbDOKU4m4DM/eprUmk85iePmwRyuEHsPxlj+r7Cs9bcbsdKY=
+
+`,
+    link: "Ghost in the Shell (2025)",
+    href: "./gui-face/ghost-in-the-shell.html"
 }
+
 
 
 ];
