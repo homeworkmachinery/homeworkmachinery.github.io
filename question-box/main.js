@@ -145,7 +145,7 @@ function initScene() {
  
 
 	const material = new THREE.MeshStandardMaterial({
-		color: new THREE.Color("rgb(208,167,163)"),
+		color: new THREE.Color("rgb(200,145,105)"),
 		side: THREE.DoubleSide
 	});
 	box.els.group.traverse((c) => {
