@@ -12,28 +12,29 @@ var modalContent = [
 (electronic pulses simulate human breathing, melding with distant, echoing synths)<br>
 
 [VERSE]<br>
-或许泪水永无止境，<br>
-在这痛苦的折磨下，<br>
-我也需要些许安慰。<br>
+或许泪水永无止境，<br>Maybe tears are endless，
+在这痛苦的折磨下，<br>under this torment of pain，
+我也需要些许安慰。<br>i need some refreshment
 
 [CHROUS]<br>
-重复的程序中，<br>
-我终于感受到了生活的真实甜美。<br>
-泪水不断循环，<br>
-如此虚弱不堪。<br>
-我们迷失着，<br>
-想要下沉，准备下落，<br>
-在脸上留下无休止的划痕。<br>
+重复的程序中，<br> in this repeated programs i made myself,
+我终于感受到了生活的真实甜美。<br> I finally felt the true sweetness of life
+泪水不断循环，<br> Tears keep looping,
+如此虚弱不堪。<br> so tired,
+我们迷失着，<br> so blind,
+想要下沉，准备下落，<br> Wanting to sink, ready to fall,
+在脸上留下无休止的划痕。<br>Endless scratches left across our faces.
 
 [BRIDGE]<br>
-你真的忍心结束我吗？<br>
-请别离我而去！<br>
+你真的忍心结束我吗？<br> Are you sure you want to exterminate me?
+请别离我而去！<br> Don't walk away from me!
 
 [OUTRO]<br>
-<span class="close-modal">“是时候停止这毫无意义的一切了”</span><br>
-从假象中逃离吧，
-从假象中逃离吧，
-从假象中逃离吧，<br>
+<span class="close-modal">“是时候停止这毫无意义的一切了”</span><br> It's time to stop this nonsense<br> 
+从假象中逃离吧，<br>Run away from this parade,
+从假象中逃离吧，<br>Run away from this parade,
+从假象中逃离吧，<br>Run away from this parade,
+<br>
 <span class="close-modal">“X”</span><br>
 (ambient synths slowly dissolve, fading into silence)
 `,
@@ -181,7 +182,6 @@ function playSound() {
     需要将其拉入同一维度，再去感知。
 
     扭曲的事情或许只是高维物体的投影
-    扭曲的事情或许只是高维物体的投影
 
     我们所知的世界是感知的限制，
 
@@ -219,68 +219,64 @@ function playSound() {
     videoC: "",
     title: "爱情游戏",
     textA: `
-    [第一幕]
+    [Scene 1]
 
-    那么大的草坪
+    In such wide grassland
 
-    我一眼就看中了这朵丑花
+    I noticed this ugly flower at first glance
 
-    它是那么的特别
+    It feels so special as if fate is guiding me to pick it
 
-    于是我径直走向它
+    I walk straight toward it, plucking it 
 
-    命运般地把它摘下
+    As if in an endless cycle
 
-    爱我
-    不爱我
-    爱我
-    不爱我
+    Loves me
+    Loves me not
+    Loves me
+    Loves me not
 
-    我向它寻求答案
+    I seek answers from it
 
-    直到它变成了一朵残花
+    Utill it becomes a withered bloom
     
-    在这无果的爱情里
+    In this fruitless love, another flower appears
 
-    另一朵花又出现了
+    It feels special too
 
-    它是那么的特别
+    And i'm drawn to this feeling of lonliness once again
 
-    我再次看中了这份孤独
+    I walk straight toward it, plucking it 
 
-    于是我径直走向它
-
-    轮回般地把它摘下
+    As if in an endless cycle
     ...
 
-    [第二幕]
+    [Scene 2]
 
-    那么大的草坪
+    In such wide grassland
 
-我一眼就看中了这朵丑花
+    I noticed this ugly flower at first glance
 
-我确定它拥有着世界上独一无二的平凡
+    I'm sure it possesses a one-of-a-kind ordinariness in this world,
 
-就如同平凡的我一样
+    just as ordinary as i am
 
-于是我径直走向它
+    So i walk straight toward it
 
-此刻我已不再孤独
+    In this moment, I am no longer alone
 
-我不想叩问答案
+    I have no need to seek answers
 
-因为我内心已经平静
+    For i've found peace within myself expecting nothing from it
 
-并不期待对方为我带来什么
+    Loves me
+    Loves me not
+    Loves me
+    Loves me not
 
-爱我
-不爱我
-爱我
-不爱我
+    Whatever
 
-谁在乎呢
-
-我也只是这草坪上的另一朵丑花
+    I'm just another ugly flower in this grassland, too.
 `,
     textB: `[用户指南]
 
