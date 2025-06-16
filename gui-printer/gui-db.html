@@ -49,6 +49,45 @@
   border: 1px dashed black;
 }
 
+
+#gui-printer {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 18px;
+      font-family: "STSong", serif;
+      cursor: pointer;
+      border: 1px dashed black;
+      padding: 5px 10px;
+      user-select: none;
+
+
+      color: black;
+    }
+
+#scanner-container {
+  width: 320px; 
+  height: 140px;
+  margin: 0 auto; 
+  border: 1px dashed black;
+  overflow: hidden;
+  position: relative;
+}
+
+#scanner-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#scanner-container canvas {
+  display: none;
+}
+
+.scanner-active {
+  border: 2px solid red;
+}
+
       </style>
       
 </head>
@@ -66,21 +105,14 @@
   </div>
   
   <div style="text-align: center; margin: 20px;">
-    <button onclick="startBarcodeScanner()">扫码查找</button>
+    <button id="scanner-toggle" onclick="toggleScanner()">扫码查找</button>
   </div>
   
-  <div id="scanner-container" style="width: 320px; height: 240px; margin: 0 auto; border: 1px dashed black;"></div>
+  <div id="scanner-container"></div>
 
   <div id="search-results" ></div>
 
-
-
-
-
-
-
-
-
+<a href="./gui-printer.html"><div id="gui-printer">GUI PRINTER</div></a>
 
 <script>
   const yearSelect = document.getElementById("search-year");
@@ -103,6 +135,8 @@
 
 <script>
 let allManifestos = []; // 保存所有 items
+let html5QrCode = null;
+let isScannerActive = false;
 
 
 async function searchManifestos() {
@@ -125,7 +159,7 @@ async function searchManifestos() {
   }
 
   if (!data || data.length === 0) {
-    resultsDiv.textContent = "没有找到匹配的内容";
+    resultsDiv.textContent = "没有找到匹配的宣言";
     return;
   }
 
@@ -139,44 +173,62 @@ async function searchManifestos() {
   });
 }
 
-
-
-function startBarcodeScanner() {
+function toggleScanner() {
+  const scannerToggle = document.getElementById("scanner-toggle");
   const scannerContainer = document.getElementById("scanner-container");
-  scannerContainer.innerHTML = ""; // 清空旧内容
-
-  const html5QrCode = new Html5Qrcode("scanner-container");
-
-  const config = {
-    fps: 10,
-    qrbox: { width: 250, height: 250 }
-  };
-
-  html5QrCode.start(
-    { facingMode: "environment" }, // 后置摄像头
-    config,
-    (decodedText, decodedResult) => {
-      console.log("扫码结果：", decodedText);
+  
+  if (isScannerActive) {
+    // 关闭扫描器
+    if (html5QrCode) {
       html5QrCode.stop().then(() => {
-        document.getElementById("scanner-container").innerHTML = "扫描成功，正在搜索…";
-
-        // 设置搜索框并触发搜索
-        document.getElementById("search-keyword").value = decodedText;
-        searchManifestos();
+        scannerContainer.innerHTML = "";
+        scannerToggle.textContent = "扫码查找";
+        scannerContainer.classList.remove("scanner-active");
+        isScannerActive = false;
+      }).catch(err => {
+        console.error("关闭失败：", err);
       });
-    },
-    (errorMessage) => {
-      // 可选：console.log("扫码失败：", errorMessage);
     }
-  ).catch(err => {
-    console.error("启动失败：", err);
-    alert("摄像头初始化失败");
-  });
+  } else {
+    // 启动扫描器
+    scannerContainer.innerHTML = "正在启动摄像头...";
+    html5QrCode = new Html5Qrcode("scanner-container");
+
+    const config = {
+      fps: 10,
+      qrbox: { width: 200, height: 100 } // 减小扫描框以适应容器
+    };
+
+    html5QrCode.start(
+      { facingMode: "environment" }, // 后置摄像头
+      config,
+      (decodedText, decodedResult) => {
+        console.log("扫码结果：", decodedText);
+        html5QrCode.stop().then(() => {
+          scannerContainer.innerHTML = "扫描成功，正在搜索";
+          scannerToggle.textContent = "扫码查找";
+          scannerContainer.classList.remove("scanner-active");
+          isScannerActive = false;
+
+          // 设置搜索框并触发搜索
+          document.getElementById("search-keyword").value = decodedText;
+          searchManifestos();
+        });
+      },
+      (errorMessage) => {
+        // 可选：console.log("扫码失败：", errorMessage);
+      }
+    ).then(() => {
+      scannerToggle.textContent = "关闭相机";
+      scannerContainer.classList.add("scanner-active");
+      isScannerActive = true;
+    }).catch(err => {
+      console.error("启动失败：", err);
+      scannerContainer.innerHTML = "摄像头初始化失败";
+      alert("无法访问摄像头，请检查权限设置");
+    });
+  }
 }
-
-
-
-
 
   window.addEventListener("load", searchManifestos);
 </script>

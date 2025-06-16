@@ -1,0 +1,383 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>鬼魂打印机</title>
+  <meta charset="utf-8" />
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js" defer></script>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+    window.supabase = createClient(
+      "https://zdahntyxdcmkmbgjtizc.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkYWhudHl4ZGNta21iZ2p0aXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwNDM3MjMsImV4cCI6MjA2NDYxOTcyM30.ew3haBr1qN5lSKQ8LWBRqlqrWw99b_s954GGjrK4brc"
+    );
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+
+
+  <style>
+    body {
+      padding: 50px;
+      background: white;
+      color: black;
+
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      /* 或 center，如果你希望垂直也居中 */
+      min-height: 100vh;
+      margin: 0;
+
+    }
+
+
+
+    h1 {
+      font-family: "STSong", serif;
+      font-size: 48px;
+      font-weight: 900;
+      color: black;
+      text-align: center;
+      margin-bottom: 7px;
+      text-shadow:
+        0.3px 0 0 black,
+        -0.3px 0 0 black,
+        0 0.3px 0 black,
+        0 -0.3px 0 black;
+    }
+
+    h2 {
+      font-family: "STSong", serif;
+      font-size: 35px;
+      font-weight: 900;
+      color: black;
+      text-align: center;
+      outline: none;
+      /* 点击时不显示边框 */
+      cursor: text;
+      /* 鼠标显示为输入光标 */
+      margin: 0 0 13px 0;
+      /* 确保所有边距为0 */
+      padding: 0 0 0 0;
+      /* 确保所有内边距为0 */
+      line-height: 1.1;
+      /* 适当调整行高 */
+
+    }
+
+
+    #barcode {
+      /* 保持与h2相同的下边距 */
+      width: 80%;
+      max-width: 420px;
+      height: 80px;
+    }
+
+
+    #ascii {
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 3px;
+      line-height: 3.5px;
+
+      text-align: center;
+      letter-spacing: 0px;
+      margin: 0;
+      /* 移除所有外边距 */
+      padding: 0;
+      /* 移除所有内边距 */
+
+
+    }
+
+    textarea {
+      font-family: "STSong", serif;
+      font-size: 30px;
+      font-weight: 900;
+      text-align: center;
+      color: black;
+      border: none;
+      outline: none;
+      resize: none;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 4px auto;
+      padding: 0;
+      display: block;
+      line-height: 1.1;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+
+    }
+
+
+
+    #button {
+      display: none;
+
+    }
+
+    #manifesto-input,
+    #manifesto-input input {
+      max-width: 380px;
+      text-align: center;
+      word-break: break-word;
+      white-space: normal;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 4px;
+    }
+
+    .square {
+      position: fixed;
+      width: 35px;
+      height: 35px;
+      bottom: 130px;
+      right: 28px;
+      border: 1px dashed black;
+      cursor: pointer;
+    }
+
+    .circle {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      bottom: 75px;
+      right: 25px;
+      border: 1px dashed black;
+    }
+
+
+
+    .triangle {
+      width: 40px;
+      height: 35px;
+      bottom: 25px;
+      right: 25px;
+      position: fixed;
+      cursor: pointer;
+
+    }
+
+
+
+    #language {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 18px;
+      font-family: "STSong", serif;
+      cursor: pointer;
+      border: 1px dashed black;
+      padding: 5px 10px;
+      user-select: none;
+    }
+
+    #db {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      font-size: 18px;
+      font-family: "STSong", serif;
+      cursor: pointer;
+      border: 1px dashed black;
+      padding: 5px 10px;
+      user-select: none;
+
+
+      color: black;
+    }
+
+
+    #print-area {
+      position: relative;
+      padding-bottom: 80px;
+      display: inline-block;
+    }
+
+    #qrcode-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    #qrcode {
+      text-align: center;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    #qrcode-img {
+      width: 340px;
+      height: auto;
+    }
+
+    #timestamp {
+      font-family:"STSong", serif;
+      font-size: 33px;
+      text-align: center;
+      color: black;
+
+    }
+
+
+    #barcode-container {
+      display: flex;
+      width: 430px;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+        /* 所有内容默认隐藏 */
+      }
+#print-title-div{
+  width: 80%;
+  max-width: 95%;
+  margin-left: 30px;
+   
+}
+
+#manifesto-input{
+  width: 92%;
+  max-width: 92%;
+}
+      #print-area,
+      #print-area * {
+        visibility: visible;
+        /* 打印区域的内容显示 */
+
+      }
+
+      #print-area {
+        position: relative;
+    display: inline-block;
+    width: auto; /* 或设置具体宽度 */
+    height: auto; /* 或设置具体高度 */
+
+
+      }
+
+      /* 可选：取消背景、边距等页面元素对打印的影响 */
+      @page {
+        margin: 0;
+        size: auto;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .flatland {
+        bottom: 10px;
+        right: 10px;
+      }
+
+      .square{
+        width: 50px;
+        height: 50px;
+        bottom: 145px;
+      }
+
+      .circle {
+        width: 50px;
+        height: 50px;
+        bottom: 80px;
+
+      }
+
+      .triangle {
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 42px solid rgba(0, 0, 0, 0.5);
+
+      }
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <h1 id="info"></h1>
+  <div id="print-area">
+    <div id="storage-area">
+      <div id="print-title-div"><h1 id="print-title">宣言俱乐部照片回执</h1></div>
+      <div id="barcode-container"> <svg id="barcode"></svg></div>
+      <h2 id="manifesto-input" onclick="replaceWithInput()">请输入你的宣言</h2>
+      <pre id="ascii"></pre>
+
+
+      <div id="timestamp"></div>
+    </div>
+    <div id="qrcode-container">
+      <div id="qrcode">-------------------------------------------------------</div>
+      <img id="qrcode-img" src="001.png">
+    </div>
+  </div>
+
+  <div id="language" onclick="toggleLanguage()">E</div>
+  <a href="./gui-db.html"> <div id="db">GUI DB</div></a>
+
+  <div class="flatland">
+    <div class="square" id="button"></div>
+    <a href="../index.html" target="_blank">
+      <div class="circle"></div>
+    </a>
+    <div class="triangle" onclick="handleTriangleClick()">
+      <img src="black.png" width='40px' height='32px'>
+    </div>
+  </div>
+
+
+
+  <script src="./main.js"></script>
+
+
+  <script>
+    const i18n = {
+      zh: {
+        title: "宣言俱乐部照片回执",
+        placeholder: "请输入你的宣言",
+        cameraMsg: "请允许此页面访问你的摄像头"
+      },
+      en: {
+        title: "MANIFESTO RECEIPT",
+        placeholder: "YOUR MANIFESTO",
+        cameraMsg: "Please allow this page to access your camera."
+      }
+    };
+
+    let currentLang = 'zh'; // 默认中文
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'zh' ? 'en' : 'zh';
+      const lang = i18n[currentLang];
+
+      document.getElementById("info").innerText = lang.cameraMsg;
+      document.getElementById("print-title").innerText = lang.title;
+
+      const el = document.getElementById("manifesto-input");
+      if (el.tagName === "H2") {
+        el.innerText = lang.placeholder;
+      } else if (el.tagName === "INPUT") {
+        el.placeholder = lang.placeholder;
+      }
+
+      document.getElementById("language").innerText = currentLang === 'zh' ? 'E' : '中';
+    }
+
+  </script>
+
+
+</body>
+
+</html>

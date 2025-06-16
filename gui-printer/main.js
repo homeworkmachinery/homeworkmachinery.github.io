@@ -136,7 +136,7 @@ function replaceWithInput() {
     textarea.placeholder = i18n[currentLang].placeholder;
 
     // 设置样式
-    textarea.style.fontFamily = '"Noto Serif SC","STSong", serif';
+    textarea.style.fontFamily = '"STSong", serif';
     textarea.style.fontSize = "35px";
     textarea.style.fontWeight = "900";
     textarea.style.color = "black";
@@ -186,7 +186,7 @@ async function generateBarcode(text) {
 		JsBarcode("#barcode", hash, {
 			format: "CODE128",
 			displayValue: true,
-			font:"Lucida Console",
+			font:'"Lucida Console"',
 			width: 2,
 			height: 80,
 			margin: 0
@@ -466,17 +466,56 @@ async function uploadImage(file) {
 	return publicUrl;
   }
   
+
+  let isSaving = false;
+  let lastSavedPhotoHash = null; 
+
+  
   async function handleTriangleClick() {
-    // 执行打印
-    window.print();
+	if (isSaving) {
+        console.log("保存操作正在进行中");
+        return;
+    }
+    
+    isSaving = true;
+    
+    try {
+        window.print();
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 获取当前照片的哈希值
+        const currentPhotoHash = await getCurrentPhotoHash();
+        
+        // 检查是否是相同的照片
+        if (currentPhotoHash !== lastSavedPhotoHash) {
+            await saveManifesto();
+            lastSavedPhotoHash = currentPhotoHash; // 更新最后保存的照片哈希
+        } else {
+            console.log("宣言已保存");
+			alert("宣言已保存");
+        }
+    } catch (error) {
+        console.error("保存过程中出错:", error);
+        alert("保存失败: " + error.message);
+    } finally {
+        isSaving = false;
+    }
+}
 
-    // 等打印窗口关闭后再保存
-    setTimeout(async () => {
-      await saveManifesto();
-    }, 500); 
-  }
-
-
+async function getCurrentPhotoHash() {
+    const storageArea = document.getElementById("storage-area");
+    const canvas = await html2canvas(storageArea);
+    const imageData = canvas.toDataURL("image/png");
+    
+    // 简单的哈希生成方法，实际应用中可以使用更复杂的算法
+    const encoder = new TextEncoder();
+    const data = encoder.encode(imageData);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    return hashHex;
+}
 
 
 async function saveManifesto() {
@@ -546,7 +585,7 @@ if (capturing) {
 		alert("保存失败，请打开控制台查看具体错误。");
 	} else {
 		console.log("保存成功：", data);
-		alert("宣言保存成功！");
+		alert("宣言保存成功");
 	}
 }
 
