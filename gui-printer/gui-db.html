@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUI DB</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+    const client = window.supabase.createClient(
+      "https://zdahntyxdcmkmbgjtizc.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkYWhudHl4ZGNta21iZ2p0aXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwNDM3MjMsImV4cCI6MjA2NDYxOTcyM30.ew3haBr1qN5lSKQ8LWBRqlqrWw99b_s954GGjrK4brc"
+    );
+  </script>
+
+    <style>
+      *{
+        font-family: "SimSun", "NSimSun", "FangSong", "STSong", serif;
+      }
+      h1{
+        text-align: center;
+        
+        border: 1px dashed black;
+      }
+
+   #manifesto-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: black;
+}
+
+.manifesto-item {
+  background: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  text-align: center;
+}
+.search-results{
+  border: 1px dashed black;
+  text-align: center;
+  border: 1px dashed black;
+}
+
+      </style>
+      
+</head>
+
+<body>
+  <h1>GUI DATABASE</h1>
+  <div id="search-area" style="margin: 20px auto; text-align: center;">
+    <select id="search-year">
+      <option value="">时间</option>
+      <option value="2025">2025</option>
+    </select>
+    <input type="text" id="search-keyword" placeholder="关键词/条码" onkeydown="handleEnter(event)" />
+    <button onclick="searchManifestos()">搜索</button>
+
+  </div>
+  
+  <div style="text-align: center; margin: 20px;">
+    <button onclick="startBarcodeScanner()">扫码查找</button>
+  </div>
+  
+  <div id="scanner-container" style="width: 320px; height: 240px; margin: 0 auto; border: 1px dashed black;"></div>
+
+  <div id="search-results" ></div>
+
+
+
+
+
+
+
+
+
+
+<script>
+  const yearSelect = document.getElementById("search-year");
+  const currentYear = new Date().getFullYear();
+
+  if (currentYear >= 2026) {
+    const option2026 = document.createElement("option");
+    option2026.value = "2026";
+    option2026.textContent = "2026";
+    yearSelect.appendChild(option2026);
+  }
+
+  function handleEnter(event) {
+  if (event.key === "Enter") {
+    searchManifestos();
+  }
+}
+</script>
+
+
+<script>
+let allManifestos = []; // 保存所有 items
+
+
+async function searchManifestos() {
+  const keyword = document.getElementById("search-keyword").value.trim();
+  const resultsDiv = document.getElementById("search-results");
+  resultsDiv.innerHTML = "";
+
+ 
+
+  // 使用 Supabase 查询 content 包含关键字的项
+  const { data, error } = await client
+    .from("manifesto")
+    .select("*")
+    .ilike("content", `%${keyword}%`); // ilike 适用于不区分大小写的模糊搜索
+
+  if (error) {
+    console.error("搜索失败：", error);
+    resultsDiv.textContent = "搜索出错，请稍后再试。";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    resultsDiv.textContent = "没有找到匹配的内容";
+    return;
+  }
+
+  // 显示匹配项的图片
+  data.forEach(item => {
+    const img = document.createElement("img");
+    img.src = item.image_url;
+    img.style.maxWidth = "300px";
+    img.style.margin = "10px";
+    resultsDiv.appendChild(img);
+  });
+}
+
+
+
+function startBarcodeScanner() {
+  const scannerContainer = document.getElementById("scanner-container");
+  scannerContainer.innerHTML = ""; // 清空旧内容
+
+  const html5QrCode = new Html5Qrcode("scanner-container");
+
+  const config = {
+    fps: 10,
+    qrbox: { width: 250, height: 250 }
+  };
+
+  html5QrCode.start(
+    { facingMode: "environment" }, // 后置摄像头
+    config,
+    (decodedText, decodedResult) => {
+      console.log("扫码结果：", decodedText);
+      html5QrCode.stop().then(() => {
+        document.getElementById("scanner-container").innerHTML = "扫描成功，正在搜索…";
+
+        // 设置搜索框并触发搜索
+        document.getElementById("search-keyword").value = decodedText;
+        searchManifestos();
+      });
+    },
+    (errorMessage) => {
+      // 可选：console.log("扫码失败：", errorMessage);
+    }
+  ).catch(err => {
+    console.error("启动失败：", err);
+    alert("摄像头初始化失败");
+  });
+}
+
+
+
+
+
+  window.addEventListener("load", searchManifestos);
+</script>
+</body>
+</html>
