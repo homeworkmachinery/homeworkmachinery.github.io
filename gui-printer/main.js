@@ -136,7 +136,7 @@ function replaceWithInput() {
     textarea.placeholder = i18n[currentLang].placeholder;
 
     // 设置样式
-    textarea.style.fontFamily = '"STSong", serif';
+    textarea.style.fontFamily = '"Noto Serif SC","STSong", serif';
     textarea.style.fontSize = "35px";
     textarea.style.fontWeight = "900";
     textarea.style.color = "black";
