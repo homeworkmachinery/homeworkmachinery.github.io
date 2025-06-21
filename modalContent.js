@@ -653,8 +653,55 @@ O                 ()
 `,
     link: "Ghost in the Shell (2025)",
     href: "./gui-face/ghost-in-the-shell.html"
-}
+},
 
+{id: 11 ,
+    imageAa: "",
+    imageAb: "",
+    iframeAa:"",
+    imageB: "./gui-printer/004.png",
+    imageCa: "",
+    imageCb: "",
+    iframeCa:"",
+    videoAa: `./gui-printer/001.mp4`,
+    videoAb: "",
+    videoCa: "./gui-printer/001.mp4",
+    title: "鬼魂打印机",
+    textA: `
+    zh: {
+
+          title: "宣言俱乐部照片回执",
+
+          placeholder: "请输入你的宣言",
+        
+          cameraMsg: "请允许此页面访问你的摄像头"
+
+        }
+`,
+    textB: `[用户指南]
+
+    <div class='textB-desc'>
+<img src='./endless-tears/002.png' width='55px'>
+    ASCII相机定格
+    
+    
+    进入家庭作业机器
+    
+    
+    打印（储存宣言）
+    </div>
+`,
+    textC: `[README]
+    本次作业通过 Supabase 数据库，实现了我曾经“输入并储存个人宣言”的夙愿。借助 JsBarcode API，网页
+
+    生成带有唯一哈希值的条形码，并将其与输入的宣言和ASCII照片相对应。在打印完成后，网页自动将其保存至数据库（gui-db）中。在gui-db中，除了普通的关键词搜索，还可以通过摄像头扫描打印出的条码来寻找定位该条宣言（用户）。
+
+    此外，基于gpd microPC以及便携热敏打印机，这一系列操作都可以轻易在室外环境下实现。挺好的，闲着无聊又可以去绑架朋友了（...
+
+`,
+    link: "gui-printer",
+    href: "./gui-printer/gui-printer.html"
+}
 
 
 ];

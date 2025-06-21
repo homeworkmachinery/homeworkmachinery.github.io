@@ -7,18 +7,27 @@
         content="Homework Machinery serves as a refuge against depression, a haven for daydreams, and a tool for my code learning" />
     <title>家庭作业机器</title>
     <link rel='stylesheet' href="index.css">
+    <style>
+        .head-header{
+            
+        }
+    </style>
 </head>
 
 
 <body>
-    <div class="header"> <a id="headerLink" class="green" href="#">~((((((CLICK HERE TO ENTER MY HOMEWORK
-            MACHINERY))))))~</a></div>
+    <div class="head-header">
+    <div class="header"> 
+        <a id="headerLink" class="green" href="#">~((((((CLICK HERE TO ENTER MY HOMEWORK
+            MACHINERY))))))~</a>
+        </div>
+        <div class="header-content">
     <hr class="purpleline">
     <div class="instruction"> &lt;meta name="instruction-manual" content="Homework Machinery serves as a refuge against
         depression, a haven for daydreams, and a tool for my code learning" /&gt; </div>
     <hr class="greenline">
-
-
+</div>
+</div>
     <div class="flatland ">
         <a href="./homework.html" target="_parent">
             <div class="square "></div>
@@ -54,6 +63,19 @@
 
     <div class="section center">
         <ul class="homework">
+
+
+            <li data-id="11">
+                <div class="overlay">
+                    <span class="title">鬼魂打印机<br>gui printer</span>
+                    <span class="date">
+                    </span>
+                </div>
+                <img src="./gui-printer/001.gif">
+
+            </li>
+
+
             <li data-id="10">
                 <div class="overlay">
                     <span class="title">鬼魂的表情<br>gui face</span>
@@ -61,7 +83,7 @@
                     </span>
                 </div>
                 <img src="./gui-face/2.gif">
-               
+
             </li>
 
 
@@ -72,7 +94,7 @@
                     </span>
                 </div>
                 <img src="./question-box/1.gif">
-               
+
             </li>
 
             <li data-id="8">
@@ -82,7 +104,7 @@
                     </span>
                 </div>
                 <img src="./square-vs-rectangle/1.gif">
-               
+
             </li>
 
             <li data-id="7">
@@ -151,7 +173,7 @@
 
             </li>
 
-            
+
 
         </ul>
     </div>
@@ -237,7 +259,7 @@
                 mediaContentA += `<img class="modal-image" src="${content.imageAa}" >`;
             }
 
-          
+
             if (content.iframeAa) {
                 mediaContentA += `<iframe class="modal-iframe" src="${content.iframeAa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
             }
@@ -299,7 +321,7 @@
                 if (content.imageCa) {
                     mediaContentC += `<img class="modal-image" src="${content.imageCa}" >`;
                 }
-             
+
                 if (content.iframeCa) {
                     mediaContentC += `<iframe class="modal-iframe" src="${content.iframeCa}" scrolling="no" autoplay=“0” border="0" frameborder="0" framespacing="0" allowfullscreen="true"></iframe>`;
                 }
@@ -308,7 +330,7 @@
                                 <source src="${content.videoCa}" type="video/mp4">
                              </video>`;
                 }
-                 if (content.imageCb) {
+                if (content.imageCb) {
                     mediaContentC += `<img class="modal-image" src="${content.imageCb}" >`;
                 }
                 if (content.videoCb) {
@@ -316,7 +338,7 @@
                                 <source src="${content.videoCb}" type="video/mp4">
                              </video>`;
                 }
-               
+
 
 
                 if (content) {
@@ -357,13 +379,31 @@
 
 
     var closeModal = document.querySelector('.close-modal');
+
+
+
     document.addEventListener('click', function (event) {
         if (event.target === oModal || event.target.classList.contains('close-modal')) {
             oModal.style.display = 'none';
-            // oModal.classList.remove('show'); 
+
+            // 停止所有视频
+            const videos = oModal.querySelectorAll('video');
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0; // 重置播放进度
+            });
+
+            // 停止所有 iframe（通过重置 src）
+            const iframes = oModal.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                const src = iframe.src;
+                iframe.src = ''; // 清空 src 停止播放
+                setTimeout(() => {
+                    iframe.src = src; // 恢复 src 以便下次使用
+                }, 100);
+            });
         }
     });
-
 
 
 
